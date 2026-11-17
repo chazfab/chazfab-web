@@ -358,6 +358,13 @@ body {
   align-items: center;
 }
 
+.cmd-nav-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
 .nav-tab {
   display: inline-flex;
   align-items: center;

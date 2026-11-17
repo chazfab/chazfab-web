@@ -1,12 +1,11 @@
 /* ==========================================================================
-   CHAZFAB MAINFRAME // Interactive Shell, Mobile Drawer, Command Bar & SFX
+   CHAZFAB SYSOP // Interactive Terminal Shell, CRT Controls & SFX
    Zero dependencies — works offline & across all desktop/tablet/mobile browsers.
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  const ROOT = document.body.dataset.rootPrefix || './';
   const crt = document.getElementById('crtMonitor');
   const gridDrive = document.getElementById('gridDrive');
   const scanlines = document.getElementById('scanlinesToggle');
@@ -91,121 +90,21 @@
   }
 
   /* ------------------------------------------------------------------------
-     3. MOBILE <DIALOG> SWIPE NAVIGATION DRAWER (navigation-drawer guide)
-     ------------------------------------------------------------------------ */
-  const drawer = document.getElementById('mobileDrawer');
-  const openBtn = document.getElementById('drawerOpenBtn');
-  const closeBtn = document.getElementById('drawerCloseBtn');
-
-  if (drawer && openBtn && closeBtn) {
-    const scroller = drawer.querySelector('.Drawer-scroller');
-    const sheet = drawer.querySelector('.Drawer-sheet');
-    let hasEnteredViewport = false;
-
-    async function openDrawer() {
-      playBlip(720);
-      hasEnteredViewport = false;
-      drawer.showModal();
-
-      if (!CSS.supports('scroll-initial-target', 'nearest')) {
-        scroller.scrollTo({ left: scroller.offsetWidth, behavior: 'instant' });
-        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      }
-
-      scroller.scrollTo({ left: 0, behavior: 'auto' });
-    }
-
-    function closeDrawer() {
-      playBlip(460);
-      scroller.scrollTo({ left: scroller.offsetWidth, behavior: 'auto' });
-    }
-
-    function onDrawerOpened() {
-      openBtn.setAttribute('aria-expanded', 'true');
-    }
-
-    function onDrawerClosed() {
-      if (drawer.open) drawer.close();
-      hasEnteredViewport = false;
-      openBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    const visibleThreshold = 1 / Math.max(window.innerWidth, 320);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries.at(-1);
-        if (!entry) return;
-        if (entry.intersectionRatio >= visibleThreshold) {
-          hasEnteredViewport = true;
-        }
-        if (hasEnteredViewport && entry.intersectionRatio < visibleThreshold) {
-          onDrawerClosed();
-        }
-        if (entry.intersectionRatio === 1) {
-          onDrawerOpened();
-        }
-      },
-      { root: drawer, threshold: [visibleThreshold, 1] }
-    );
-    observer.observe(sheet);
-
-    if (!CSS.supports('animation-timeline: scroll()')) {
-      scroller.addEventListener('scroll', () => {
-        const ratio = Math.max(0, Math.min(1, 1 - scroller.scrollLeft / Math.max(sheet.offsetWidth, 1)));
-        drawer.style.setProperty('--drawer-backdrop', String(ratio));
-      });
-    }
-
-    openBtn.addEventListener('click', openDrawer);
-    closeBtn.addEventListener('click', closeDrawer);
-
-    drawer.addEventListener('click', (event) => {
-      if (!sheet.contains(event.target)) {
-        closeDrawer();
-      }
-    });
-
-    drawer.addEventListener('cancel', (event) => {
-      if (event.cancelable) {
-        event.preventDefault();
-        closeDrawer();
-      }
-    });
-
-    window.matchMedia('(min-width: 640px)').addEventListener('change', (mq) => {
-      if (mq.matches && drawer.open) {
-        onDrawerClosed();
-      }
-    });
-  }
-
-  /* ------------------------------------------------------------------------
-     4. INTERACTIVE C:\CHAZFAB> COMMAND PROMPT & SHORTCUT CHIPS
+     3. INTERACTIVE C:\CHAZFAB> COMMAND PROMPT & SHORTCUT CHIPS
      ------------------------------------------------------------------------ */
   const cmdForm = document.getElementById('terminalForm');
   const cmdInput = document.getElementById('terminalInput');
   const cmdOutput = document.getElementById('terminalOutput');
   const cmdChips = document.querySelectorAll('.cmd-chip');
 
-  const ROUTES = {
-    home: 'index.html',
-    mainframe: 'index.html',
-    index: 'index.html',
-    games: 'games.html',
-    game: 'games.html',
-    munchers: 'viewer.html?app=labs/number-munchers/index.html',
-    climb: 'projects/climb-the-food-chain.html',
-    cad: 'cad.html',
-    '3d': 'cad.html',
-    scanner: 'projects/3d-scanner.html',
-    mesh: 'meshtastic.html',
-    meshtastic: 'meshtastic.html',
-    labs: 'labs.html',
-    lab: 'labs.html',
-    coach: 'viewer.html?app=labs/shot-couch-coach.html',
-    tron: 'viewer.html?app=labs/tron-grid-test.html',
-    sysop: 'sysop.html',
-    about: 'sysop.html'
+  const SECTION_TARGETS = {
+    home: 'top',
+    top: 'top',
+    sysop: 'top',
+    about: 'dossier',
+    bio: 'dossier',
+    dossier: 'dossier',
+    uplinks: 'uplinks'
   };
 
   const EXTERNAL_UPLINKS = {
@@ -220,6 +119,11 @@
     yt: 'https://www.youtube.com/@chazfab'
   };
 
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function runCommand(raw) {
     const cmd = (raw || '').trim().toLowerCase();
     if (!cmd) return;
@@ -229,7 +133,7 @@
     if (cmd === 'help' || cmd === '?') {
       if (cmdOutput) {
         cmdOutput.textContent =
-          'COMMANDS: home | games | munchers | climb | cad | scanner | mesh | labs | coach | tron | sysop | socials | github | x | reddit | grid | scanlines | sfx | clear';
+          'COMMANDS: home | dossier | bio | uplinks | socials | bench | github | x | reddit | instagram | tiktok | youtube | email | grid | scanlines | sfx | clear';
       }
       return;
     }
@@ -239,13 +143,23 @@
         cmdOutput.textContent =
           'UPLINKS: github.com/chazfab | x.com/chazfabofficial | reddit.com/u/chazfab | instagram.com/chazfabofficial | tiktok.com/@chazfabofficial | youtube.com/@chazfab | hello@chazfab.com';
       }
+      scrollToSection('uplinks');
+      return;
+    }
+
+    if (cmd === 'bench') {
+      if (cmdOutput) {
+        cmdOutput.textContent =
+          'BENCH: Bambu Lab H2C (0.2 / 0.4 / 0.6mm) | ESP32 / LoRa / MeshCore / Meshtastic | Retro Arcade & Pure HTML/CSS';
+      }
+      scrollToSection('dossier');
       return;
     }
 
     if (cmd === 'dir' || cmd === 'ls') {
       if (cmdOutput) {
         cmdOutput.textContent =
-          'DIR C:\\CHAZFAB\\ -> MAINFRAME.EXE  GAME_STUDIO.EXE  3D_CAD.EXE  MESHTASTIC.EXE  HTML_LABS\\  SYSOP.TXT';
+          'DIR C:\\CHAZFAB\\ -> SYSOP.EXE  OPERATOR_BIO.TXT  COMMS_UPLINK.SYS  SYSOP_AVATAR.PNG';
       }
       return;
     }
@@ -282,9 +196,14 @@
       return;
     }
 
-    if (Object.hasOwn(ROUTES, cmd)) {
-      if (cmdOutput) cmdOutput.textContent = `LAUNCHING ${ROUTES[cmd]} ...`;
-      window.location.href = ROOT + ROUTES[cmd];
+    if (Object.hasOwn(SECTION_TARGETS, cmd)) {
+      const target = SECTION_TARGETS[cmd];
+      if (cmdOutput) {
+        cmdOutput.textContent = target === 'dossier'
+          ? 'CHAZ // CHAZFAB — Indie Games • 3D Printing CAD • Meshtastic Off-Grid • Raw .HTML Labs (hello@chazfab.com)'
+          : `FOCUSING #${target.toUpperCase()} ...`;
+      }
+      scrollToSection(target);
       return;
     }
 
@@ -310,7 +229,7 @@
     });
   });
 
-  document.querySelectorAll('.nav-tab, .btn-mainframe, .btn-raw, .btn-violet, .uplink-card, .uplink-pill').forEach((el) => {
+  document.querySelectorAll('.nav-tab, .btn-mainframe, .btn-raw, .btn-violet, .uplink-card').forEach((el) => {
     el.addEventListener('click', () => playBlip(740, 0.04));
   });
 })();
