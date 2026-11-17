@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>CHAZFAB // C:\CHAZFAB\MAINFRAME.EXE</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./mainframe.js"></script>
+</head>
+<body data-root-prefix="./">
+  <!-- Mobile Swipe-to-Dismiss Navigation Drawer (< 640px) -->
+  <dialog class="Drawer" id="mobileDrawer" aria-label="Mainframe navigation drawer">
+    <div class="Drawer-scroller">
+      <nav class="Drawer-sheet" aria-label="Mobile menu">
+        <div class="drawer-header">
+          <span class="drawer-title">CHAZFAB MENU</span>
+          <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu" autofocus>[X]</button>
+        </div>
+        <ul class="drawer-list">
+          <li><a class="drawer-link" href="./index.html" aria-current="page"><span>[MAINFRAME]</span><span class="led-dot led-dot--green" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./games.html"><span>[GAMES]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./cad.html"><span>[3D CAD]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./meshtastic.html"><span>[MESHTASTIC]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./labs.html"><span>[HTML LAB]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </dialog>
+
+  <div class="desk-backdrop">
+    <div class="crt-monitor" id="crtMonitor">
+      <div class="crt-screen">
+        <div class="scanlines-layer" aria-hidden="true"></div>
+        <div class="tron-grid-wrap" aria-hidden="true">
+          <div class="tron-horizon"></div>
+          <div class="tron-grid-plane"></div>
+        </div>
+
+        <div class="crt-content">
+          <!-- Mainframe Header & Persistent OS Navigation -->
+          <header class="os-window os-window--violet os-window-boot">
+            <div class="os-titlebar">
+              <span class="os-titlebar-path">&gt;_ C:\CHAZFAB\MAINFRAME.EXE</span>
+              <span class="led-cluster">
+                <span class="led-dot led-dot--red" aria-hidden="true"></span>
+                <span class="led-dot led-dot--green" aria-hidden="true"></span>
+                <span class="win-controls" aria-hidden="true">
+                  <span class="win-ctrl-box">_</span>
+                  <span class="win-ctrl-box">□</span>
+                  <span class="win-ctrl-box">X</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="top-nav-bar">
+              <span class="mobile-brand-mini">CHAZFAB</span>
+              <button
+                type="button"
+                class="mobile-menu-trigger"
+                id="drawerOpenBtn"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="mobileDrawer"
+              >[≡ MENU]</button>
+
+              <nav class="cmd-nav-desktop" aria-label="Mainframe sections">
+                <a class="nav-tab" href="./index.html" aria-current="page">[MAINFRAME *ACTIVE*]</a>
+                <a class="nav-tab" href="./games.html">[GAMES]</a>
+                <a class="nav-tab" href="./cad.html">[3D CAD]</a>
+                <a class="nav-tab" href="./meshtastic.html">[MESHTASTIC]</a>
+                <a class="nav-tab" href="./labs.html">[HTML LAB]</a>
+                <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
+              </nav>
+            </div>
+
+            <div class="os-body">
+              <h1 class="visually-hidden">CHAZFAB Mainframe</h1>
+              <div class="hero-header-row">
+                <div>
+                  <img class="tube-logo-img" src="./assets/svg/chazfab-neon-tube.svg" alt="CHAZFAB Neon Tube Logo">
+                  <p class="hero-tagline">GAMES &bull; 3D CAD &bull; MESHTASTIC &bull; RAW .HTML LABS</p>
+                </div>
+
+                <a class="sysop-card" href="./sysop.html" aria-label="Open SYSOP Chaz operator page">
+                  <img class="sysop-avatar" src="./assets/chazfab-avatar.png" alt="Chaz pixel cyborg avatar" width="157" height="173">
+                  <div class="sysop-meta">
+                    <span class="sysop-badge-title">SYSOP // CHAZ</span>
+                    <div>CYBORG MAINFRAME</div>
+                    <div>PURE HTML + CSS</div>
+                  </div>
+                </a>
+              </div>
+
+              <div class="status-strip">
+                <span><span class="status-tag status-tag--online">ONLINE</span><strong>NOW:</strong> Number Munchers Deluxe live in <code>/labs/</code> &bull; Building 3D Scanner, Shot Couch Coach &amp; Climb the Food Chain</span>
+                <span>TYPE <code>help</code> BELOW TO NAVIGATE</span>
+              </div>
+            </div>
+          </header>
+
+          <!-- 4-Window Mainframe Hub Grid -->
+          <main class="hub-grid">
+            <!-- Window 1: Indie Games -->
+            <article class="os-window os-window-boot">
+              <div class="os-titlebar">
+                <span class="os-titlebar-path">INDIE_GAMES.EXE</span>
+                <span class="led-cluster">
+                  <span class="led-dot led-dot--green" aria-hidden="true"></span>
+                  <span class="win-controls" aria-hidden="true"><span class="win-ctrl-box">_</span><span class="win-ctrl-box">□</span><span class="win-ctrl-box">X</span></span>
+                </span>
+              </div>
+              <div class="os-body">
+                <p class="kicker">CHAZFAB Game Studio</p>
+                <h2 class="card-heading">Indie Games &amp; Remakes</h2>
+                <div class="preview-box" aria-hidden="true">
+                  <svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="8" y="8" width="120" height="104" fill="#020804" stroke="#00ff41" stroke-width="2"/>
+                    <path d="M8 34 H128 M8 60 H128 M8 86 H128 M38 8 V112 M68 8 V112 M98 8 V112" stroke="#00ff41" stroke-opacity="0.45" stroke-width="1"/>
+                    <text x="19" y="26" fill="#00ff41" font-family="monospace" font-size="13" font-weight="700">6  12  9</text>
+                    <text x="19" y="52" fill="#00e5ff" font-family="monospace" font-size="13" font-weight="700">18  4  24</text>
+                    <rect x="73" y="65" width="20" height="16" rx="4" fill="#00ff41"/>
+                    <circle cx="79" cy="71" r="2" fill="#020406"/><circle cx="87" cy="71" r="2" fill="#020406"/>
+                    <text x="142" y="34" fill="#00ff41" font-family="monospace" font-size="12" font-weight="700">&gt; NUMBER MUNCHERS</text>
+                    <text x="142" y="54" fill="#86c9a5" font-family="monospace" font-size="10">  [LIVE PLAYABLE]</text>
+                    <text x="142" y="82" fill="#00e5ff" font-family="monospace" font-size="12" font-weight="700">&gt; CLIMB FOOD CHAIN</text>
+                    <text x="142" y="100" fill="#ff2800" font-family="monospace" font-size="10">  [PLACEHOLDER]</text>
+                  </svg>
+                </div>
+                <p class="card-copy">Play <strong>Number Munchers Deluxe</strong> right inside the Mainframe or full screen, plus track <strong>Climb the Food Chain</strong>.</p>
+                <div class="action-row">
+                  <a class="btn-mainframe" href="./games.html">OPEN GAMES STUDIO &rarr;</a>
+                  <a class="btn-raw" href="./viewer.html?app=labs/number-munchers/index.html">PLAY MUNCHERS</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Window 2: 3D Printing CAD -->
+            <article class="os-window os-window-boot">
+              <div class="os-titlebar">
+                <span class="os-titlebar-path">3D_PRINTING_CAD.EXE</span>
+                <span class="led-cluster">
+                  <span class="led-dot led-dot--red" aria-hidden="true"></span>
+                  <span class="win-controls" aria-hidden="true"><span class="win-ctrl-box">_</span><span class="win-ctrl-box">□</span><span class="win-ctrl-box">X</span></span>
+                </span>
+              </div>
+              <div class="os-body">
+                <p class="kicker kicker--wip">Work In Progress Slot</p>
+                <h2 class="card-heading">3D Printing CAD &amp; Scanner</h2>
+                <div class="preview-box" aria-hidden="true">
+                  <svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="110" cy="78" rx="64" ry="22" fill="none" stroke="#00ff41" stroke-width="2"/>
+                    <ellipse cx="110" cy="86" rx="68" ry="24" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+                    <path d="M84 54 L110 42 L136 54 V74 L110 86 L84 74 Z" fill="none" stroke="#00ff41" stroke-width="1.8"/>
+                    <path d="M84 54 L110 66 L136 54 M110 66 V86" fill="none" stroke="#00ff41" stroke-width="1.4"/>
+                    <rect x="208" y="28" width="28" height="20" fill="none" stroke="#00e5ff" stroke-width="1.8"/>
+                    <line x1="208" y1="38" x2="136" y2="62" stroke="#ff2800" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <line x1="222" y1="48" x2="212" y2="104" stroke="#00e5ff" stroke-width="1.5"/>
+                    <line x1="222" y1="48" x2="236" y2="104" stroke="#00e5ff" stroke-width="1.5"/>
+                    <text x="16" y="24" fill="#00ff41" font-family="monospace" font-size="11" font-weight="700">3D SCANNER RIG [WIP]</text>
+                  </svg>
+                </div>
+                <p class="card-copy">Dedicated CAD hub featuring the <strong>3D Scanner</strong> build slot and ready-to-fill enclosure &amp; `.3MF` print templates.</p>
+                <div class="action-row">
+                  <a class="btn-mainframe" href="./cad.html">OPEN 3D CAD &rarr;</a>
+                  <a class="btn-violet" href="./projects/3d-scanner.html">3D SCANNER STUB</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Window 3: Meshtastic -->
+            <article class="os-window os-window-boot">
+              <div class="os-titlebar">
+                <span class="os-titlebar-path">MESHTASTIC.EXE</span>
+                <span class="led-cluster">
+                  <span class="led-dot led-dot--cyan" aria-hidden="true"></span>
+                  <span class="win-controls" aria-hidden="true"><span class="win-ctrl-box">_</span><span class="win-ctrl-box">□</span><span class="win-ctrl-box">X</span></span>
+                </span>
+              </div>
+              <div class="os-body">
+                <p class="kicker">Starter Template Ready</p>
+                <h2 class="card-heading">Meshtastic Off-Grid</h2>
+                <div class="preview-box" aria-hidden="true">
+                  <svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="56" y1="38" x2="142" y2="28" stroke="#00ff41" stroke-width="2" stroke-dasharray="4 3"/>
+                    <line x1="142" y1="28" x2="226" y2="56" stroke="#00e5ff" stroke-width="2"/>
+                    <line x1="56" y1="38" x2="122" y2="88" stroke="#00e5ff" stroke-width="1.8"/>
+                    <line x1="122" y1="88" x2="226" y2="56" stroke="#00ff41" stroke-width="2" stroke-dasharray="4 3"/>
+                    <circle cx="56" cy="38" r="14" fill="#031410" stroke="#00ff41" stroke-width="2"/>
+                    <circle cx="142" cy="28" r="14" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
+                    <circle cx="226" cy="56" r="14" fill="#031410" stroke="#00ff41" stroke-width="2"/>
+                    <circle cx="122" cy="88" r="12" fill="#03121d" stroke="#9d4edd" stroke-width="2"/>
+                    <text x="36" y="64" fill="#00ff41" font-family="monospace" font-size="9">BASE_01</text>
+                    <text x="122" y="12" fill="#00e5ff" font-family="monospace" font-size="9">RELAY_01</text>
+                    <text x="200" y="82" fill="#00ff41" font-family="monospace" font-size="9">FIELD_RX</text>
+                  </svg>
+                </div>
+                <p class="card-copy">Clean 915 MHz LoRa mesh topology view, hardware BOM table, and range-log starter templates waiting for your nodes.</p>
+                <div class="action-row">
+                  <a class="btn-mainframe" href="./meshtastic.html">OPEN MESHTASTIC &rarr;</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Window 4: Raw .HTML Lab -->
+            <article class="os-window os-window-boot">
+              <div class="os-titlebar">
+                <span class="os-titlebar-path">RAW_HTML_LAB\</span>
+                <span class="led-cluster">
+                  <span class="led-dot led-dot--green" aria-hidden="true"></span>
+                  <span class="win-controls" aria-hidden="true"><span class="win-ctrl-box">_</span><span class="win-ctrl-box">□</span><span class="win-ctrl-box">X</span></span>
+                </span>
+              </div>
+              <div class="os-body">
+                <p class="kicker">Apps &amp; Experiments</p>
+                <h2 class="card-heading">Raw .HTML Test Lab</h2>
+                <pre class="code-snippet-box" tabindex="0" role="region" aria-label="HTML lab links snippet"><code>&lt;!DOCTYPE html&gt;
+&lt;!-- Drop tests into /labs/ --&gt;
+&lt;a href="labs/shot-couch-coach.html"&gt;Shot Couch Coach&lt;/a&gt;
+&lt;a href="labs/number-munchers/index.html"&gt;Number Munchers&lt;/a&gt;
+&lt;a href="labs/tron-grid-test.html"&gt;TRON Grid Tester&lt;/a&gt;</code></pre>
+                <p class="card-copy">Includes <strong>Shot Couch Coach</strong> (placeholder stub), <strong>Number Munchers</strong>, and the interactive <strong>TRON Grid Tester</strong>.</p>
+                <div class="action-row">
+                  <a class="btn-mainframe" href="./labs.html">OPEN HTML LAB &rarr;</a>
+                  <a class="btn-raw" href="./labs/tron-grid-test.html">RAW TRON DEMO</a>
+                </div>
+              </div>
+            </article>
+          </main>
+
+          <!-- Interactive C:\CHAZFAB> Command Prompt -->
+          <section class="terminal-bar" aria-label="Mainframe command prompt">
+            <div class="terminal-output" id="terminalOutput"></div>
+            <form class="terminal-form" id="terminalForm">
+              <label class="terminal-prompt-label" for="terminalInput">
+                C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span>
+              </label>
+              <input
+                class="terminal-input"
+                id="terminalInput"
+                type="text"
+                placeholder="type command (help, games, munchers, cad, labs, socials, grid)..."
+                autocomplete="off"
+                spellcheck="false"
+              >
+              <button type="submit" class="btn-mainframe">RUN</button>
+            </form>
+            <div class="cmd-chips" aria-label="Quick command shortcuts">
+              <button type="button" class="cmd-chip" data-cmd="help">[help]</button>
+              <button type="button" class="cmd-chip" data-cmd="games">[games]</button>
+              <button type="button" class="cmd-chip" data-cmd="munchers">[munchers]</button>
+              <button type="button" class="cmd-chip" data-cmd="cad">[cad]</button>
+              <button type="button" class="cmd-chip" data-cmd="mesh">[mesh]</button>
+              <button type="button" class="cmd-chip" data-cmd="labs">[labs]</button>
+              <button type="button" class="cmd-chip" data-cmd="sysop">[sysop]</button>
+              <button type="button" class="cmd-chip" data-cmd="socials">[socials]</button>
+              <button type="button" class="cmd-chip" data-cmd="grid">[grid]</button>
+            </div>
+          </section>
+
+          <!-- Retro 88x31 Taskbar -->
+          <footer class="os-taskbar">
+            <div class="badge-shelf">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-chazfab.svg" alt="CHAZFAB badge">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-tron-grid.svg" alt="TRON GRID badge">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-cyborg.svg" alt="CYBORG LAB badge">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-html-labs.svg" alt="HTML LABS badge">
+            </div>
+            <nav class="taskbar-uplinks" aria-label="Social and contact">
+              <ul class="uplink-list">
+                <li><a class="uplink-pill" href="https://github.com/chazfab" target="_blank" rel="noopener noreferrer">[GITHUB]</a></li>
+                <li><a class="uplink-pill" href="https://x.com/chazfabofficial" target="_blank" rel="noopener noreferrer">[X]</a></li>
+                <li><a class="uplink-pill" href="https://www.reddit.com/user/chazfab/" target="_blank" rel="noopener noreferrer">[REDDIT]</a></li>
+                <li><a class="uplink-pill" href="https://www.instagram.com/chazfabofficial/" target="_blank" rel="noopener noreferrer">[IG]</a></li>
+                <li><a class="uplink-pill" href="https://www.youtube.com/@chazfab" target="_blank" rel="noopener noreferrer">[YT]</a></li>
+                <li><a class="uplink-pill" href="mailto:hello@chazfab.com">[EMAIL]</a></li>
+              </ul>
+            </nav>
+            <div class="hit-counter">MAINFRAME // VISITOR #004096</div>
+          </footer>
+        </div>
+      </div>
+
+      <!-- CRT Monitor Bottom Bezel Controls -->
+      <div class="monitor-bezel-controls" aria-label="CRT display switches">
+        <div class="bezel-group">
+          <span class="bezel-brand">CHAZFAB CRT-82 // MAINFRAME</span>
+          <label class="bezel-btn">
+            <input type="checkbox" id="gridDrive">
+            GRID DRIVE
+          </label>
+          <label class="bezel-btn">
+            <input type="checkbox" id="scanlinesToggle" checked>
+            SCANLINES
+          </label>
+          <label class="bezel-btn">
+            <input type="checkbox" id="sfxToggle">
+            SFX BLIPS
+          </label>
+        </div>
+
+        <div class="bezel-group">
+          <span class="led-dot led-dot--red" aria-hidden="true"></span>
+          <span>PWR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

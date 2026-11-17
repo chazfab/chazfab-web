@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 72" width="360" height="72" role="img" aria-label="CHAZFAB Industrial Stencil Logo">
+  <style>
+    :root { color: #e2e8f0; }
+    .accent { stroke: var(--accent, #38bdf8); fill: none; }
+    .accent-fill { fill: var(--accent, #38bdf8); }
+    .warn { stroke: var(--accent-alt, #f59e0b); fill: none; }
+    .warn-fill { fill: var(--accent-alt, #f59e0b); }
+    .ink { fill: currentColor; }
+    .ink-stroke { stroke: currentColor; fill: none; }
+  </style>
+  <!-- CAD Corner Reticles -->
+  <path class="accent" stroke-width="2" d="M4 18 V4 H18 M342 4 H356 V18 M4 54 V68 H18 M342 68 H356 V54"/>
+  <!-- Crosshair Caliper Emblem -->
+  <g transform="translate(36 36)">
+    <circle class="accent" cx="0" cy="0" r="20" stroke-width="2" stroke-dasharray="10 4"/>
+    <circle class="warn" cx="0" cy="0" r="11" stroke-width="2"/>
+    <circle class="warn-fill" cx="0" cy="0" r="3"/>
+    <path class="accent" stroke-width="2" d="M-26 0 H-15 M15 0 H26 M0 -26 V-15 M0 15 V26"/>
+    <!-- Caliper Jaws -->
+    <path class="ink-stroke" stroke-width="2.2" d="M-9 -16 L-9 -23 L-4 -23 L-2 -18 M9 -16 L9 -23 L4 -23 L2 -18"/>
+  </g>
+  <!-- Stencil Wordmark -->
+  <text x="76" y="42" class="ink" font-family="ui-monospace, 'Cascadia Mono', 'Consolas', monospace" font-size="34" font-weight="900" letter-spacing="4">CHAZ<tspan class="accent-fill">FAB</tspan></text>
+  <!-- Stencil Cut Lines (subtle industrial breaks) -->
+  <path class="accent" stroke-width="1.5" d="M76 52 H334"/>
+  <rect class="warn-fill" x="76" y="50" width="28" height="4"/>
+  <text x="112" y="61" class="accent-fill" font-family="ui-monospace, 'Consolas', monospace" font-size="9.5" font-weight="700" letter-spacing="2.5">FAB // CODE // GAMES // LABS</text>
+</svg>

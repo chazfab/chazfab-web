@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 31" width="88" height="31" shape-rendering="crispEdges" role="img" aria-label="CHAZFAB 88x31 Pixel Badge">
+  <!-- Classic 88x31 Win98/GeoCities Bevel Frame -->
+  <rect x="0" y="0" width="88" height="31" fill="#0b111a"/>
+  <rect x="0" y="0" width="88" height="1" fill="#38bdf8"/>
+  <rect x="0" y="0" width="1" height="31" fill="#38bdf8"/>
+  <rect x="0" y="30" width="88" height="1" fill="#0284c7"/>
+  <rect x="87" y="0" width="1" height="31" fill="#0284c7"/>
+  <!-- Left Amber Accent Square -->
+  <rect x="3" y="3" width="18" height="25" fill="#f59e0b"/>
+  <rect x="6" y="7" width="12" height="3" fill="#0b111a"/>
+  <rect x="6" y="13" width="8" height="3" fill="#0b111a"/>
+  <rect x="6" y="19" width="12" height="3" fill="#0b111a"/>
+  <!-- Pixel Label -->
+  <text x="25" y="14" fill="#e2e8f0" font-family="ui-monospace, 'Courier New', monospace" font-size="10" font-weight="900" letter-spacing="0.5">CHAZFAB</text>
+  <text x="25" y="25" fill="#38bdf8" font-family="ui-monospace, 'Courier New', monospace" font-size="7.5" font-weight="700">MAKE // CODE</text>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Meshtastic Off-Grid Radio Icon">
+  <style>
+    :root { color: #e2e8f0; }
+    .primary { stroke: var(--accent, #38bdf8); fill: none; }
+    .alt { stroke: var(--accent-alt, #f59e0b); fill: none; }
+    .alt-fill { fill: var(--accent-alt, #f59e0b); }
+    .ink-stroke { stroke: currentColor; fill: none; }
+  </style>
+  <!-- Handheld Mesh Radio Body -->
+  <rect class="ink-stroke" x="14" y="24" width="24" height="34" rx="4" stroke-width="2.2"/>
+  <!-- Antenna Mast -->
+  <path class="primary" stroke-width="2.6" stroke-linecap="round" d="M20 24 V8"/>
+  <circle class="alt-fill" cx="20" cy="7" r="2.6"/>
+  <!-- OLED Screen -->
+  <rect class="primary" x="18" y="30" width="16" height="11" rx="1.5" stroke-width="1.8"/>
+  <!-- Keypad / Buttons -->
+  <circle class="alt-fill" cx="21" cy="48" r="2"/>
+  <circle class="alt-fill" cx="26" cy="48" r="2"/>
+  <circle class="alt-fill" cx="31" cy="48" r="2"/>
+  <!-- LoRa Radio Waves -->
+  <path class="primary" stroke-width="2" stroke-linecap="round" d="M31 12 A11 11 0 0 1 31 24"/>
+  <path class="primary" stroke-width="2" stroke-linecap="round" d="M37 8 A17 17 0 0 1 37 28"/>
+  <path class="alt" stroke-width="2" stroke-linecap="round" d="M44 5 A23 23 0 0 1 44 31"/>
+  <!-- Mesh Relay Node Dot -->
+  <circle class="alt-fill" cx="53" cy="18" r="3"/>
+</svg>

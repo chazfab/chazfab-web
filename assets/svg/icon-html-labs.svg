@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="HTML Test Labs Icon">
+  <style>
+    :root { color: #e2e8f0; }
+    .primary { stroke: var(--accent, #38bdf8); fill: none; }
+    .alt { stroke: var(--accent-alt, #f59e0b); fill: none; }
+    .alt-fill { fill: var(--accent-alt, #f59e0b); }
+    .ink-stroke { stroke: currentColor; fill: none; }
+  </style>
+  <!-- Erlenmeyer Lab Flask -->
+  <path class="primary" stroke-width="2.2" stroke-linejoin="round" d="M24 8 H40 M26 8 V22 L12 50 C10.5 53 12.5 56 16 56 H48 C51.5 56 53.5 53 52 50 L38 22 V8"/>
+  <!-- Liquid Surface Line -->
+  <path class="alt" stroke-width="2" d="M18 40 H46"/>
+  <!-- Code Brackets </> Inside -->
+  <path class="ink-stroke" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M25 44 L21 48 L25 52 M39 44 L43 48 L39 52 M34 43 L30 53"/>
+  <!-- Bubbles -->
+  <circle class="alt-fill" cx="30" cy="31" r="2"/>
+  <circle class="alt-fill" cx="36" cy="26" r="1.5"/>
+</svg>

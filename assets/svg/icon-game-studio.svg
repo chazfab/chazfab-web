@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="CHAZFAB Game Studio Icon">
+  <style>
+    :root { color: #e2e8f0; }
+    .primary { stroke: var(--accent, #38bdf8); fill: none; }
+    .alt { stroke: var(--accent-alt, #f59e0b); fill: none; }
+    .alt-fill { fill: var(--accent-alt, #f59e0b); }
+    .ink-stroke { stroke: currentColor; fill: none; }
+  </style>
+  <!-- Cartridge Outline -->
+  <rect class="primary" x="10" y="6" width="44" height="52" rx="4" stroke-width="2.2"/>
+  <!-- Cartridge Top Grip Grooves -->
+  <path class="primary" stroke-width="1.8" d="M16 12 H48 M16 16 H48"/>
+  <!-- Inner Screen / Controller Shell -->
+  <rect class="ink-stroke" x="16" y="22" width="32" height="24" rx="2.5" stroke-width="1.8"/>
+  <!-- D-Pad -->
+  <path class="alt" stroke-width="2.2" stroke-linecap="square" d="M25 28 V40 M19 34 H31"/>
+  <!-- A / B Action Buttons -->
+  <circle class="alt-fill" cx="38" cy="37" r="2.6"/>
+  <circle class="alt-fill" cx="43" cy="31" r="2.6"/>
+  <!-- Bottom Pins -->
+  <path class="primary" stroke-width="2" d="M20 52 V58 M26 52 V58 M32 52 V58 M38 52 V58 M44 52 V58"/>
+</svg>

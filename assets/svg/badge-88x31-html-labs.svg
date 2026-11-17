@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 31" width="88" height="31" shape-rendering="crispEdges" role="img" aria-label="Pure HTML Labs 88x31 Pixel Badge">
+  <!-- Classic 88x31 Phosphor CRT Frame -->
+  <rect x="0" y="0" width="88" height="31" fill="#12100e"/>
+  <rect x="0" y="0" width="88" height="1" fill="#ffb000"/>
+  <rect x="0" y="0" width="1" height="31" fill="#ffb000"/>
+  <rect x="0" y="30" width="88" height="1" fill="#92400e"/>
+  <rect x="87" y="0" width="1" height="31" fill="#92400e"/>
+  <!-- Left Green Status Strip -->
+  <rect x="3" y="3" width="5" height="25" fill="#33ff66"/>
+  <!-- Pixel Text -->
+  <text x="12" y="14" fill="#ffb000" font-family="ui-monospace, 'Courier New', monospace" font-size="9.5" font-weight="900">&lt;HTML LABS&gt;</text>
+  <text x="12" y="25" fill="#33ff66" font-family="ui-monospace, 'Courier New', monospace" font-size="7" font-weight="700">HAND-CODED '99</text>
+</svg>

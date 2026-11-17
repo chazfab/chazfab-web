@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>CHAZFAB // Meshtastic (C:\CHAZFAB\MESHTASTIC.EXE)</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./mainframe.js"></script>
+</head>
+<body data-root-prefix="./">
+  <dialog class="Drawer" id="mobileDrawer" aria-label="Mainframe navigation drawer">
+    <div class="Drawer-scroller">
+      <nav class="Drawer-sheet" aria-label="Mobile menu">
+        <div class="drawer-header">
+          <span class="drawer-title">CHAZFAB MENU</span>
+          <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu" autofocus>[X]</button>
+        </div>
+        <ul class="drawer-list">
+          <li><a class="drawer-link" href="./index.html"><span>[MAINFRAME]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./games.html"><span>[GAMES]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./cad.html"><span>[3D CAD]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./meshtastic.html" aria-current="page"><span>[MESHTASTIC]</span><span class="led-dot led-dot--green" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./labs.html"><span>[HTML LAB]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+          <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span><span class="led-dot led-dot--cyan" aria-hidden="true"></span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </dialog>
+
+  <div class="desk-backdrop">
+    <div class="crt-monitor" id="crtMonitor">
+      <div class="crt-screen">
+        <div class="scanlines-layer" aria-hidden="true"></div>
+        <div class="tron-grid-wrap" aria-hidden="true">
+          <div class="tron-horizon"></div>
+          <div class="tron-grid-plane"></div>
+        </div>
+
+        <div class="crt-content">
+          <header class="os-window os-window--violet os-window-boot">
+            <div class="os-titlebar">
+              <span class="os-titlebar-path">&gt;_ C:\CHAZFAB\MESHTASTIC.EXE</span>
+              <span class="led-cluster">
+                <span class="led-dot led-dot--red" aria-hidden="true"></span>
+                <span class="led-dot led-dot--green" aria-hidden="true"></span>
+                <span class="win-controls" aria-hidden="true"><span class="win-ctrl-box">_</span><span class="win-ctrl-box">□</span><span class="win-ctrl-box">X</span></span>
+              </span>
+            </div>
+
+            <div class="top-nav-bar">
+              <span class="mobile-brand-mini">CHAZFAB</span>
+              <button type="button" class="mobile-menu-trigger" id="drawerOpenBtn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileDrawer">[≡ MENU]</button>
+
+              <nav class="cmd-nav-desktop" aria-label="Mainframe sections">
+                <a class="nav-tab" href="./index.html">[MAINFRAME]</a>
+                <a class="nav-tab" href="./games.html">[GAMES]</a>
+                <a class="nav-tab" href="./cad.html">[3D CAD]</a>
+                <a class="nav-tab" href="./meshtastic.html" aria-current="page">[MESHTASTIC *ACTIVE*]</a>
+                <a class="nav-tab" href="./labs.html">[HTML LAB]</a>
+                <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
+              </nav>
+            </div>
+
+            <div class="os-body">
+              <h1 class="card-heading">Meshtastic Off-Grid Comms</h1>
+              <p class="card-copy">Starter template ready for your 915 MHz LoRa builds, node topology logs, antenna tests, and BOMs.</p>
+            </div>
+          </header>
+
+          <main class="hub-grid">
+            <article class="os-window os-window-boot">
+              <div class="os-titlebar">
+                <span class="os-titlebar-path">915MHZ_MESH_TOPOLOGY.SLOT</span>
+                <span class="led-cluster">
+                  <span class="led-dot led-dot--cyan" aria-hidden="true"></span>
+                  <span class="win-controls" aria-hidden="true"><span class="win-ctrl-box">_</span><span class="win-ctrl-box">□</span><span class="win-ctrl-box">X</span></span>
+                </span>
+              </div>
+              <div class="os-body">
+                <p class="kicker">Starter Template</p>
+                <h2 class="card-heading">Node Mesh Topology Slot</h2>
+
+                <div class="preview-box" aria-hidden="true">
+                  <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="64" y1="40" x2="210" y2="40" stroke="#00ff41" stroke-width="2" stroke-dasharray="5 3"/>
+                    <line x1="64" y1="40" x2="64" y2="105" stroke="#00e5ff" stroke-width="2"/>
+                    <line x1="210" y1="40" x2="210" y2="105" stroke="#00e5ff" stroke-width="2"/>
+                    <line x1="64" y1="105" x2="210" y2="105" stroke="#00ff41" stroke-width="2" stroke-dasharray="5 3"/>
+                    <line x1="64" y1="40" x2="210" y2="105" stroke="#9d4edd" stroke-width="1.5"/>
+                    <rect x="44" y="24" width="40" height="32" fill="#031410" stroke="#00ff41" stroke-width="2"/>
+                    <rect x="190" y="24" width="40" height="32" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
+                    <rect x="44" y="88" width="40" height="32" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
+                    <rect x="190" y="88" width="40" height="32" fill="#031410" stroke="#00ff41" stroke-width="2"/>
+                    <text x="48" y="44" fill="#00ff41" font-family="monospace" font-size="8">BASE_01</text>
+                    <text x="194" y="44" fill="#00e5ff" font-family="monospace" font-size="8">RELAY_1</text>
+                    <text x="48" y="108" fill="#00e5ff" font-family="monospace" font-size="8">NODE_RX</text>
+                    <text x="194" y="108" fill="#00ff41" font-family="monospace" font-size="8">FIELD_2</text>
+                  </svg>
+                </div>
+
+                <p class="card-copy">Replace this placeholder when you publish node configs, firmware settings, or range test telemetry.</p>
+              </div>
+            </article>
+
+            <article class="os-window os-window-boot">
+              <div class="os-titlebar">
+                <span class="os-titlebar-path">HARDWARE_BOM_TEMPLATE.TXT</span>
+                <span class="led-cluster">
+                  <span class="led-dot led-dot--cyan" aria-hidden="true"></span>
+                  <span class="win-controls" aria-hidden="true"><span class="win-ctrl-box">_</span><span class="win-ctrl-box">□</span><span class="win-ctrl-box">X</span></span>
+                </span>
+              </div>
+              <div class="os-body">
+                <p class="kicker">Clean BOM &amp; Range Log Slots</p>
+                <h2 class="card-heading">Hardware BOM Template</h2>
+
+                <table class="spec-table" aria-label="Meshtastic BOM Template">
+                  <thead>
+                    <tr><th>Component</th><th>Keep-Out / Note</th><th>Qty</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>MCU / LoRa Radio</td><td>915 MHz node slot</td><td>1</td></tr>
+                    <tr><td>Antenna + SMA</td><td>15 mm straight ferrule clearance</td><td>1</td></tr>
+                    <tr><td>LiPo Battery</td><td>+1.0 mm swell margin</td><td>1</td></tr>
+                  </tbody>
+                </table>
+
+                <div class="template-slot">
+                  [FIELD RANGE LOGS // EMPTY TEMPLATE SLOT]
+                </div>
+              </div>
+            </article>
+          </main>
+
+          <section class="terminal-bar" aria-label="Mainframe command prompt">
+            <div class="terminal-output" id="terminalOutput"></div>
+            <form class="terminal-form" id="terminalForm">
+              <label class="terminal-prompt-label" for="terminalInput">C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span></label>
+              <input class="terminal-input" id="terminalInput" type="text" placeholder="type command (home, games, cad, labs, help)..." autocomplete="off" spellcheck="false">
+              <button type="submit" class="btn-mainframe">RUN</button>
+            </form>
+            <div class="cmd-chips">
+              <button type="button" class="cmd-chip" data-cmd="home">[home]</button>
+              <button type="button" class="cmd-chip" data-cmd="games">[games]</button>
+              <button type="button" class="cmd-chip" data-cmd="cad">[cad]</button>
+              <button type="button" class="cmd-chip" data-cmd="labs">[labs]</button>
+              <button type="button" class="cmd-chip" data-cmd="help">[help]</button>
+            </div>
+          </section>
+
+          <footer class="os-taskbar">
+            <div class="badge-shelf">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-chazfab.svg" alt="CHAZFAB badge">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-tron-grid.svg" alt="TRON GRID badge">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-cyborg.svg" alt="CYBORG LAB badge">
+              <img class="badge-88x31" src="./assets/svg/badge-88x31-html-labs.svg" alt="HTML LABS badge">
+            </div>
+            <div class="hit-counter">MESHTASTIC // STANDBY</div>
+          </footer>
+        </div>
+      </div>
+
+      <div class="monitor-bezel-controls" aria-label="CRT display switches">
+        <div class="bezel-group">
+          <span class="bezel-brand">CHAZFAB CRT-82 // MESHTASTIC</span>
+          <label class="bezel-btn"><input type="checkbox" id="gridDrive"> GRID DRIVE</label>
+          <label class="bezel-btn"><input type="checkbox" id="scanlinesToggle" checked> SCANLINES</label>
+          <label class="bezel-btn"><input type="checkbox" id="sfxToggle"> SFX BLIPS</label>
+        </div>
+        <div class="bezel-group"><span class="led-dot led-dot--red" aria-hidden="true"></span><span>PWR</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

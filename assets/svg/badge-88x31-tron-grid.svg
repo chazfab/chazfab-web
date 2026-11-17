@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 31" width="88" height="31" shape-rendering="crispEdges" role="img" aria-label="TRON GRID 88x31 Pixel Badge">
+  <rect x="0" y="0" width="88" height="31" fill="#040812"/>
+  <rect x="0" y="0" width="88" height="1" fill="#00E5FF"/>
+  <rect x="0" y="0" width="1" height="31" fill="#00E5FF"/>
+  <rect x="0" y="30" width="88" height="1" fill="#0284C7"/>
+  <rect x="87" y="0" width="1" height="31" fill="#0284C7"/>
+  <!-- Horizon Perspective Grid Mini Motif -->
+  <line x1="2" y1="21" x2="86" y2="21" stroke="#00E5FF" stroke-width="1"/>
+  <line x1="2" y1="25" x2="86" y2="25" stroke="#00E5FF" stroke-width="1" opacity="0.65"/>
+  <line x1="16" y1="21" x2="4" y2="29" stroke="#00E5FF" stroke-width="1"/>
+  <line x1="34" y1="21" x2="26" y2="29" stroke="#00E5FF" stroke-width="1"/>
+  <line x1="54" y1="21" x2="62" y2="29" stroke="#00E5FF" stroke-width="1"/>
+  <line x1="72" y1="21" x2="84" y2="29" stroke="#00E5FF" stroke-width="1"/>
+  <!-- Amber Identity Disc Pill -->
+  <rect x="4" y="4" width="6" height="14" fill="#F59E0B"/>
+  <text x="14" y="12" fill="#F8FAFC" font-family="ui-monospace, 'Courier New', monospace" font-size="8.5" font-weight="900">TRON // GRID</text>
+  <text x="14" y="19" fill="#00E5FF" font-family="ui-monospace, 'Courier New', monospace" font-size="6.5" font-weight="700">CHAZFAB 1982</text>
+</svg>

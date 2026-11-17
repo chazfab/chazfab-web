@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="3D CAD and Printing Icon">
+  <style>
+    :root { color: #e2e8f0; }
+    .primary { stroke: var(--accent, #38bdf8); fill: none; }
+    .alt { stroke: var(--accent-alt, #f59e0b); fill: none; }
+    .alt-fill { fill: var(--accent-alt, #f59e0b); }
+    .ink-stroke { stroke: currentColor; fill: none; }
+  </style>
+  <!-- Extruder Nozzle Above -->
+  <path class="alt" stroke-width="2" stroke-linejoin="round" d="M24 6 H40 V12 L34 19 H30 L24 12 Z"/>
+  <line class="alt" x1="32" y1="19" x2="32" y2="25" stroke-width="2" stroke-dasharray="2 2"/>
+  <!-- Isometric 3D Cube -->
+  <polygon class="primary" points="32,26 52,36 52,52 32,60 12,52 12,36" stroke-width="2.2" stroke-linejoin="round"/>
+  <path class="primary" stroke-width="2" stroke-linejoin="round" d="M12 36 L32 45 L52 36 M32 45 V60"/>
+  <!-- Caliper Dimension Line -->
+  <path class="ink-stroke" stroke-width="1.5" d="M6 36 V52 M4 36 H8 M4 52 H8"/>
+  <circle class="alt-fill" cx="32" cy="26" r="2.2"/>
+</svg>

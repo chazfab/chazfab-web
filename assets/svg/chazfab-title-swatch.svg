@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 90" width="420" height="90" role="img" aria-label="CHAZFAB Title Swatch Stencil Banner">
+  <defs>
+    <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Dark CRT Backing -->
+  <rect x="0" y="0" width="420" height="90" fill="none"/>
+  <!-- Corner Bracket Reticles: Left White/Amber, Right Cyan/Amber -->
+  <path fill="none" stroke="#F8FAFC" stroke-width="4" stroke-linecap="square" d="M18 32 V14 H168"/>
+  <path fill="none" stroke="#00E5FF" stroke-width="4" stroke-linecap="square" d="M174 14 H402 V32" filter="url(#cyanGlow)"/>
+  <!-- Amber Corner Caps -->
+  <path fill="none" stroke="#F59E0B" stroke-width="4.5" stroke-linecap="square" d="M18 22 V14 H28 M18 68 V76 H28 M392 14 H402 V22 M392 76 H402 V68"/>
+  <!-- Bottom Diagonal Split Accent Bars -->
+  <polygon points="30,74 156,74 162,79 30,79" fill="#F8FAFC"/>
+  <polygon points="164,74 390,74 390,79 169,79" fill="#F59E0B"/>
+
+  <!-- Stencil Wordmark: CHAZ (White) + FAB (TRON Cyan) -->
+  <text x="34" y="61" fill="#F8FAFC" font-family="ui-monospace, 'Cascadia Mono', 'Consolas', Impact, monospace" font-size="48" font-weight="900" letter-spacing="5">CHAZ</text>
+  <text x="206" y="61" fill="#00E5FF" filter="url(#cyanGlow)" font-family="ui-monospace, 'Cascadia Mono', 'Consolas', Impact, monospace" font-size="48" font-weight="900" letter-spacing="5">FAB</text>
+
+  <!-- Subtle Stencil Cut Breaks Across Letters -->
+  <rect x="34" y="38" width="352" height="2.2" fill="#040812" opacity="0.85"/>
+</svg>
