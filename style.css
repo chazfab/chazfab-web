@@ -378,6 +378,7 @@ body {
 }
 
 .clean-card {
+  container-type: inline-size;
   background: var(--card-bg);
   border: 1.5px solid rgba(0, 229, 255, 0.42);
   border-radius: 6px;
@@ -468,6 +469,76 @@ body {
   height: 100%;
   max-height: 185px;
   display: block;
+}
+
+.card-art--sysop {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-items: start;
+  gap: 1.15rem;
+  padding: 0.75rem 1.1rem;
+}
+
+.sysop-card-avatar {
+  width: 112px;
+  height: auto;
+  aspect-ratio: 157 / 173;
+  object-fit: cover;
+  image-rendering: pixelated;
+  display: block;
+  background: #000000;
+  border: 1.8px solid var(--cyber-violet);
+  border-radius: 5px;
+  box-shadow: 0 0 14px rgba(157, 78, 221, 0.32);
+}
+
+.sysop-card-specs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.sysop-spec-heading {
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.1rem;
+}
+
+.sysop-spec-cyan {
+  color: var(--tron-cyan);
+}
+
+.sysop-spec-green {
+  color: var(--neon-green);
+}
+
+.sysop-spec-muted {
+  color: var(--ink-muted);
+  margin-top: 0.18rem;
+}
+
+@container (max-width: 340px) {
+  .card-art--sysop {
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .sysop-card-avatar {
+    width: 82px;
+  }
+
+  .sysop-card-specs {
+    font-size: 0.75rem;
+  }
 }
 
 .card-desc {
