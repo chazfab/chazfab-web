@@ -19,9 +19,9 @@
         </div>
         <ul class="drawer-list">
           <li><a class="drawer-link" href="./index.html"><span>[MAINFRAME]</span></a></li>
-          <li><a class="drawer-link" href="./games.html" aria-current="page"><span>[GAMES]</span></a></li>
-          <li><a class="drawer-link" href="./projects.html"><span>[PROJECTS]</span></a></li>
-          <li><a class="drawer-link" href="./labs.html"><span>[LABS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/number-munchers/index.html"><span>[MUNCHERS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/salmon-tracker/index.html"><span>[SALMON]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/meshtastic-planner.html"><span>[MESHTASTIC]</span></a></li>
           <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span></a></li>
         </ul>
       </nav>
@@ -42,9 +42,9 @@
 
       <nav class="top-nav" aria-label="Primary navigation">
         <a class="nav-tab" href="./index.html">[MAINFRAME]</a>
-        <a class="nav-tab" href="./games.html" aria-current="page">[GAMES *]</a>
-        <a class="nav-tab" href="./projects.html">[PROJECTS]</a>
-        <a class="nav-tab" href="./labs.html">[LABS]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/number-munchers/index.html">[MUNCHERS]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/salmon-tracker/index.html">[SALMON]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/meshtastic-planner.html">[MESHTASTIC]</a>
         <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
       </nav>
 
@@ -59,12 +59,12 @@
     <main class="mainframe-stage">
       <div class="page-intro">
         <h1 class="page-title">Game Studio</h1>
-        <p class="page-note">Playable browser builds &amp; upcoming arcade experiments.</p>
+        <p class="page-note">Playable browser builds running live inside the CHAZFAB Mainframe.</p>
       </div>
 
-      <section class="hub-grid" aria-label="Games catalog">
+      <section class="hub-grid" aria-label="Playable games">
         <!-- Number Munchers Deluxe -->
-        <article class="clean-card clean-card--green">
+        <article class="clean-card clean-card--green hub-wide">
           <div class="card-head">
             <h2 class="card-title">Number Munchers Deluxe</h2>
             <span class="status-pill status-pill--live">LIVE</span>
@@ -80,34 +80,10 @@
             </svg>
           </div>
           <p class="card-desc">Classic 6&times;5 math arcade remake with Troggles, Muncher Theater skits, and multiple rule modes.</p>
-          <div class="action-row">
-            <a class="btn-play" href="./viewer.html?app=labs/number-munchers/index.html">[PLAY]</a>
-            <a class="btn-raw" href="./labs/number-munchers/index.html">[RAW .HTML]</a>
-          </div>
-        </article>
-
-        <!-- Climb the Food Chain -->
-        <article class="clean-card clean-card--violet">
-          <div class="card-head">
-            <h2 class="card-title">Climb the Food Chain</h2>
-            <span class="status-pill status-pill--wip">SOON</span>
-          </div>
-          <div class="card-art" aria-hidden="true">
-            <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="140,14 236,126 44,126" fill="none" stroke="#9d4edd" stroke-width="2"/>
-              <line x1="112" y1="46" x2="168" y2="46" stroke="#00e5ff" stroke-width="1.5"/>
-              <line x1="88" y1="74" x2="192" y2="74" stroke="#00e5ff" stroke-width="1.5"/>
-              <line x1="65" y1="100" x2="215" y2="100" stroke="#00e5ff" stroke-width="1.5"/>
-              <text x="124" y="39" fill="#ff2800" font-family="monospace" font-size="9" font-weight="700">APEX</text>
-              <text x="108" y="66" fill="#00ff41" font-family="monospace" font-size="9">PREDATOR</text>
-              <text x="102" y="92" fill="#00e5ff" font-family="monospace" font-size="9">HERBIVORE</text>
-              <text x="104" y="117" fill="#8ec9a9" font-family="monospace" font-size="9">PRODUCER</text>
-            </svg>
-          </div>
-          <p class="card-desc">Placeholder page reserved for Climb the Food Chain devlogs, artwork, and playable export.</p>
-          <div class="action-row">
-            <a class="enter-btn" href="./projects/climb-the-food-chain.html">[OPEN STUB]</a>
-          </div>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/number-munchers/index.html">[PLAY]<span class="visually-hidden"> Number Munchers Deluxe</span></a>
+            <a class="btn-raw" href="./labs/number-munchers/index.html">[FULLSCREEN]<span class="visually-hidden"> Number Munchers Deluxe</span></a>
+          </footer>
         </article>
       </section>
     </main>
@@ -118,7 +94,7 @@
           <label class="terminal-prompt-label" for="terminalInput">
             C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span>
           </label>
-          <input class="terminal-input" id="terminalInput" type="text" placeholder="munchers, climb, home, labs, help..." autocomplete="off" spellcheck="false">
+          <input class="terminal-input" id="terminalInput" type="text" placeholder="munchers, salmon, mesh, sysop, home, help..." autocomplete="off" spellcheck="false">
         </form>
         <span class="terminal-output" id="terminalOutput" aria-live="polite"></span>
       </div>

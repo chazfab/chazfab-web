@@ -180,17 +180,16 @@
     games: 'games.html',
     game: 'games.html',
     munchers: 'viewer.html?app=labs/number-munchers/index.html',
-    climb: 'projects/climb-the-food-chain.html',
+    salmon: 'viewer.html?app=labs/salmon-tracker/index.html',
+    fish: 'viewer.html?app=labs/salmon-tracker/index.html',
+    tracker: 'viewer.html?app=labs/salmon-tracker/index.html',
     projects: 'projects.html',
-    cad: 'projects.html#hardware',
-    hardware: 'projects.html#hardware',
-    scanner: 'projects/3d-scanner.html',
-    mesh: 'projects.html#offgrid',
-    meshtastic: 'projects.html#offgrid',
+    mesh: 'viewer.html?app=labs/meshtastic-planner.html',
+    meshtastic: 'viewer.html?app=labs/meshtastic-planner.html',
+    rf: 'viewer.html?app=labs/meshtastic-planner.html',
     offgrid: 'projects.html#offgrid',
     labs: 'labs.html',
     lab: 'labs.html',
-    coach: 'viewer.html?app=labs/shot-couch-coach.html',
     tron: 'viewer.html?app=labs/tron-grid-test.html',
     sysop: 'sysop.html',
     about: 'sysop.html',
@@ -216,7 +215,7 @@
 
     if (cmd === 'help' || cmd === '?') {
       if (cmdOutput) {
-        cmdOutput.textContent = 'home | games | munchers | projects | labs | coach | tron | sysop | grid | sfx | clear';
+        cmdOutput.textContent = 'home | munchers | salmon | mesh | sysop | games | projects | labs | tron | grid | sfx | clear';
       }
       return;
     }

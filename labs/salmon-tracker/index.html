@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full antialiased">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Michigan Salmon &amp; Steelhead Staging Spark // CHAZFAB</title>
+  <meta name="description" content="Real-time coastal upwelling, USGS river hydrograph rate-of-change, solunar/barometric gating, and species-specific salmon, steelhead, and splake staging evaluations across Michigan's four DNR regions.">
+  <link rel="icon" type="image/png" sizes="64x64" href="../../assets/favicon.png">
+  <script>
+    try {
+      var stored = localStorage.getItem("color-scheme");
+      var themeParam = new URLSearchParams(window.location.search).get("theme");
+      var meta = document.querySelector('meta[name="color-scheme"]');
+      if (meta) {
+        if (stored === "light" || stored === "dark") {
+          meta.setAttribute("content", stored);
+        } else if (themeParam === "light" || themeParam === "dark") {
+          meta.setAttribute("content", themeParam);
+        }
+      }
+    } catch (_) {}
+  </script>
+  <link rel="stylesheet" href="./salmon-tracker.css">
+</head>
+<body class="min-h-full flex flex-col">
+  <div id="root"></div>
+  <script defer src="./salmon-tracker.js"></script>
+</body>
+</html>

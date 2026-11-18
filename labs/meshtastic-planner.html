@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Meshtastic 915 MHz RF Site Planner — Northville, MI</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="../assets/favicon.png" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            slate: {
+              850: '#151e2e',
+              925: '#0b111e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      scrollbar-color: #334155 #0f172a;
+    }
+    body {
+      background-color: #0b111e;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    /* Legacy WebKit fallback scrollbars */
+    @supports not (scrollbar-color: auto) {
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+    }
+    /* Leaflet dark control tweaks */
+    .leaflet-container {
+      background: #0f172a;
+      font-family: 'Inter', sans-serif;
+    }
+    .leaflet-control-layers,
+    .leaflet-bar a {
+      background-color: #1e293b !important;
+      color: #f8fafc !important;
+      border-color: #334155 !important;
+    }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+      border: 1px solid #334155;
+    }
+    input[type="range"] {
+      accent-color: #10b981;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col select-none overflow-hidden">
+
+  <!-- TOP HEADER BAR -->
+  <header class="bg-slate-900/95 border-b border-slate-800 px-3 py-2 flex flex-wrap items-center justify-between gap-2 z-30 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-mono font-bold text-sm shadow-inner">
+        M/915
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm font-bold tracking-tight text-white">MESHTASTIC MULTI-NODE RF &amp; IDLE MESH PLANNER</h1>
+          <span class="hidden sm:inline-block text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">US915 · Slot 20 · 906.875 MHz</span>
+        </div>
+        <p class="text-[11px] text-slate-400 font-mono">
+          BASE STATION: <span class="text-slate-200">Downtown Northville, MI (830 ft ASL)</span> · Active Nodes: <span id="hdrNodeCount" class="text-emerald-400 font-bold">3</span> · Mesh Links: <span id="hdrLinkCount" class="text-cyan-400 font-bold">3</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- QUICK VIEW & COVERAGE MODE TOGGLES -->
+    <div class="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
+      <button id="btnCovCombined" onclick="setCoverageMode('combined')" class="px-2.5 py-1.5 rounded text-xs font-medium transition flex items-center gap-1.5 bg-emerald-600 text-white shadow">
+        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+        Combined Mesh
+      </button>
+      <button id="btnCovSelected" onclick="setCoverageMode('selected')" class="px-2.5 py-1.5 rounded text-xs font-medium transition text-slate-300 hover:text-white hover:bg-slate-800">
+        Selected Node Only
+      </button>
+      <button id="btnCovOverlap" onclick="setCoverageMode('overlap')" class="px-2.5 py-1.5 rounded text-xs font-medium transition text-cyan-300 hover:bg-slate-800" title="Show multi-node handoff &amp; relay overlap zones">
+        Relay Overlap Zones
+      </button>
+      <button id="btnCovDiff1W" onclick="setCoverageMode('diff_1w')" class="px-2.5 py-1.5 rounded text-xs font-semibold transition text-fuchsia-300 bg-fuchsia-500/10 border border-fuchsia-500/30 hover:bg-fuchsia-500/20" title="Compare 1W (30 dBm) vs 0.1W (22 dBm) on Chimney (+8 dB Link Gain)">
+        Δ 1W vs 0.1W Chimney
+      </button>
+      <button id="btnToggleChimneyPower" onclick="quickToggleChimney1W()" class="px-2 py-1.5 rounded text-xs font-mono font-bold transition text-emerald-300 bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25" title="Instantly toggle Home Chimney between 1W (30dBm) and 0.1W (22dBm)">
+        Chimney: 1W (30dBm)
+      </button>
+      <button id="btnZoomClose" onclick="zoomToSelectedNodeClose()" class="px-2 py-1.5 rounded text-xs font-mono transition text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20" title="Zoom to 300ft Umbra Touchdown Ring">
+        Up-Close (Umbra)
+      </button>
+      <button id="btnOpenIdleModal" onclick="toggleIdleMeshModal(true)" class="px-2.5 py-1.5 rounded text-xs font-semibold transition bg-indigo-600 hover:bg-indigo-500 text-white shadow flex items-center gap-1.5">
+        <span>⚡ Idle Mesh &amp; CLI Setup</span>
+      </button>
+    </div>
+
+    <!-- ELEVATION API STATUS -->
+    <div class="hidden xl:flex items-center gap-2 text-xs font-mono bg-slate-950/90 px-2.5 py-1 rounded border border-slate-800">
+      <span id="demStatusDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+      <span id="demStatusText" class="text-slate-300">SRTM 30m Grid Sync</span>
+      <button onclick="fetchRegionalSRTMGrid()" class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white border border-emerald-500 font-semibold">
+        Load Real Topo Grid
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+    <!-- LEFT SIDEBAR: MULTI-NODE MANAGER & RF PARAMETER EDITOR -->
+    <aside class="w-full lg:w-96 xl:w-[420px] bg-slate-900/95 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col overflow-hidden z-20 shrink-0 max-h-[44vh] lg:max-h-full">
+
+      <!-- SIDEBAR NAVIGATION TABS -->
+      <div class="grid grid-cols-3 border-b border-slate-800 bg-slate-950/80 text-xs font-semibold shrink-0">
+        <button id="tabBtnNodes" onclick="switchSidebarTab('nodes')" class="py-2.5 px-2 border-b-2 border-emerald-500 text-emerald-400 bg-slate-900/60 transition">
+          1. Nodes &amp; Editor
+        </button>
+        <button id="tabBtnLinks" onclick="switchSidebarTab('links')" class="py-2.5 px-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+          2. Mesh Links (<span id="tabLinkBadge">3</span>)
+        </button>
+        <button id="tabBtnIdle" onclick="switchSidebarTab('idle')" class="py-2.5 px-2 border-b-2 border-transparent text-indigo-300 hover:text-indigo-200 transition">
+          3. Idle / CLI Config
+        </button>
+      </div>
+
+      <!-- TAB 1: NODES LIST + SELECTED NODE RF EDITOR -->
+      <div id="sidebarTab_nodes" class="flex-1 overflow-y-auto divide-y divide-slate-800">
+
+        <!-- 1W VS 0.1W CHIMNEY COMPARISON BANNER -->
+        <div class="p-2.5 bg-gradient-to-r from-emerald-950/70 via-slate-900 to-fuchsia-950/50 border-b border-slate-800 flex items-center justify-between gap-2">
+          <div>
+            <div class="text-[11px] font-bold text-white flex items-center gap-1.5">
+              <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px]">+8 dB GAIN</span>
+              <span>1W RAK on Chimney vs 0.1W</span>
+            </div>
+            <p class="text-[10px] text-slate-300 mt-0.5" id="chimneyCompareSubtext">
+              35.3 dBm EIRP (~3.4W) punches West over Beck/Napier ridges + LNA boosts weak 0.1W handheld RX.
+            </p>
+          </div>
+          <button onclick="setCoverageMode(state.coverageMode === 'diff_1w' ? 'combined' : 'diff_1w')" class="px-2 py-1 rounded text-[10px] font-mono font-semibold bg-fuchsia-600 hover:bg-fuchsia-500 text-white shrink-0 shadow">
+            Show +8dB Zone
+          </button>
+        </div>
+
+        <!-- NODE ROSTER & ADD CONTROLS -->
+        <div class="p-3 bg-slate-950/40">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Mesh Node Roster</span>
+            <div class="flex items-center gap-1.5">
+              <button id="btnAddClickMap" onclick="toggleAddNodeMapMode()" class="px-2 py-1 rounded text-[11px] font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition flex items-center gap-1">
+                <span>+ Click Map to Add</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Regional Node Presets Dropdown -->
+          <div class="flex items-center gap-1.5 mb-2.5">
+            <select id="presetNodeSelect" class="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+              <option value="">+ Quick-Add Regional Preset Node...</option>
+              <option value="personal_truck">Personal Handheld / Truck Node (0.1W · CLIENT_MUTE)</option>
+              <option value="maybury">Maybury State Park High Point (971 ft Hilltop Relay)</option>
+              <option value="downtown_nv">Downtown Northville Relay (Main &amp; Center Roof)</option>
+              <option value="southlyon">South Lyon Node (West Moraine Link)</option>
+              <option value="hinespark">Plymouth / Hines Park Valley Node</option>
+              <option value="novitower">Novi / 8 Mile Ridge Relay (958 ft Crest)</option>
+              <option value="livonia_e">Livonia East Flatland Node (I-96 Corridor)</option>
+              <option value="saline_s">Saline / Ann Arbor South Relay</option>
+            </select>
+            <button onclick="addPresetNodeFromDropdown()" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 shrink-0">
+              Add
+            </button>
+          </div>
+
+          <!-- Active Nodes List -->
+          <div id="nodeRosterList" class="space-y-1.5 max-h-44 overflow-y-auto pr-0.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- SELECTED NODE HARDWARE & ANTENNA EDITOR -->
+        <div class="p-3.5 space-y-3" id="selectedNodeEditor">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400" id="edNodeColorDot"></span>
+              <span class="text-xs font-bold uppercase tracking-wider text-white" id="edHeaderTitle">Editing: Home Base</span>
+            </div>
+            <span class="text-[11px] font-mono text-cyan-400" id="edGroundElevLbl">Ground: 853 ft ASL</span>
+          </div>
+
+          <!-- Name & ShortName -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="col-span-2">
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Node Long Name</label>
+              <input id="inpNodeName" type="text" oninput="saveSelectedNodeEdits()" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:border-emerald-500 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Short (4ch)</label>
+              <input id="inpNodeShort" type="text" maxlength="4" oninput="saveSelectedNodeEdits()" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs font-mono uppercase text-emerald-300 focus:border-emerald-500 focus:outline-none" />
+            </div>
+          </div>
+
+          <!-- Coordinates (Draggable on map) -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Latitude (Drag Pin)</label>
+              <input id="inpNodeLat" type="number" step="0.0001" onchange="saveSelectedNodeCoords()" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-300" />
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Longitude</label>
+              <input id="inpNodeLon" type="number" step="0.0001" onchange="saveSelectedNodeCoords()" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-300" />
+            </div>
+          </div>
+
+          <!-- Hardware Platform & Meshtastic Role -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Hardware Transceiver</label>
+              <select id="selNodeHardware" onchange="onHardwarePresetChange()" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-xs text-white">
+                <option value="rak4631_1w">RAK4631 + 1W PA/LNA (30dBm / 1000mW · High-Power Base)</option>
+                <option value="rak4631">RAK4631 WisBlock (22dBm / 0.16W · nRF52 Ultra-Low Idle)</option>
+                <option value="seeed_nRF">Seeed Wio Tracker / Xiao nRF52 (22dBm · Personal/Mobile)</option>
+                <option value="heltec_v3">Heltec V3 / T-Beam ESP32 (22dBm · High Idle)</option>
+                <option value="station_g2">B&amp;Q Station G2 Base (30dBm / 1W High Power)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Meshtastic Role</label>
+              <select id="selNodeRole" onchange="saveSelectedNodeEdits()" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-xs font-mono text-emerald-300">
+                <option value="CLIENT">CLIENT (Smart Flood · Recommended)</option>
+                <option value="CLIENT_MUTE">CLIENT_MUTE (Edge / Indoor / No Re-TX)</option>
+                <option value="ROUTER">ROUTER (Mountain / High Tower Only)</option>
+                <option value="REPEATER">REPEATER (Stealth Solar Relay)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Power Source -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Power Architecture</label>
+              <select id="selNodePower" onchange="saveSelectedNodeEdits()" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                <option value="solar">Solar + 6000mAh LiFePO4 / 18650 Pack</option>
+                <option value="grid">Grid / USB-C / PoE Continuous</option>
+                <option value="battery">Handheld / Truck Internal Battery</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase font-mono text-slate-400 mb-0.5">Feedline / Coax Loss</label>
+              <select id="selNodeCoax" onchange="saveSelectedNodeEdits()" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-xs font-mono text-amber-300">
+                <option value="0.5">0.5 dB (Node in Chimney Mast Box · N-Pigtail)</option>
+                <option value="0.4">0.4 dB (Direct SMA / IPEX Pigtail)</option>
+                <option value="1.2">1.2 dB (10 ft LMR-400 Jumper)</option>
+                <option value="2.4">2.4 dB (30 ft Chimney Coax Run)</option>
+                <option value="4.2">4.2 dB (30 ft Thin RG-58 / RG-174)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Antenna Gain & Vertical Beamwidth Selector -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[10px] uppercase font-mono text-slate-400">Antenna Gain &amp; Vertical Beam Cone</label>
+              <span id="edBeamBadge" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">5.8 dBi · 35° Cone</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button type="button" onclick="setSelectedNodeGain(2.0)" id="gainBtn_2" class="p-1.5 rounded border border-slate-700 bg-slate-800/50 text-left transition">
+                <div class="text-xs font-mono font-bold text-white">2.0 dBi</div>
+                <div class="text-[9px] text-slate-400">75° Whip</div>
+              </button>
+              <button type="button" onclick="setSelectedNodeGain(3.0)" id="gainBtn_3" class="p-1.5 rounded border border-slate-700 bg-slate-800/50 text-left transition">
+                <div class="text-xs font-mono font-bold text-white">3.0 dBi</div>
+                <div class="text-[9px] text-slate-400">60° Stubby</div>
+              </button>
+              <button type="button" onclick="setSelectedNodeGain(5.8)" id="gainBtn_5.8" class="p-1.5 rounded border-2 border-emerald-500 bg-emerald-500/15 text-left transition">
+                <div class="text-xs font-mono font-bold text-emerald-300">5.8 dBi ★</div>
+                <div class="text-[9px] text-emerald-200">35° SparkFun</div>
+              </button>
+              <button type="button" onclick="setSelectedNodeGain(6.0)" id="gainBtn_6" class="p-1.5 rounded border border-slate-700 bg-slate-800/50 text-left transition">
+                <div class="text-xs font-mono font-bold text-white">6.0 dBi</div>
+                <div class="text-[9px] text-slate-400">33° Rokland</div>
+              </button>
+              <button type="button" onclick="setSelectedNodeGain(8.0)" id="gainBtn_8" class="p-1.5 rounded border border-slate-700 bg-slate-800/50 text-left transition">
+                <div class="text-xs font-mono font-bold text-white">8.0 dBi</div>
+                <div class="text-[9px] text-amber-400">15° Flat</div>
+              </button>
+              <button type="button" onclick="setSelectedNodeGain(10.0)" id="gainBtn_10" class="p-1.5 rounded border border-slate-700 bg-slate-800/50 text-left transition">
+                <div class="text-xs font-mono font-bold text-white">10.0 dBi</div>
+                <div class="text-[9px] text-rose-400">12° Pancake</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Antenna Height AGL Slider -->
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-400">Antenna Height Above Ground (AGL)</span>
+              <span class="font-mono text-emerald-400 font-semibold" id="valNodeHeight">33 ft (10.1 m)</span>
+            </div>
+            <input id="sliderNodeHeight" type="range" min="5" max="120" step="1" value="33" oninput="saveSelectedNodeEdits()" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-0.5">
+              <span>6 ft (Handheld)</span>
+              <span>33 ft (Chimney)</span>
+              <span>120 ft (Tower)</span>
+            </div>
+          </div>
+
+          <!-- Global Tree / Suburban Clutter Slider -->
+          <div class="pt-2 border-t border-slate-800/80 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Propagation Realism Preset</span>
+              <select id="selPropModel" onchange="onChangePropModel()" class="bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-[11px] font-mono text-emerald-300">
+                <option value="realistic" selected>Realistic Suburban (Handheld @ 5ft)</option>
+                <option value="rooftop">Roof-to-Roof Base Stations (@ 25ft)</option>
+                <option value="optimistic">Optimistic Bare-Earth (SPLAT! Raw)</option>
+              </select>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">Northville Oak/Maple &amp; Roof Clutter</span>
+                <span class="font-mono text-cyan-400 font-semibold" id="valClutterFt">42 ft (12.8 m)</span>
+              </div>
+              <input id="sliderClutter" type="range" min="0" max="75" step="1" value="42" oninput="updateGlobalClutter()" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            </div>
+          </div>
+
+          <!-- Selected Node RF & Role Advisor Card -->
+          <div class="bg-slate-950 rounded-lg p-2.5 border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span class="text-slate-400">Touchdown Ring: <strong id="edMetricTouchdown" class="text-amber-300">105 ft</strong></span>
+              <span class="text-slate-400">ERP: <strong id="edMetricEirp" class="text-cyan-300">27.4 dBm</strong></span>
+              <span class="text-slate-400">Idle: <strong id="edMetricIdleMa" class="text-emerald-300">9.5 mA</strong></span>
+            </div>
+            <div id="edRoleAdvisorBox" class="text-[11px] leading-snug text-slate-300 bg-slate-900/90 p-2 rounded border border-slate-800/90">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: MESH LINK MATRIX & P2P SELECTOR -->
+      <div id="sidebarTab_links" class="hidden flex-1 overflow-y-auto p-3.5 space-y-3">
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-white mb-1">Active Node-to-Node RF Links</h3>
+          <p class="text-[11px] text-slate-400">Click any link pair below (or any link line on the map) to inspect its terrain cross-section, dual vertical beam cones, and Fresnel clearance.</p>
+        </div>
+
+        <!-- Custom Link Pair Selector -->
+        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Source Node (A)</label>
+            <select id="selLinkNodeA" onchange="onSelectLinkPairDropdown()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-emerald-300 font-medium"></select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Target Node (B)</label>
+            <select id="selLinkNodeB" onchange="onSelectLinkPairDropdown()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-cyan-300 font-medium"></select>
+          </div>
+        </div>
+
+        <!-- Calculated Link Matrix Cards -->
+        <div id="meshLinksMatrixList" class="space-y-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- TAB 3: QUICK IDLE MESH & CLI SUMMARY IN SIDEBAR -->
+      <div id="sidebarTab_idle" class="hidden flex-1 overflow-y-auto p-3.5 space-y-3">
+        <div class="bg-indigo-950/30 border border-indigo-500/40 rounded-lg p-3">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-300">Ideal / Idle Mesh Architecture</span>
+            <button onclick="toggleIdleMeshModal(true)" class="text-[11px] font-mono px-2 py-0.5 rounded bg-indigo-600 text-white hover:bg-indigo-500">
+              Full Screen View
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            An <strong>Idle-Ready Mesh</strong> minimizes airtime collisions (channel utilization &lt; 15%) and maximizes battery/solar autonomy during Michigan winter cloud cover while guaranteeing multi-hop delivery.
+          </p>
+        </div>
+
+        <div id="sidebarIdleSummaryCards" class="space-y-2.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CENTER / RIGHT: INTERACTIVE GOOGLE TERRAIN MAP + BOTTOM DUAL-CONE PROFILER -->
+    <main class="flex-1 flex flex-col overflow-hidden relative">
+
+      <!-- MAP CONTAINER -->
+      <div class="flex-1 relative">
+        <div id="map" class="w-full h-full z-10"></div>
+
+        <!-- ADD-NODE MAP CLICK BANNER -->
+        <div id="addNodeBanner" class="hidden absolute top-3 left-1/2 -translate-x-1/2 z-30 bg-emerald-600 text-white px-4 py-2 rounded-full shadow-2xl border border-emerald-300 flex items-center gap-3 text-xs font-bold animate-bounce">
+          <span>📍 Click anywhere on the map to place your new Meshtastic node</span>
+          <button onclick="toggleAddNodeMapMode(false)" class="px-2 py-0.5 rounded-full bg-slate-950/60 hover:bg-slate-950 text-[11px]">Cancel</button>
+        </div>
+
+        <!-- FLOATING LEGEND & GOOGLE MAP LAYER SWITCHER -->
+        <div class="absolute top-3 right-3 z-20 bg-slate-900/95 backdrop-blur border border-slate-700/80 rounded-lg p-2.5 shadow-xl max-w-xs">
+          <div class="flex items-center justify-between gap-3 mb-1.5">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-200" id="legendTitle">Combined Mesh Coverage</span>
+            <label class="flex items-center gap-1 text-[11px] text-slate-300 cursor-pointer">
+              <input type="checkbox" id="chkShowOverlay" checked onchange="renderCoverageOverlay()" class="rounded accent-emerald-500">
+              <span>RF Overlay</span>
+            </label>
+          </div>
+
+          <div id="standardLegend" class="space-y-1 text-[11px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-sm bg-emerald-500/80 border border-emerald-400 inline-block"></span>
+              <span class="text-slate-200">&gt; -112 dBm</span>
+              <span class="text-slate-400 text-[10px] ml-auto">Strong LOS + Cone</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-sm bg-amber-400/80 border border-amber-300 inline-block"></span>
+              <span class="text-slate-200">-112 to -123 dBm</span>
+              <span class="text-slate-400 text-[10px] ml-auto">Canopy / Grazing</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-sm bg-rose-500/75 border border-rose-400 inline-block"></span>
+              <span class="text-slate-200">-123 to -130 dBm</span>
+              <span class="text-slate-400 text-[10px] ml-auto">Umbra / Edge LoRa</span>
+            </div>
+          </div>
+
+          <div id="overlapLegend" class="hidden space-y-1 text-[11px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-sm bg-cyan-400/85 border border-cyan-200 inline-block"></span>
+              <span class="text-cyan-200">2+ Nodes Overlap (&gt; -126 dBm)</span>
+            </div>
+            <div class="text-[10px] text-slate-400 pl-5">Ideal multi-hop relay &amp; redundant handoff zone</div>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="w-3 h-3 rounded-sm bg-emerald-500/50 border border-emerald-400 inline-block"></span>
+              <span class="text-slate-300">Single Node Coverage</span>
+            </div>
+          </div>
+
+          <div id="diff1WLegend" class="hidden space-y-1 text-[11px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-sm bg-fuchsia-500/85 border border-fuchsia-300 inline-block"></span>
+              <span class="text-fuchsia-200">1W (30 dBm) Extra Reach (+8 dB)</span>
+            </div>
+            <div class="text-[10px] text-slate-400 pl-5">New Western ridge &amp; South Lyon zones unlocked ONLY by 1W PA</div>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="w-3 h-3 rounded-sm bg-emerald-500/45 border border-emerald-400 inline-block"></span>
+              <span class="text-slate-300">Covered by both 0.1W &amp; 1W</span>
+            </div>
+          </div>
+
+          <!-- Base Map Layer Switcher -->
+          <div class="mt-2 pt-2 border-t border-slate-800">
+            <div class="text-[10px] text-slate-400 mb-1 font-medium">Google Maps &amp; Topo Base Layers:</div>
+            <div class="grid grid-cols-2 gap-1">
+              <button onclick="setBaseMap('gterrain')" id="mapBtn_gterrain" class="px-1.5 py-1 rounded text-[10px] bg-emerald-600 text-white font-medium transition">Google Terrain</button>
+              <button onclick="setBaseMap('ghybrid')" id="mapBtn_ghybrid" class="px-1.5 py-1 rounded text-[10px] bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Google Hybrid</button>
+              <button onclick="setBaseMap('gstreets')" id="mapBtn_gstreets" class="px-1.5 py-1 rounded text-[10px] bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Google Streets</button>
+              <button onclick="setBaseMap('usgstopo')" id="mapBtn_usgstopo" class="px-1.5 py-1 rounded text-[10px] bg-slate-800 text-slate-300 hover:bg-slate-700 transition">USGS Topo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLOATING LINK & UMBRA LEGEND BAR -->
+        <div class="absolute bottom-3 left-3 z-20 bg-slate-900/95 backdrop-blur border border-slate-700/80 rounded-lg px-3 py-1.5 shadow-lg hidden sm:flex items-center gap-4 text-[11px] font-mono">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full border-2 border-amber-400 inline-block"></span>
+            <span class="text-amber-300">Amber Ring:</span>
+            <span class="text-white font-bold" id="mapRingLabel">105 ft</span>
+            <span class="text-slate-400">Main Beam Touchdown</span>
+          </div>
+          <div class="h-3 w-px bg-slate-700"></div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-0.5 bg-emerald-400 inline-block"></span>
+            <span class="text-slate-300">LOS Link</span>
+            <span class="w-3 h-0.5 bg-amber-400 inline-block ml-1"></span>
+            <span class="text-slate-300">Grazing</span>
+            <span class="w-3 h-0.5 bg-rose-500 inline-block ml-1"></span>
+            <span class="text-slate-300">Blocked</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM INTERACTIVE NODE-TO-NODE OR POINT-TO-POINT CROSS-SECTION PROFILER -->
+      <div class="h-56 sm:h-64 bg-slate-900/98 border-t border-slate-800 p-3 flex flex-col shrink-0 z-20">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 font-mono">DUAL-CONE RF PATH &amp; FRESNEL PROFILER</span>
+            <span class="text-xs font-mono text-slate-200 font-semibold" id="profileTargetTitle">Home Base (CHIM) ⇄ South Lyon Relay (SLYN)</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 text-xs font-mono">
+            <div>Dist: <span id="profDist" class="text-white font-bold">8.8 mi</span></div>
+            <div>FSPL: <span id="profFspl" class="text-slate-300 font-bold">114.6 dB</span></div>
+            <div>Beam Off-Axis: <span id="profLobeLoss" class="text-amber-300 font-bold">-0.3 dB</span></div>
+            <div>RSSI / SNR: <span id="profRssi" class="text-emerald-400 font-bold">-113.8 dBm</span> (<span id="profSnr" class="text-cyan-300 font-bold">+6.2 dB</span>)</div>
+            <div class="px-2 py-0.5 rounded bg-slate-950 border border-slate-700">
+              <span id="profStatus" class="text-emerald-400 font-bold">STRONG MESH LINK</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Cross Section -->
+        <div class="flex-1 relative bg-slate-950 rounded-lg border border-slate-800 overflow-hidden">
+          <canvas id="profileCanvas" class="w-full h-full block"></canvas>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- FULL-SCREEN MODAL: IDEAL / IDLE MESH SETUP & CLI GENERATOR -->
+    <div id="idleMeshModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+      <div class="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden">
+        <!-- Modal Header -->
+        <div class="px-5 py-3.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">Meshtastic Firmware 2.5+</span>
+              <h2 class="text-base font-bold text-white">Ideal / Idle Mesh Architecture, Solar Autonomy &amp; CLI Generator</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Tailored for Southeast Michigan / Northville terrain · Optimized for low channel utilization (&lt;12% airtime) &amp; Michigan winter idle survival</p>
+          </div>
+          <button onclick="toggleIdleMeshModal(false)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono border border-slate-700">
+            ✕ Close
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-6">
+
+          <!-- 1. CORE MESH TOPOLOGY & ROLE STRATEGY -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-slate-950/90 border border-slate-800 rounded-lg p-3.5">
+              <div class="text-xs font-bold uppercase text-emerald-400 mb-1">Why Chimney = CLIENT (Not ROUTER)</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                At <strong>886 ft ASL</strong> (853 ft base + 33 ft chimney), your home node has great reach East toward Livonia, but the 960+ ft moraine ridges to the West block horizon sightlines. Setting it to <code class="text-emerald-300">CLIENT</code> lets it smartly repeat packets after listening briefly, whereas <code class="text-rose-300">ROUTER</code> preemptively grabs hops and can swallow packets meant for higher hilltop nodes (like Maybury State Park at 971 ft).
+              </p>
+            </div>
+            <div class="bg-slate-950/90 border border-slate-800 rounded-lg p-3.5">
+              <div class="text-xs font-bold uppercase text-cyan-400 mb-1">Zero-Collision Idle Intervals</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Default Meshtastic settings broadcast GPS &amp; telemetry too frequently, waking radios and draining batteries. For a quiet, reliable <strong>Idle Mesh</strong>, set stationary nodes to fixed GPS coordinates, <code class="text-cyan-300">node_info_broadcast_secs = 10800</code> (3 hrs), and <code class="text-cyan-300">device_update_interval = 3600</code> (1 hr).
+              </p>
+            </div>
+            <div class="bg-slate-950/90 border border-slate-800 rounded-lg p-3.5">
+              <div class="text-xs font-bold uppercase text-amber-400 mb-1">Michigan Winter Solar Math</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Southeast Michigan averages only <strong>1.45 Peak Sun Hours/day</strong> in December. An <code class="text-emerald-300">nRF52840 (RAK4631)</code> draws just <strong>~9.5 mA idle</strong> (~0.23 Ah/day = 13+ days dark runtime on one 3000mAh 18650), whereas an <code class="text-rose-300">ESP32 (Heltec V3)</code> draws <strong>~95 mA</strong> (~2.28 Ah/day = dies in 31 hrs without deep sleep).
+              </p>
+            </div>
+          </div>
+
+          <!-- 2. PER-NODE CONFIGURATION & CLI CARDS -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">Per-Node Hardware, Idle Power Budget &amp; Copyable CLI Commands</h3>
+            <div id="modalNodeConfigCards" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /***********************************************************************
+     * 1. SITE CONSTANTS, HARDWARE SPECS & NORTHVILLE TOPOGRAPHY ENGINE
+     ***********************************************************************/
+    const HOME_SITE = {
+      lat: 42.4310,
+      lon: -83.4832,
+      baseElevMeters: 253.0, // 830 ft ASL at Downtown Northville Town Square (Main & Center)
+      freqMHz: 906.875,      // US915 LongFast Slot 20 center frequency
+      rxSensitivity: -130.0, // LoRa SF11/BW250 sensitivity floor
+      noiseFloorDbm: -120.0  // Typical 915MHz suburban thermal + RF noise floor
+    };
+
+    const HARDWARE_SPECS = {
+      rak4631_1w: {
+        name: "RAK4631 + 1W PA/LNA (30 dBm / 1000 mW)",
+        txPowerDbm: 30,
+        rxLnaBoostDb: 3.5, // Built-in LNA improves receive sensitivity for hearing weak 0.1W handhelds
+        idleCurrentMa: 14.5, // nRF52840 + RX LNA active bias
+        txCurrentMa: 720,    // 1W PA transmit burst draw
+        mcuArch: "nRF52840 + 1W PA/LNA",
+        recommendedBatteryMah: 6400, // 2x 3200mAh 18650 or 6Ah LiFePO4
+        recommendedSolarWatts: 10,
+        sleepFlag: "--set power.is_power_saving false"
+      },
+      rak4631: {
+        name: "RAK4631 WisBlock (22 dBm / 158 mW · nRF52840)",
+        txPowerDbm: 22,
+        rxLnaBoostDb: 0.0,
+        idleCurrentMa: 9.5,
+        txCurrentMa: 115,
+        mcuArch: "nRF52840",
+        recommendedBatteryMah: 3200,
+        recommendedSolarWatts: 5,
+        sleepFlag: "--set power.is_power_saving false"
+      },
+      seeed_nRF: {
+        name: "Seeed Wio Tracker / Xiao nRF52 (22 dBm / 0.16W)",
+        txPowerDbm: 22,
+        rxLnaBoostDb: 0.0,
+        idleCurrentMa: 11.0,
+        txCurrentMa: 115,
+        mcuArch: "nRF52840",
+        recommendedBatteryMah: 2000,
+        recommendedSolarWatts: 5,
+        sleepFlag: "--set power.is_power_saving false"
+      },
+      heltec_v3: {
+        name: "Heltec V3 / T-Beam (ESP32-S3 · 22 dBm)",
+        txPowerDbm: 22,
+        rxLnaBoostDb: 0.0,
+        idleCurrentMa: 88.0,
+        txCurrentMa: 195,
+        mcuArch: "ESP32",
+        recommendedBatteryMah: 10000,
+        recommendedSolarWatts: 15,
+        sleepFlag: "--set power.is_power_saving true --set power.ls_secs 300"
+      },
+      station_g2: {
+        name: "B&Q Station G2 Base (ESP32-S3 · 30 dBm / 1W PA)",
+        txPowerDbm: 30,
+        rxLnaBoostDb: 3.5,
+        idleCurrentMa: 135.0,
+        txCurrentMa: 750,
+        mcuArch: "ESP32 + 1W PA/LNA",
+        recommendedBatteryMah: 20000,
+        recommendedSolarWatts: 30,
+        sleepFlag: "--set power.is_power_saving false"
+      }
+    };
+
+    const ANTENNA_SPECS = {
+      2.0: {
+        gain: 2.0,
+        beamwidthDeg: 75.0,
+        halfAngle: 37.5,
+        name: "2.0 dBi Flexible Whip",
+        desc: "Wide 75° vertical cone; ideal for pocket/handheld nodes or steep valleys."
+      },
+      3.0: {
+        gain: 3.0,
+        beamwidthDeg: 60.0,
+        halfAngle: 30.0,
+        name: "3.0 dBi Omni Stubby",
+        desc: "60° vertical cone; strong immediate street coverage."
+      },
+      5.8: {
+        gain: 5.8,
+        beamwidthDeg: 35.0,
+        halfAngle: 17.5,
+        name: "5.8 dBi Fiberglass (SparkFun / Rokland)",
+        desc: "35° Sweet-Spot Cone: Touches down ~105 ft from chimney; upper +17.5° clears 950+ ft western ridges."
+      },
+      6.0: {
+        gain: 6.0,
+        beamwidthDeg: 33.0,
+        halfAngle: 16.5,
+        name: "6.0 dBi Low-Profile Fiberglass (Rokland)",
+        desc: "33° balanced vertical cone; compact 21.6\" tube with low wind load."
+      },
+      8.0: {
+        gain: 8.0,
+        beamwidthDeg: 15.0,
+        halfAngle: 7.5,
+        name: "8.0 dBi High-Gain Collinear",
+        desc: "15° flat cone: Punches East across flat Livonia plain, but overshoots local dips."
+      },
+      10.0: {
+        gain: 10.0,
+        beamwidthDeg: 12.0,
+        halfAngle: 6.0,
+        name: "10.0 dBi Backcountry Collinear (45\")",
+        desc: "12° razor pancake: 310+ ft umbrella dead-zone underneath; blocked by western hills."
+      }
+    };
+
+    const REGIONAL_NODE_PRESETS = {
+      personal_truck: {
+        name: "Personal Handheld / Truck Node",
+        shortName: "PRSN",
+        lat: 42.4148,
+        lon: -83.5045,
+        heightFt: 5,
+        gain: 2.0,
+        hardware: "seeed_nRF",
+        role: "CLIENT_MUTE",
+        power: "battery",
+        coaxLoss: 0.4,
+        color: "#f59e0b"
+      },
+      maybury: {
+        name: "Maybury Hilltop Relay (971 ft)",
+        shortName: "MAYB",
+        lat: 42.4318,
+        lon: -83.5325,
+        heightFt: 25,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "CLIENT",
+        power: "solar",
+        coaxLoss: 0.4,
+        color: "#22d3ee"
+      },
+      downtown_nv: {
+        name: "Downtown Northville Roof",
+        shortName: "DWNV",
+        lat: 42.4310,
+        lon: -83.4832,
+        heightFt: 28,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "CLIENT",
+        power: "grid",
+        coaxLoss: 0.4,
+        color: "#a855f7"
+      },
+      southlyon: {
+        name: "South Lyon West Node",
+        shortName: "SLYN",
+        lat: 42.4605,
+        lon: -83.6515,
+        heightFt: 35,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "CLIENT",
+        power: "solar",
+        coaxLoss: 0.4,
+        color: "#f59e0b"
+      },
+      hinespark: {
+        name: "Plymouth / Hines Park Node",
+        shortName: "HINE",
+        lat: 42.3985,
+        lon: -83.4340,
+        heightFt: 20,
+        gain: 3.0,
+        hardware: "seeed_nRF",
+        role: "CLIENT_MUTE",
+        power: "battery",
+        coaxLoss: 0.4,
+        color: "#ec4899"
+      },
+      novitower: {
+        name: "Novi 8-Mile Ridge Relay",
+        shortName: "NOVI",
+        lat: 42.4480,
+        lon: -83.5240,
+        heightFt: 35,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "ROUTER",
+        power: "solar",
+        coaxLoss: 0.4,
+        color: "#38bdf8"
+      },
+      livonia_e: {
+        name: "Livonia East Gateway",
+        shortName: "LIVO",
+        lat: 42.4090,
+        lon: -83.3550,
+        heightFt: 30,
+        gain: 8.0,
+        hardware: "heltec_v3",
+        role: "CLIENT",
+        power: "grid",
+        coaxLoss: 0.4,
+        color: "#38bdf8"
+      },
+      saline_s: {
+        name: "Saline / Ann Arbor South Relay",
+        shortName: "SALN",
+        lat: 42.2650,
+        lon: -83.7450,
+        heightFt: 40,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "CLIENT",
+        power: "solar",
+        coaxLoss: 0.4,
+        color: "#84cc16"
+      }
+    };
+
+    const NODE_PALETTE = ["#10b981", "#f59e0b", "#22d3ee", "#a855f7", "#ec4899", "#38bdf8", "#84cc16"];
+
+    // Initial Multi-Node State:
+    // 1. Node 1: Downtown Northville Base (1W / 30dBm RAK + 5.8 dBi N-Type @ 30 ft AGL, 1.2 dB coax+window loss, CLIENT)
+    // 2. Node 2: Personal Handheld / Truck Node (0.1W / 22dBm Seeed/RAK + 2 dBi Whip @ 5 ft AGL, CLIENT_MUTE)
+    // 3. Node 3: Maybury State Park High Point Relay (971 ft ASL + 25 ft AGL, 5.8 dBi, CLIENT)
+    let state = {
+      coverageMode: 'combined', // 'combined' | 'selected' | 'overlap' | 'diff_1w'
+      propModel: 'realistic',   // 'realistic' (5ft handheld w/ ground bounce & clutter) | 'rooftop' (25ft roof-to-roof) | 'optimistic'
+      clutterHeightFt: 42,      // Mature Northville oak/maple canopy & 2-story roofs (~42 ft)
+      addNodeMapMode: false,
+      selectedNodeId: 'node_1',
+      activeLinkPair: ['node_1', 'node_2'],
+      customTargetPoint: null,
+      nodes: [
+        {
+          id: 'node_1',
+          name: 'Northville Base (Town Square Roof)',
+          shortName: 'BASE',
+          lat: 42.4310,
+          lon: -83.4832,
+          heightFt: 30, // 30 ft roof/mast AGL
+          gain: 5.8,    // 5.8 dBi N-Type Fiberglass
+          hardware: 'rak4631_1w', // 1W / 30 dBm RAK PA/LNA
+          role: 'CLIENT',
+          power: 'grid',
+          coaxLoss: 1.2, // 25ft 400-series coax (0.9dB) + 12" flat window ribbon (0.25dB)
+          enabled: true,
+          color: '#10b981'
+        },
+        {
+          id: 'node_2',
+          name: 'Personal Handheld / Truck Node',
+          shortName: 'PRSN',
+          lat: 42.4165,
+          lon: -83.5080, // Positioned West near Beck / 6 Mile so user can test link back to chimney & Maybury
+          heightFt: 5,  // 5 ft AGL handheld/truck height
+          gain: 2.0,    // 2.0 dBi Whip
+          hardware: 'seeed_nRF', // Standard 0.1W (22 dBm)
+          role: 'CLIENT_MUTE',
+          power: 'battery',
+          coaxLoss: 0.4,
+          enabled: true,
+          color: '#f59e0b'
+        },
+        {
+          id: 'node_3',
+          name: 'Maybury Hilltop Relay (971 ft)',
+          shortName: 'MAYB',
+          lat: 42.4318,
+          lon: -83.5325,
+          heightFt: 25,
+          gain: 5.8,
+          hardware: 'rak4631',
+          role: 'CLIENT',
+          power: 'solar',
+          coaxLoss: 0.4,
+          enabled: true,
+          color: '#22d3ee'
+        }
+      ]
+    };
+
+    /***********************************************************************
+     * 2. REAL SRTM 30m REGIONAL DEM GRID + BILINEAR INTERPOLATION ENGINE
+     ***********************************************************************/
+    const demCache = new Map();
+    let srtmGrid = null; // Stores live bilinear SRTM 30m matrix fetched from Open-Meteo
+
+    // Calibrated USGS regional moraine & river valley fallback prior to SRTM grid sync:
+    // - Northville moraine shelf: 261m (856 ft ASL)
+    // - Beck Rd / Ridge Rd crest: 277m–296m (909–971 ft ASL)
+    // - Salem / Chubb moraine: 302m (991 ft ASL)
+    // - Downtown Northville / Rouge River Valley floor: 238m (780 ft ASL)
+    // - East escarpment drop into Livonia lakebed: 206m (675 ft ASL)
+    const TERRAIN_ORIGIN = { lat: 42.4100, lon: -83.4850 };
+
+    function getSyntheticTerrainMeters(lat, lon) {
+      const dLatKm = (lat - TERRAIN_ORIGIN.lat) * 111.132;
+      const dLonKm = (lon - TERRAIN_ORIGIN.lon) * 111.320 * Math.cos(TERRAIN_ORIGIN.lat * Math.PI / 180);
+
+      let elev = 260.9; // Baseline moraine shelf elevation (m)
+
+      if (dLonKm > 1.1) {
+        // Defiance Moraine drops sharply East of Haggerty/I-275 down onto the flat glacial lakebed (Livonia ~675ft)
+        const eastDist = dLonKm - 1.1;
+        elev -= 55.0 * (1 - Math.exp(-eastDist / 2.4)) + eastDist * 1.25;
+      } else {
+        // Steep climb West across the Fort Wayne & Defiance Moraines (Beck Rd -> Ridge Rd -> Napier Rd)
+        const westDist = Math.max(0, -dLonKm);
+        const northDist = Math.max(0, dLatKm);
+        elev += westDist * 4.4 + northDist * 2.8;
+
+        const ridgeAxis = westDist * 0.88 + dLatKm * 0.42;
+        const SheldonBluff = 9.5 * Math.exp(-Math.pow((ridgeAxis - 1.05) / 0.55, 2));
+        const beckRidge = 18.5 * Math.exp(-Math.pow((ridgeAxis - 2.35) / 0.85, 2));
+        const mayburyCrest = 26.0 * Math.exp(-Math.pow((ridgeAxis - 4.5) / 1.45, 2));
+        const salemHigh = 22.0 * Math.exp(-Math.pow((ridgeAxis - 8.2) / 2.4, 2));
+        elev += SheldonBluff + beckRidge + mayburyCrest + salemHigh;
+      }
+
+      if (dLatKm < -0.8) {
+        elev -= Math.abs(dLatKm + 0.8) * 3.5;
+      }
+
+      // Middle Rouge River / Hines Park Valley Trench cutting NW-to-SE through Downtown Northville & Plymouth
+      const valleyOffset = (dLatKm * 0.76 + dLonKm * 0.64) - 1.42;
+      if (dLonKm < 5.5 && dLonKm > -4.5) {
+        const valleyDepth = -29.5 * Math.exp(-Math.pow(valleyOffset / 0.58, 2));
+        elev += valleyDepth;
+      }
+
+      const undulation = 3.8 * Math.sin(dLonKm * 2.6) * Math.cos(dLatKm * 2.4);
+      elev += undulation;
+
+      const distKm = Math.hypot(dLatKm, dLonKm);
+      if (distKm < 0.15) {
+        const w = distKm / 0.15;
+        elev = 260.9 * (1 - w) + elev * w;
+      }
+
+      return Math.max(175.0, Math.min(335.0, elev));
+    }
+
+    function getElevationMeters(lat, lon) {
+      const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
+      if (demCache.has(key)) return demCache.get(key);
+
+      // If Live SRTM 30m Grid is loaded, bilinearly interpolate real satellite elevation
+      if (srtmGrid && lat >= srtmGrid.minLat && lat <= srtmGrid.maxLat && lon >= srtmGrid.minLon && lon <= srtmGrid.maxLon) {
+        const rFrac = ((lat - srtmGrid.minLat) / (srtmGrid.maxLat - srtmGrid.minLat)) * (srtmGrid.rows - 1);
+        const cFrac = ((lon - srtmGrid.minLon) / (srtmGrid.maxLon - srtmGrid.minLon)) * (srtmGrid.cols - 1);
+        const r0 = Math.max(0, Math.min(srtmGrid.rows - 2, Math.floor(rFrac)));
+        const c0 = Math.max(0, Math.min(srtmGrid.cols - 2, Math.floor(cFrac)));
+        const dr = rFrac - r0;
+        const dc = cFrac - c0;
+
+        const v00 = srtmGrid.data[r0 * srtmGrid.cols + c0];
+        const v01 = srtmGrid.data[r0 * srtmGrid.cols + (c0 + 1)];
+        const v10 = srtmGrid.data[(r0 + 1) * srtmGrid.cols + c0];
+        const v11 = srtmGrid.data[(r0 + 1) * srtmGrid.cols + (c0 + 1)];
+
+        if (typeof v00 === 'number' && typeof v11 === 'number') {
+          return (1 - dr) * ((1 - dc) * v00 + dc * v01) + dr * ((1 - dc) * v10 + dc * v11);
+        }
+      }
+
+      return getSyntheticTerrainMeters(lat, lon);
+    }
+
+    // Fetches a real 2D SRTM 30m elevation grid (15x15 = 225 satellite points in batched chunks)
+    // across Northville, Novi, South Lyon, Plymouth, and Livonia
+    async function fetchRegionalSRTMGrid() {
+      const dot = document.getElementById('demStatusDot');
+      const txt = document.getElementById('demStatusText');
+      try {
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
+        if (txt) txt.textContent = "Fetching SRTM 30m Topo Grid...";
+
+        // 1. Sync exact node coordinates first
+        const nLats = state.nodes.map(n => n.lat);
+        const nLons = state.nodes.map(n => n.lon);
+        const nodeRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${nLats.join(',')}&longitude=${nLons.join(',')}`);
+        if (nodeRes.ok) {
+          const nData = await nodeRes.json();
+          if (nData && Array.isArray(nData.elevation)) {
+            state.nodes.forEach((n, i) => {
+              if (typeof nData.elevation[i] === 'number') {
+                demCache.set(`${n.lat.toFixed(3)},${n.lon.toFixed(3)}`, nData.elevation[i]);
+              }
+            });
+          }
+        }
+
+        // 2. Build 14x14 regional grid (196 SRTM points in 2 fast 98-point requests) covering ~28km x 28km
+        const rows = 14, cols = 14;
+        const minLat = HOME_SITE.lat - 0.11, maxLat = HOME_SITE.lat + 0.11;
+        const minLon = HOME_SITE.lon - 0.16, maxLon = HOME_SITE.lon + 0.16;
+        const pts = [];
+
+        for (let r = 0; r < rows; r++) {
+          const lat = minLat + (r / (rows - 1)) * (maxLat - minLat);
+          for (let c = 0; c < cols; c++) {
+            const lon = minLon + (c / (cols - 1)) * (maxLon - minLon);
+            pts.push({ lat: lat.toFixed(4), lon: lon.toFixed(4) });
+          }
+        }
+
+        const elevArray = [];
+        const batchSize = 98;
+        for (let b = 0; b < pts.length; b += batchSize) {
+          const slice = pts.slice(b, b + batchSize);
+          const u = `https://api.open-meteo.com/v1/elevation?latitude=${slice.map(p => p.lat).join(',')}&longitude=${slice.map(p => p.lon).join(',')}`;
+          const r = await fetch(u);
+          if (!r.ok) throw new Error("SRTM Grid HTTP " + r.status);
+          const j = await r.json();
+          elevArray.push(...(j.elevation || []));
+        }
+
+        if (elevArray.length === rows * cols) {
+          srtmGrid = { rows, cols, minLat, maxLat, minLon, maxLon, data: elevArray };
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+          if (txt) txt.textContent = "Live NASA SRTM 30m Grid Active (196 pts)";
+          updateAllVisuals();
+        }
+      } catch (e) {
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-cyan-400";
+        if (txt) txt.textContent = "USGS Northville DEM Active";
+        updateAllVisuals();
+      }
+    }
+
+    function fetchLiveOpenMeteoDEM() {
+      return fetchRegionalSRTMGrid();
+    }
+
+    /***********************************************************************
+     * 3. REALISTIC SUBURBAN 915 MHz RF PROPAGATION ENGINE
+     *    (Bullington Multi-Peak Diffraction + Two-Ray Ground Bounce + Clutter)
+     ***********************************************************************/
+    function computeVerticalPatternLossDb(takeoffAngleDeg, gainDb) {
+      const spec = ANTENNA_SPECS[gainDb] || ANTENNA_SPECS[5.8];
+      const halfPowerAngle = spec.beamwidthDeg / 2.0;
+      const absAngle = Math.abs(takeoffAngleDeg);
+      const norm = absAngle / halfPowerAngle;
+
+      if (norm <= 1.35) {
+        return 3.0 * Math.pow(norm, 2);
+      } else {
+        const excess = norm - 1.35;
+        const rawNullLoss = 5.46 + 14.5 * Math.pow(excess, 1.35);
+        return Math.min(24.0, rawNullLoss);
+      }
+    }
+
+    // Evaluates link between a source Node object and either another Node object or a raw Ground Point
+    function evaluateLinkBetween(nodeA, targetObj, sampleSteps = 18, overrideTxPowerDbm = null) {
+      const hwA = HARDWARE_SPECS[nodeA.hardware] || HARDWARE_SPECS.rak4631;
+      const txPowerDbm = overrideTxPowerDbm !== null ? overrideTxPowerDbm : hwA.txPowerDbm;
+      const txGainDb = nodeA.gain;
+      const txCableLossDb = nodeA.coaxLoss;
+      const txHeightM = nodeA.heightFt * 0.3048;
+
+      const isTargetNode = Boolean(targetObj && targetObj.id);
+      const hwB = isTargetNode ? (HARDWARE_SPECS[targetObj.hardware] || HARDWARE_SPECS.rak4631) : null;
+
+      // Ground target height depends on Realism Preset:
+      // - 'realistic': 1.5m (5 ft handheld/pocket node surrounded by local clutter)
+      // - 'rooftop':   7.6m (25 ft roof-to-roof base station)
+      // - 'optimistic': 2.0m bare earth
+      let defaultRxHeightM = 1.5;
+      if (state.propModel === 'rooftop') defaultRxHeightM = 7.6;
+
+      const rxHeightM = isTargetNode ? (targetObj.heightFt * 0.3048) : defaultRxHeightM;
+      const rxGainDb = isTargetNode ? targetObj.gain : (state.propModel === 'rooftop' ? 5.8 : 2.0);
+      const rxCableLossDb = isTargetNode ? targetObj.coaxLoss : 0.0;
+
+      const latA = nodeA.lat, lonA = nodeA.lon;
+      const latB = targetObj.lat, lonB = targetObj.lon;
+
+      const dLatKm = (latB - latA) * 111.132;
+      const dLonKm = (lonB - lonA) * 111.320 * Math.cos(latA * Math.PI / 180);
+      const distKm = Math.max(0.008, Math.hypot(dLatKm, dLonKm));
+      const distMeters = distKm * 1000.0;
+
+      const groundAM = getElevationMeters(latA, lonA);
+      const groundBM = getElevationMeters(latB, lonB);
+      const altAM = groundAM + txHeightM;
+      const altBM = groundBM + rxHeightM;
+
+      const earthRadiusM = 6371000 * 1.333;
+      const earthDropTotal = (distMeters * distMeters) / (2 * earthRadiusM);
+
+      // Takeoff angle from Node A toward B, and arrival angle at B from A
+      const takeoffAngleADeg = Math.atan2((altBM - earthDropTotal) - altAM, distMeters) * (180 / Math.PI);
+      const takeoffAngleBDeg = Math.atan2((altAM - earthDropTotal) - altBM, distMeters) * (180 / Math.PI);
+
+      const lobeLossADb = computeVerticalPatternLossDb(takeoffAngleADeg, txGainDb);
+      const lobeLossBDb = isTargetNode ? computeVerticalPatternLossDb(takeoffAngleBDeg, rxGainDb) : 0.0;
+
+      // 1. Free-Space Path Loss (FSPL) + Two-Ray Ground Reflection Plane-Earth Roll-off (40*log10(d) beyond breakpoint)
+      // In real life, a 10m chimney shooting to a 1.5m handheld suffers destructive ground reflection beyond ~350m,
+      // causing path loss to climb at ~35-38 dB/decade instead of ideal free-space 20 dB/decade.
+      const fsplDb = 32.45 + 20 * Math.log10(distKm) + 20 * Math.log10(HOME_SITE.freqMHz);
+      let groundReflectionLossDb = 0;
+      if (state.propModel !== 'optimistic' && distKm > 0.45) {
+        const effHa = Math.max(3.0, txHeightM);
+        const effHb = Math.max(1.5, rxHeightM);
+        // Egli / Two-Ray suburban ground-reflection excess loss for low antennas
+        groundReflectionLossDb = Math.max(0, 14.5 * Math.log10(distKm / 0.45) - 6.0 * Math.log10((effHa * effHb) / 15.0));
+      }
+
+      // 2. Multi-Obstacle Terrain + Suburban Tree/Roof Diffraction
+      const clutterM = state.propModel === 'optimistic' ? 0 : (state.clutterHeightFt * 0.3048);
+      const wavelengthM = 299.792458 / HOME_SITE.freqMHz;
+      let maxNu = -999;
+      let secondMaxNu = -999;
+      let worstClearanceM = 999;
+      let canopyHits = 0;
+      let rockHits = 0;
+
+      for (let i = 1; i < sampleSteps; i++) {
+        const frac = i / sampleSteps;
+        const sLat = latA + (latB - latA) * frac;
+        const sLon = lonA + (lonB - lonA) * frac;
+        const d1 = distMeters * frac;
+        const d2 = distMeters * (1 - frac);
+
+        const gM = getElevationMeters(sLat, sLon);
+        const bulgeM = (d1 * d2) / (2 * earthRadiusM);
+        const nearEndScale = Math.min(1.0, Math.min(d1, d2) / 55.0);
+
+        const bareTerrainAltM = gM + bulgeM;
+        const obstacleAltM = bareTerrainAltM + (clutterM * 0.85 * nearEndScale);
+
+        const losRayAltM = altAM + (altBM - altAM) * frac;
+        const r1M = Math.sqrt((wavelengthM * d1 * d2) / (d1 + d2));
+
+        // Check if solid dirt/hill blocks the line of sight vs tree canopy
+        const hDirt = bareTerrainAltM - losRayAltM;
+        const hTotal = obstacleAltM - losRayAltM;
+        const clearance = losRayAltM - obstacleAltM;
+        if (clearance < worstClearanceM) worstClearanceM = clearance;
+
+        if (hDirt > -0.3 * r1M) rockHits++;
+        if (hTotal > -0.55 * r1M) canopyHits++;
+
+        const nu = hTotal * Math.sqrt((2 * (d1 + d2)) / (wavelengthM * d1 * d2));
+        if (nu > maxNu) {
+          secondMaxNu = maxNu;
+          maxNu = nu;
+        } else if (nu > secondMaxNu) {
+          secondMaxNu = nu;
+        }
+      }
+
+      // Primary + Secondary ridge knife-edge diffraction (Epstein-Peterson multi-ridge approximation)
+      let diffractionLossDb = 0;
+      if (maxNu > -0.78) {
+        diffractionLossDb += 6.9 + 20 * Math.log10(Math.sqrt(Math.pow(maxNu - 0.1, 2) + 1) + maxNu - 0.1);
+      }
+      if (secondMaxNu > 0.0 && state.propModel !== 'optimistic') {
+        diffractionLossDb += 0.45 * (6.9 + 20 * Math.log10(Math.sqrt(Math.pow(secondMaxNu - 0.1, 2) + 1) + secondMaxNu - 0.1));
+      }
+
+      // 3. Suburban Tree Canopy & Local Street Clutter Loss (Weissberger / COST-231)
+      let foliageLossDb = 0;
+      if (clutterM > 2 && state.propModel !== 'optimistic') {
+        const canopyFraction = canopyHits / sampleSteps;
+        // Penetrating Northville oak/maple canopy and houses at 915 MHz
+        foliageLossDb = Math.min(28.0, canopyFraction * (clutterM * 1.15) * Math.log10(1 + distKm * 3.8));
+        // Local receiver street-level clutter penalty when target is a 5ft handheld below roof/tree height
+        if (rxHeightM < clutterM * 0.75) {
+          const rxBurialDepthM = (clutterM * 0.75) - rxHeightM;
+          foliageLossDb += Math.min(14.0, rxBurialDepthM * 1.15 * Math.min(1.0, distKm / 0.35));
+        }
+      }
+
+      // Extra attenuation when solid glacial moraine dirt (Beck/Maybury/Salem ridges) physically blocks LOS
+      if (rockHits >= 2 && state.propModel !== 'optimistic') {
+        diffractionLossDb += Math.min(16.0, rockHits * 2.8);
+      }
+
+      const totalPathLossDb = fsplDb + groundReflectionLossDb + diffractionLossDb + foliageLossDb + lobeLossADb + lobeLossBDb + txCableLossDb + rxCableLossDb - txGainDb - (isTargetNode ? rxGainDb : 0);
+
+      // Forward Link (A -> B)
+      const rssiAB_Dbm = txPowerDbm - totalPathLossDb + (hwB ? (hwB.rxLnaBoostDb || 0) : 0);
+      const snrAB_Db = Math.max(-20.0, Math.min(15.0, rssiAB_Dbm - HOME_SITE.noiseFloorDbm));
+
+      // Reverse Link (B -> A) to detect "Alligator" asymmetry between 1W Base and 0.1W Handheld
+      const txPowerBDbm = isTargetNode ? hwB.txPowerDbm : 22.0;
+      const rssiBA_Dbm = txPowerBDbm - totalPathLossDb + (hwA.rxLnaBoostDb || 0);
+      const snrBA_Db = Math.max(-20.0, Math.min(15.0, rssiBA_Dbm - HOME_SITE.noiseFloorDbm));
+
+      return {
+        rssiDbm: rssiAB_Dbm,
+        snrDb: snrAB_Db,
+        reverseRssiDbm: rssiBA_Dbm,
+        reverseSnrDb: snrBA_Db,
+        txPowerADbm: txPowerDbm,
+        txPowerBDbm,
+        distKm,
+        distMiles: distKm * 0.621371,
+        distFeet: distMeters * 3.28084,
+        groundAFt: groundAM * 3.28084,
+        groundBFt: groundBM * 3.28084,
+        takeoffAngleADeg,
+        takeoffAngleBDeg,
+        lobeLossADb,
+        lobeLossBDb,
+        totalLobeLossDb: lobeLossADb + lobeLossBDb,
+        fsplDb,
+        diffractionLossDb: diffractionLossDb + foliageLossDb + groundReflectionLossDb,
+        worstClearanceM
+      };
+    }
+
+    /***********************************************************************
+     * 4. LEAFLET MAP, DRAGGABLE NODE PINS, LINK LINES & MULTI-NODE HEATMAP
+     ***********************************************************************/
+    let map, baseLayers, activeBaseLayer;
+    let nodeMarkersLayer, linkLinesLayer, touchdownRingsLayer;
+    let customTargetMarker;
+    let HeatCanvasOverlay, heatOverlayInstance;
+
+    function initMap() {
+      map = L.map('map', {
+        center: [HOME_SITE.lat, HOME_SITE.lon],
+        zoom: 13,
+        zoomControl: true
+      });
+
+      baseLayers = {
+        gterrain: L.tileLayer('https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+          attribution: '&copy; Google Maps Terrain',
+          maxZoom: 20
+        }),
+        ghybrid: L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+          attribution: '&copy; Google Maps Hybrid',
+          maxZoom: 20
+        }),
+        gstreets: L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          attribution: '&copy; Google Maps Streets',
+          maxZoom: 20
+        }),
+        usgstopo: L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '&copy; USGS National Map',
+          maxZoom: 16
+        })
+      };
+
+      activeBaseLayer = baseLayers.gterrain;
+      activeBaseLayer.addTo(map);
+
+      // Custom Multi-Node Canvas Heatmap Overlay
+      HeatCanvasOverlay = L.Layer.extend({
+        onAdd: function (map) {
+          this._map = map;
+          this._canvas = L.DomUtil.create('canvas', 'leaflet-layer pointer-events-none');
+          this._canvas.style.pointerEvents = 'none';
+          this._canvas.style.zIndex = 240;
+          map.getPanes().overlayPane.appendChild(this._canvas);
+          map.on('moveend zoomend resize', this._reset, this);
+          this._reset();
+        },
+        onRemove: function (map) {
+          L.DomUtil.remove(this._canvas);
+          map.off('moveend zoomend resize', this._reset, this);
+        },
+        _reset: function () {
+          const size = this._map.getSize();
+          const topLeft = this._map.containerPointToLayerPoint([0, 0]);
+          L.DomUtil.setPosition(this._canvas, topLeft);
+          this._canvas.width = size.x;
+          this._canvas.height = size.y;
+          this.draw();
+        },
+        draw: function () {
+          if (!this._map) return;
+          const ctx = this._canvas.getContext('2d');
+          const W = this._canvas.width;
+          const H = this._canvas.height;
+          ctx.clearRect(0, 0, W, H);
+
+          const show = document.getElementById('chkShowOverlay')?.checked;
+          if (!show) return;
+
+          const activeNodes = state.nodes.filter(n => n.enabled);
+          if (activeNodes.length === 0) return;
+
+          const homeNode = state.nodes[0];
+          const nodesToEval = (state.coverageMode === 'selected')
+            ? activeNodes.filter(n => n.id === state.selectedNodeId)
+            : activeNodes;
+
+          if (nodesToEval.length === 0) return;
+
+          // Screen-space adaptive grid for smooth multi-node coverage rendering
+          const cellPx = 14;
+          const cols = Math.ceil(W / cellPx);
+          const rows = Math.ceil(H / cellPx);
+
+          for (let r = 0; r < rows; r++) {
+            const py = r * cellPx + cellPx * 0.5;
+            for (let c = 0; c < cols; c++) {
+              const px = c * cellPx + cellPx * 0.5;
+              const latLng = this._map.containerPointToLatLng([px, py]);
+              const ptObj = { lat: latLng.lat, lon: latLng.lng };
+
+              let fillStyle = null;
+
+              if (state.coverageMode === 'diff_1w') {
+                // Compare Home Chimney at 1W (30 dBm) vs 0.1W (22 dBm)
+                const dLat = Math.abs(ptObj.lat - homeNode.lat);
+                const dLon = Math.abs(ptObj.lon - homeNode.lon);
+                if (dLat <= 0.28 && dLon <= 0.36) {
+                  const link1W = evaluateLinkBetween(homeNode, ptObj, 7, 30.0);
+                  const rssi1W = link1W.rssiDbm;
+                  const rssi01W = rssi1W - 8.0; // 22 dBm is 8 dB lower than 30 dBm
+
+                  if (rssi1W >= -130.0 && rssi01W < -130.0) {
+                    // Unlocked ONLY by 1W (30 dBm) +8 dB link budget
+                    fillStyle = 'rgba(217, 70, 239, 0.52)';
+                  } else if (rssi01W >= -130.0) {
+                    // Covered by both 0.1W and 1W
+                    fillStyle = 'rgba(16, 185, 129, 0.26)';
+                  }
+                }
+              } else {
+                let bestRssi = -999;
+                let coveredCount = 0;
+
+                for (let i = 0; i < nodesToEval.length; i++) {
+                  const nd = nodesToEval[i];
+                  const dLat = Math.abs(ptObj.lat - nd.lat);
+                  const dLon = Math.abs(ptObj.lon - nd.lon);
+                  if (dLat > 0.26 || dLon > 0.34) continue;
+
+                  const link = evaluateLinkBetween(nd, ptObj, 7);
+                  if (link.rssiDbm > bestRssi) bestRssi = link.rssiDbm;
+                  if (link.rssiDbm >= -126.5) coveredCount++;
+                }
+
+                if (state.coverageMode === 'overlap') {
+                  if (coveredCount >= 2) {
+                    fillStyle = 'rgba(34, 211, 238, 0.48)'; // Cyan Multi-Node Relay Overlap
+                  } else if (coveredCount === 1) {
+                    fillStyle = 'rgba(16, 185, 129, 0.22)'; // Single Node
+                  }
+                } else {
+                  if (bestRssi >= -112) {
+                    fillStyle = 'rgba(16, 185, 129, 0.40)';
+                  } else if (bestRssi >= -123) {
+                    fillStyle = 'rgba(251, 191, 36, 0.38)';
+                  } else if (bestRssi >= -130.5) {
+                    fillStyle = 'rgba(244, 63, 94, 0.36)';
+                  }
+                }
+              }
+
+              if (fillStyle) {
+                ctx.fillStyle = fillStyle;
+                ctx.fillRect(c * cellPx, r * cellPx, cellPx, cellPx);
+              }
+            }
+          }
+        }
+      });
+
+      heatOverlayInstance = new HeatCanvasOverlay();
+      heatOverlayInstance.addTo(map);
+
+      touchdownRingsLayer = L.layerGroup().addTo(map);
+      linkLinesLayer = L.layerGroup().addTo(map);
+      nodeMarkersLayer = L.layerGroup().addTo(map);
+
+      // Map click handler: either Add New Node or inspect Point-to-Point profile from selected node
+      map.on('click', (e) => {
+        if (state.addNodeMapMode) {
+          addNewNodeAtCoords(e.latlng.lat, e.latlng.lng);
+          toggleAddNodeMapMode(false);
+        } else {
+          state.customTargetPoint = {
+            lat: e.latlng.lat,
+            lon: e.latlng.lng,
+            name: `Map Point (${e.latlng.lat.toFixed(4)}°N, ${e.latlng.lng.toFixed(4)}°W)`
+          };
+          renderMapMarkersAndLinks();
+          updateCrossSectionProfiler();
+        }
+      });
+    }
+
+    function renderMapMarkersAndLinks() {
+      if (!map) return;
+      nodeMarkersLayer.clearLayers();
+      linkLinesLayer.clearLayers();
+      touchdownRingsLayer.clearLayers();
+
+      const activeNodes = state.nodes.filter(n => n.enabled);
+
+      // 1. Draw Node-to-Node Mesh Link Lines
+      for (let i = 0; i < activeNodes.length; i++) {
+        for (let j = i + 1; j < activeNodes.length; j++) {
+          const nA = activeNodes[i];
+          const nB = activeNodes[j];
+          const link = evaluateLinkBetween(nA, nB, 18);
+
+          const isSelectedPair = !state.customTargetPoint &&
+            ((state.activeLinkPair[0] === nA.id && state.activeLinkPair[1] === nB.id) ||
+             (state.activeLinkPair[0] === nB.id && state.activeLinkPair[1] === nA.id));
+
+          let lineColor = '#10b981'; // Strong Green
+          if (link.rssiDbm < -130) lineColor = '#f43f5e'; // Blocked Red
+          else if (link.rssiDbm < -118) lineColor = '#fbbf24'; // Grazing Amber
+
+          const poly = L.polyline([[nA.lat, nA.lon], [nB.lat, nB.lon]], {
+            color: lineColor,
+            weight: isSelectedPair ? 4.5 : 2.5,
+            opacity: isSelectedPair ? 1.0 : 0.78,
+            dashArray: link.rssiDbm < -130 ? '4, 6' : (isSelectedPair ? null : '6, 4')
+          }).addTo(linkLinesLayer);
+
+          poly.on('click', (ev) => {
+            L.DomEvent.stopPropagation(ev);
+            state.customTargetPoint = null;
+            state.activeLinkPair = [nA.id, nB.id];
+            renderMapMarkersAndLinks();
+            renderMeshLinksTab();
+            updateCrossSectionProfiler();
+          });
+
+          poly.bindTooltip(`
+            <div class="font-mono text-[11px]">
+              <strong>${nA.shortName} (${link.txPowerADbm}dBm) ⇄ ${nB.shortName} (${link.txPowerBDbm}dBm)</strong> (${link.distMiles.toFixed(1)} mi)<br/>
+              ${nA.shortName}→${nB.shortName}: ${link.rssiDbm.toFixed(1)} dBm · ${nB.shortName}→${nA.shortName}: ${link.reverseRssiDbm.toFixed(1)} dBm
+            </div>
+          `, { sticky: true });
+        }
+      }
+
+      // 2. If inspecting a Custom Map Point, draw sightline from Selected Node
+      const selNode = getSelectedNode();
+      if (state.customTargetPoint && selNode) {
+        L.polyline([[selNode.lat, selNode.lon], [state.customTargetPoint.lat, state.customTargetPoint.lon]], {
+          color: '#22d3ee',
+          weight: 2.5,
+          dashArray: '5, 5'
+        }).addTo(linkLinesLayer);
+
+        const targetIcon = L.divIcon({
+          className: '',
+          html: `<div class="w-3.5 h-3.5 rounded-full bg-cyan-400 border-2 border-slate-950 shadow"></div>`,
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        });
+        L.marker([state.customTargetPoint.lat, state.customTargetPoint.lon], { icon: targetIcon }).addTo(linkLinesLayer);
+      }
+
+      // 3. Draw Draggable Node Markers & Touchdown Rings
+      state.nodes.forEach(nd => {
+        if (!nd.enabled) return;
+        const isSelected = nd.id === state.selectedNodeId;
+        const spec = ANTENNA_SPECS[nd.gain] || ANTENNA_SPECS[5.8];
+        const touchdownFt = Math.round(nd.heightFt / Math.tan((spec.halfAngle * Math.PI) / 180));
+
+        // Draw Umbra Touchdown Circle
+        L.circle([nd.lat, nd.lon], {
+          radius: touchdownFt * 0.3048,
+          color: isSelected ? '#fbbf24' : nd.color,
+          weight: isSelected ? 2 : 1,
+          dashArray: '4, 4',
+          fillColor: '#f43f5e',
+          fillOpacity: isSelected ? 0.14 : 0.05
+        }).addTo(touchdownRingsLayer);
+
+        // Draggable Custom Badge Marker
+        const hw = HARDWARE_SPECS[nd.hardware] || HARDWARE_SPECS.rak4631;
+        const pwrTag = hw.txPowerDbm >= 30 ? '1W' : '0.1W';
+        const iconHtml = `
+          <div class="relative flex flex-col items-center group cursor-grab">
+            <div class="px-1.5 py-0.5 rounded bg-slate-950/95 border ${isSelected ? 'border-emerald-400 text-emerald-300 scale-105' : 'border-slate-600 text-slate-200'} text-[10px] font-mono font-bold shadow-md whitespace-nowrap mb-0.5">
+              ${nd.shortName} · ${pwrTag} · ${nd.gain}dBi
+            </div>
+            <div class="w-4 h-4 rounded-full border-2 border-slate-950 shadow-lg" style="background-color: ${nd.color};"></div>
+          </div>
+        `;
+
+        const marker = L.marker([nd.lat, nd.lon], {
+          draggable: true,
+          icon: L.divIcon({
+            className: '',
+            html: iconHtml,
+            iconSize: [64, 38],
+            iconAnchor: [32, 30]
+          })
+        }).addTo(nodeMarkersLayer);
+
+        marker.on('click', (ev) => {
+          L.DomEvent.stopPropagation(ev);
+          selectNodeById(nd.id);
+        });
+
+        marker.on('dragend', (ev) => {
+          const pos = ev.target.getLatLng();
+          nd.lat = parseFloat(pos.lat.toFixed(5));
+          nd.lon = parseFloat(pos.lng.toFixed(5));
+          state.selectedNodeId = nd.id;
+          updateAllVisuals();
+        });
+      });
+    }
+
+    /***********************************************************************
+     * 5. MULTI-NODE MANAGEMENT & SIDEBAR EDITING
+     ***********************************************************************/
+    function getSelectedNode() {
+      return state.nodes.find(n => n.id === state.selectedNodeId) || state.nodes[0];
+    }
+
+    function selectNodeById(id) {
+      state.selectedNodeId = id;
+      // Ensure activeLinkPair includes this node if another node exists
+      const other = state.nodes.find(n => n.id !== id && n.enabled);
+      if (other) {
+        state.activeLinkPair = [id, other.id];
+      }
+      updateAllVisuals();
+    }
+
+    function toggleAddNodeMapMode(forceState = null) {
+      state.addNodeMapMode = forceState !== null ? forceState : !state.addNodeMapMode;
+      const banner = document.getElementById('addNodeBanner');
+      const btn = document.getElementById('btnAddClickMap');
+      if (state.addNodeMapMode) {
+        banner.classList.remove('hidden');
+        btn.className = "px-2 py-1 rounded text-[11px] font-semibold bg-amber-500 text-slate-950 shadow transition flex items-center gap-1";
+        btn.innerHTML = "<span>📍 Click Map Now...</span>";
+      } else {
+        banner.classList.add('hidden');
+        btn.className = "px-2 py-1 rounded text-[11px] font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition flex items-center gap-1";
+        btn.innerHTML = "<span>+ Click Map to Add</span>";
+      }
+    }
+
+    function addNewNodeAtCoords(lat, lon, presetObj = null) {
+      const idx = state.nodes.length + 1;
+      const newId = 'node_' + Date.now().toString().slice(-4);
+      const color = presetObj?.color || NODE_PALETTE[(idx - 1) % NODE_PALETTE.length];
+
+      const newNode = {
+        id: newId,
+        name: presetObj ? presetObj.name : `Mesh Node ${idx}`,
+        shortName: presetObj ? presetObj.shortName : `ND0${idx}`.slice(-4),
+        lat: parseFloat(lat.toFixed(5)),
+        lon: parseFloat(lon.toFixed(5)),
+        heightFt: presetObj ? presetObj.heightFt : 25,
+        gain: presetObj ? presetObj.gain : 5.8,
+        hardware: presetObj ? presetObj.hardware : 'rak4631',
+        role: presetObj ? presetObj.role : 'CLIENT',
+        power: presetObj ? presetObj.power : 'solar',
+        coaxLoss: presetObj ? presetObj.coaxLoss : 0.4,
+        enabled: true,
+        color
+      };
+
+      state.nodes.push(newNode);
+      const prevId = state.selectedNodeId;
+      state.selectedNodeId = newId;
+      state.customTargetPoint = null;
+      if (prevId) state.activeLinkPair = [prevId, newId];
+
+      updateAllVisuals();
+      fetchLiveOpenMeteoDEM();
+    }
+
+    function addPresetNodeFromDropdown() {
+      const sel = document.getElementById('presetNodeSelect');
+      const key = sel.value;
+      if (!key || !REGIONAL_NODE_PRESETS[key]) return;
+      const p = REGIONAL_NODE_PRESETS[key];
+      addNewNodeAtCoords(p.lat, p.lon, p);
+      sel.value = "";
+      if (map) {
+        map.panTo([p.lat, p.lon]);
+      }
+    }
+
+    function toggleNodeEnabled(id, ev) {
+      ev.stopPropagation();
+      const nd = state.nodes.find(n => n.id === id);
+      if (nd) {
+        nd.enabled = !nd.enabled;
+        updateAllVisuals();
+      }
+    }
+
+    function deleteNodeById(id, ev) {
+      ev.stopPropagation();
+      if (state.nodes.length <= 1) return; // Always keep at least 1 node
+      state.nodes = state.nodes.filter(n => n.id !== id);
+      if (state.selectedNodeId === id) {
+        state.selectedNodeId = state.nodes[0].id;
+      }
+      if (state.activeLinkPair.includes(id) && state.nodes.length >= 2) {
+        state.activeLinkPair = [state.nodes[0].id, state.nodes[1].id];
+      }
+      updateAllVisuals();
+    }
+
+    function renderNodeRoster() {
+      const container = document.getElementById('nodeRosterList');
+      container.innerHTML = '';
+
+      state.nodes.forEach(nd => {
+        const isSelected = nd.id === state.selectedNodeId;
+        const elevFt = Math.round(getElevationMeters(nd.lat, nd.lon) * 3.28084);
+        const hw = HARDWARE_SPECS[nd.hardware] || HARDWARE_SPECS.rak4631;
+        const pwrBadge = hw.txPowerDbm >= 30 ? '1W (30dBm)' : '0.1W (22dBm)';
+        const card = document.createElement('div');
+        card.onclick = () => selectNodeById(nd.id);
+        card.className = `p-2 rounded-lg border transition cursor-pointer flex items-center justify-between gap-2 ${
+          isSelected
+            ? 'bg-slate-800/95 border-emerald-500 shadow'
+            : 'bg-slate-900/70 border-slate-800 hover:bg-slate-800/60'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0">
+            <input type="checkbox" ${nd.enabled ? 'checked' : ''} onclick="toggleNodeEnabled('${nd.id}', event)" class="rounded accent-emerald-500 cursor-pointer" title="Toggle node active" />
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${nd.color}"></span>
+            <div class="min-w-0">
+              <div class="text-xs font-semibold text-white truncate">${nd.name}</div>
+              <div class="text-[10px] font-mono text-slate-400">
+                <span class="text-emerald-300">${nd.shortName}</span> · <span class="text-cyan-300">${pwrBadge}</span> · ${nd.role} · ${elevFt}+${nd.heightFt}ft · ${nd.gain}dBi
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            ${state.nodes.length > 1 ? `
+              <button onclick="deleteNodeById('${nd.id}', event)" class="px-1.5 py-0.5 rounded text-[10px] text-slate-400 hover:text-rose-400 hover:bg-slate-950" title="Remove Node">✕</button>
+            ` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      const activeCount = state.nodes.filter(n => n.enabled).length;
+      const linkCount = Math.max(0, (activeCount * (activeCount - 1)) / 2);
+      document.getElementById('hdrNodeCount').textContent = activeCount;
+      document.getElementById('hdrLinkCount').textContent = linkCount;
+      document.getElementById('tabLinkBadge').textContent = linkCount;
+
+      // Update Quick 1W vs 0.1W Header Button state
+      const homeNode = state.nodes[0];
+      const toggleBtn = document.getElementById('btnToggleChimneyPower');
+      const subText = document.getElementById('chimneyCompareSubtext');
+      if (homeNode && toggleBtn) {
+        const is1W = homeNode.hardware === 'rak4631_1w' || homeNode.hardware === 'station_g2';
+        if (is1W) {
+          toggleBtn.textContent = "Chimney: 1W (30dBm)";
+          toggleBtn.className = "px-2 py-1.5 rounded text-xs font-mono font-bold transition text-emerald-300 bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25";
+          if (subText) subText.textContent = "ACTIVE: 1W (30dBm) + 5.8 dBi = 35.3 dBm EIRP (~3.4W) + RX LNA boost.";
+        } else {
+          toggleBtn.textContent = "Chimney: 0.1W (22dBm)";
+          toggleBtn.className = "px-2 py-1.5 rounded text-xs font-mono font-bold transition text-amber-300 bg-amber-500/15 border border-amber-500/40 hover:bg-amber-500/25";
+          if (subText) subText.textContent = "ACTIVE: Standard 0.1W (22dBm) = 27.3 dBm EIRP (~0.5W). Click top button to test 1W.";
+        }
+      }
+    }
+
+    function quickToggleChimney1W() {
+      const homeNode = state.nodes[0];
+      if (!homeNode) return;
+      homeNode.hardware = (homeNode.hardware === 'rak4631_1w') ? 'rak4631' : 'rak4631_1w';
+      state.selectedNodeId = homeNode.id;
+      updateAllVisuals();
+    }
+
+    function populateSelectedNodeEditor() {
+      const nd = getSelectedNode();
+      if (!nd) return;
+
+      const groundFt = Math.round(getElevationMeters(nd.lat, nd.lon) * 3.28084);
+      document.getElementById('edNodeColorDot').style.backgroundColor = nd.color;
+      document.getElementById('edHeaderTitle').textContent = `Editing: ${nd.name}`;
+      document.getElementById('edGroundElevLbl').textContent = `Ground: ${groundFt} ft ASL`;
+
+      document.getElementById('inpNodeName').value = nd.name;
+      document.getElementById('inpNodeShort').value = nd.shortName;
+      document.getElementById('inpNodeLat').value = nd.lat;
+      document.getElementById('inpNodeLon').value = nd.lon;
+      document.getElementById('selNodeHardware').value = nd.hardware;
+      document.getElementById('selNodeRole').value = nd.role;
+      document.getElementById('selNodePower').value = nd.power;
+      document.getElementById('selNodeCoax').value = String(nd.coaxLoss);
+      document.getElementById('sliderNodeHeight').value = nd.heightFt;
+
+      const hMeters = (nd.heightFt * 0.3048).toFixed(1);
+      document.getElementById('valNodeHeight').textContent = `${nd.heightFt} ft (${hMeters} m)`;
+
+      const spec = ANTENNA_SPECS[nd.gain] || ANTENNA_SPECS[5.8];
+      document.getElementById('edBeamBadge').textContent = `${nd.gain} dBi · ${spec.beamwidthDeg}° Cone`;
+
+      [2.0, 3.0, 5.8, 6.0, 8.0, 10.0].forEach(g => {
+        const btn = document.getElementById(`gainBtn_${g}`);
+        if (!btn) return;
+        btn.className = (g === nd.gain)
+          ? "p-1.5 rounded border-2 border-emerald-500 bg-emerald-500/15 text-left transition"
+          : "p-1.5 rounded border border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-left transition";
+      });
+
+      // Metrics & Role Advisor
+      const touchdownFt = Math.round(nd.heightFt / Math.tan((spec.halfAngle * Math.PI) / 180));
+      const hw = HARDWARE_SPECS[nd.hardware] || HARDWARE_SPECS.rak4631;
+      const eirp = hw.txPowerDbm - nd.coaxLoss + nd.gain;
+
+      document.getElementById('edMetricTouchdown').textContent = `${touchdownFt} ft`;
+      document.getElementById('mapRingLabel').textContent = `${touchdownFt} ft`;
+      document.getElementById('edMetricEirp').textContent = `${eirp.toFixed(1)} dBm`;
+      document.getElementById('edMetricIdleMa').textContent = `${hw.idleCurrentMa} mA`;
+
+      const totalAltFt = groundFt + nd.heightFt;
+      const advisorEl = document.getElementById('edRoleAdvisorBox');
+      if (hw.txPowerDbm >= 30 && nd.heightFt < 12) {
+        advisorEl.innerHTML = `<span class="text-rose-400 font-semibold">⚠️ Alligator Warning (1W at Ground Level):</span> Running 1W (30 dBm) at ${nd.heightFt} ft AGL lets your node shout far, but it won't hear weak 0.1W replies through clutter. Put the <strong>1W RAK on your 30 ft chimney</strong> and use 0.1W (<code class="text-amber-300">CLIENT_MUTE</code>) as your personal node.`;
+      } else if (hw.txPowerDbm >= 30 && nd.heightFt >= 20) {
+        advisorEl.innerHTML = `<span class="text-emerald-400 font-semibold">★ Optimal 1W Chimney Base (${totalAltFt} ft ASL):</span> 30 dBm + 5.8 dBi antenna (${eirp.toFixed(1)} dBm EIRP) + built-in LNA gives balanced 2-way links with 0.1W handhelds and +8 dB punch over the Western ridges. Keep Role = <code class="text-emerald-300">CLIENT</code>.`;
+      } else if (nd.role === 'CLIENT_MUTE' || nd.heightFt <= 10) {
+        advisorEl.innerHTML = `<span class="text-amber-300 font-semibold">Personal / Truck Node (${totalAltFt} ft ASL):</span> Standard 0.1W (22 dBm) set to <code class="text-amber-300">CLIENT_MUTE</code> saves battery and prevents indoor/driveway hop-stealing while your 1W Chimney Base handles all repeating.`;
+      } else if (totalAltFt >= 965) {
+        advisorEl.innerHTML = `<span class="text-cyan-400 font-semibold">High Moraine Crest (${totalAltFt} ft ASL):</span> Commanding regional elevation. Suitable for <code class="text-emerald-300">CLIENT</code> or dedicated <code class="text-cyan-300">ROUTER</code> with a <strong>5.8–6 dBi (35° cone)</strong> antenna.`;
+      } else {
+        advisorEl.innerHTML = `<span class="text-emerald-400 font-semibold">Mid-Shelf Relay (${totalAltFt} ft ASL):</span> Best set to <code class="text-emerald-300">CLIENT</code> (Smart Flood) with a <strong>5.8 dBi antenna</strong> to bridge East/West traffic.`;
+      }
+    }
+
+    function saveSelectedNodeEdits() {
+      const nd = getSelectedNode();
+      if (!nd) return;
+      nd.name = document.getElementById('inpNodeName').value || 'Mesh Node';
+      nd.shortName = (document.getElementById('inpNodeShort').value || 'NODE').toUpperCase().slice(0, 4);
+      nd.hardware = document.getElementById('selNodeHardware').value;
+      nd.role = document.getElementById('selNodeRole').value;
+      nd.power = document.getElementById('selNodePower').value;
+      nd.coaxLoss = parseFloat(document.getElementById('selNodeCoax').value);
+      nd.heightFt = parseFloat(document.getElementById('sliderNodeHeight').value);
+
+      updateAllVisuals();
+    }
+
+    function saveSelectedNodeCoords() {
+      const nd = getSelectedNode();
+      if (!nd) return;
+      const lat = parseFloat(document.getElementById('inpNodeLat').value);
+      const lon = parseFloat(document.getElementById('inpNodeLon').value);
+      if (!isNaN(lat) && !isNaN(lon)) {
+        nd.lat = lat;
+        nd.lon = lon;
+        updateAllVisuals();
+        if (map) map.panTo([lat, lon]);
+      }
+    }
+
+    function onHardwarePresetChange() {
+      saveSelectedNodeEdits();
+    }
+
+    function setSelectedNodeGain(gainVal) {
+      const nd = getSelectedNode();
+      if (!nd) return;
+      nd.gain = gainVal;
+      updateAllVisuals();
+    }
+
+    function updateGlobalClutter() {
+      state.clutterHeightFt = parseFloat(document.getElementById('sliderClutter').value);
+      const cM = (state.clutterHeightFt * 0.3048).toFixed(1);
+      document.getElementById('valClutterFt').textContent = `${state.clutterHeightFt} ft (${cM} m)`;
+      updateAllVisuals();
+    }
+
+    function onChangePropModel() {
+      const sel = document.getElementById('selPropModel');
+      if (!sel) return;
+      state.propModel = sel.value;
+      updateAllVisuals();
+    }
+
+    /***********************************************************************
+     * 6. MESH LINKS MATRIX & DUAL-CONE CROSS-SECTION PROFILER
+     ***********************************************************************/
+    function renderMeshLinksTab() {
+      const selA = document.getElementById('selLinkNodeA');
+      const selB = document.getElementById('selLinkNodeB');
+      if (!selA || !selB) return;
+
+      const activeNodes = state.nodes.filter(n => n.enabled);
+      selA.innerHTML = activeNodes.map(n => `<option value="${n.id}">${n.shortName} - ${n.name}</option>`).join('');
+      selB.innerHTML = activeNodes.map(n => `<option value="${n.id}">${n.shortName} - ${n.name}</option>`).join('');
+
+      if (activeNodes.some(n => n.id === state.activeLinkPair[0])) selA.value = state.activeLinkPair[0];
+      if (activeNodes.some(n => n.id === state.activeLinkPair[1])) selB.value = state.activeLinkPair[1];
+
+      const listEl = document.getElementById('meshLinksMatrixList');
+      listEl.innerHTML = '';
+
+      if (activeNodes.length < 2) {
+        listEl.innerHTML = `<div class="p-3 rounded bg-slate-950 border border-slate-800 text-xs text-slate-400">Add at least 2 active nodes to analyze Node-to-Node mesh links.</div>`;
+        return;
+      }
+
+      for (let i = 0; i < activeNodes.length; i++) {
+        for (let j = i + 1; j < activeNodes.length; j++) {
+          const nA = activeNodes[i];
+          const nB = activeNodes[j];
+          const link = evaluateLinkBetween(nA, nB, 18);
+
+          const isSelected = !state.customTargetPoint &&
+            ((state.activeLinkPair[0] === nA.id && state.activeLinkPair[1] === nB.id) ||
+             (state.activeLinkPair[0] === nB.id && state.activeLinkPair[1] === nA.id));
+
+          let statusBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">LOS OK · ${link.rssiDbm.toFixed(0)} dBm</span>`;
+          if (link.rssiDbm < -130) {
+            statusBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/30">BLOCKED · ${link.rssiDbm.toFixed(0)} dBm</span>`;
+          } else if (link.rssiDbm < -118) {
+            statusBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30">GRAZING · ${link.rssiDbm.toFixed(0)} dBm</span>`;
+          }
+
+          const item = document.createElement('div');
+          item.onclick = () => {
+            state.customTargetPoint = null;
+            state.activeLinkPair = [nA.id, nB.id];
+            updateAllVisuals();
+          };
+          item.className = `p-2.5 rounded-lg border cursor-pointer transition ${
+            isSelected ? 'bg-slate-800 border-cyan-400 shadow' : 'bg-slate-950/80 border-slate-800 hover:bg-slate-800/60'
+          }`;
+
+          item.innerHTML = `
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <div class="text-xs font-bold text-white font-mono">${nA.shortName} (${link.txPowerADbm}dBm) ⇄ ${nB.shortName} (${link.txPowerBDbm}dBm)</div>
+              ${statusBadge}
+            </div>
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>Dist: <strong class="text-slate-200">${link.distMiles.toFixed(2)} mi</strong></span>
+              <span>A→B: <strong class="text-emerald-300">${link.rssiDbm.toFixed(1)} dBm</strong></span>
+              <span>B→A: <strong class="text-cyan-300">${link.reverseRssiDbm.toFixed(1)} dBm</strong></span>
+            </div>
+          `;
+          listEl.appendChild(item);
+        }
+      }
+    }
+
+    function onSelectLinkPairDropdown() {
+      const idA = document.getElementById('selLinkNodeA').value;
+      const idB = document.getElementById('selLinkNodeB').value;
+      if (idA && idB && idA !== idB) {
+        state.customTargetPoint = null;
+        state.activeLinkPair = [idA, idB];
+        updateAllVisuals();
+      }
+    }
+
+    function updateCrossSectionProfiler() {
+      const activeNodes = state.nodes.filter(n => n.enabled);
+      let nodeA = state.nodes.find(n => n.id === state.activeLinkPair[0]) || getSelectedNode();
+      let targetB = null;
+
+      if (state.customTargetPoint) {
+        nodeA = getSelectedNode();
+        targetB = state.customTargetPoint;
+      } else {
+        targetB = state.nodes.find(n => n.id === state.activeLinkPair[1] && n.id !== nodeA.id) ||
+                  activeNodes.find(n => n.id !== nodeA.id);
+      }
+
+      if (!nodeA || !targetB) return;
+
+      const link = evaluateLinkBetween(nodeA, targetB, 48);
+      const isNodeB = Boolean(targetB.id);
+
+      document.getElementById('profileTargetTitle').textContent = isNodeB
+        ? `${nodeA.shortName} (${link.txPowerADbm}dBm) ⇄ ${targetB.shortName} (${link.txPowerBDbm}dBm)`
+        : `${nodeA.shortName} (${link.txPowerADbm}dBm) → ${targetB.name}`;
+
+      document.getElementById('profDist').textContent = link.distMiles < 0.25
+        ? `${Math.round(link.distFeet)} ft`
+        : `${link.distMiles.toFixed(2)} mi`;
+      document.getElementById('profFspl').textContent = `${link.fsplDb.toFixed(1)} dB`;
+      document.getElementById('profLobeLoss').textContent = `-${link.totalLobeLossDb.toFixed(1)} dB`;
+      document.getElementById('profRssi').textContent = isNodeB
+        ? `${link.rssiDbm.toFixed(1)} / ${link.reverseRssiDbm.toFixed(1)} dBm`
+        : `${link.rssiDbm.toFixed(1)} dBm`;
+      document.getElementById('profSnr').textContent = `${link.snrDb >= 0 ? '+' : ''}${link.snrDb.toFixed(1)} dB`;
+
+      const statusEl = document.getElementById('profStatus');
+      const worstTwoWayRssi = isNodeB ? Math.min(link.rssiDbm, link.reverseRssiDbm) : link.rssiDbm;
+      if (worstTwoWayRssi >= -112) {
+        statusEl.textContent = "STRONG 2-WAY LINK";
+        statusEl.className = "text-emerald-400 font-bold";
+      } else if (worstTwoWayRssi >= -124) {
+        statusEl.textContent = "2-WAY GRAZING OK";
+        statusEl.className = "text-amber-300 font-bold";
+      } else if (worstTwoWayRssi >= -130) {
+        statusEl.textContent = "EDGE OF LORA";
+        statusEl.className = "text-rose-400 font-bold";
+      } else if (Math.max(link.rssiDbm, link.reverseRssiDbm) >= -128) {
+        statusEl.textContent = "ASYMMETRIC (1-WAY)";
+        statusEl.className = "text-fuchsia-400 font-bold";
+      } else {
+        statusEl.textContent = "TERRAIN BLOCKED";
+        statusEl.className = "text-rose-500 font-bold";
+      }
+
+      drawDualConeCrossSection(nodeA, targetB, link);
+    }
+
+    function drawDualConeCrossSection(nodeA, targetB, link) {
+      const canvas = document.getElementById('profileCanvas');
+      if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const W = rect.width;
+      const H = rect.height;
+      ctx.clearRect(0, 0, W, H);
+
+      const padL = 52, padR = 52, padT = 18, padB = 24;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      const steps = 64;
+      const samples = [];
+      const earthRadiusM = 6371000 * 1.333;
+      const distMeters = link.distKm * 1000.0;
+      const clutterFt = state.clutterHeightFt;
+
+      let minElevFt = 99999;
+      let maxElevFt = -99999;
+
+      for (let i = 0; i <= steps; i++) {
+        const frac = i / steps;
+        const lat = nodeA.lat + (targetB.lat - nodeA.lat) * frac;
+        const lon = nodeA.lon + (targetB.lon - nodeA.lon) * frac;
+        const d1 = distMeters * frac;
+        const d2 = distMeters * (1 - frac);
+        const bulgeFt = ((d1 * d2) / (2 * earthRadiusM)) * 3.28084;
+
+        const gFt = getElevationMeters(lat, lon) * 3.28084 + bulgeFt;
+        const treeFt = (i === 0 || i === steps) ? gFt : gFt + clutterFt * 0.85;
+
+        if (gFt < minElevFt) minElevFt = gFt;
+        if (treeFt > maxElevFt) maxElevFt = treeFt;
+        samples.push({ frac, gFt, treeFt, d1, d2 });
+      }
+
+      const rxHeightFt = targetB.id ? targetB.heightFt : 6.0;
+      const txTopFt = samples[0].gFt + nodeA.heightFt;
+      const rxTopFt = samples[steps].gFt + rxHeightFt;
+
+      minElevFt = Math.min(minElevFt, txTopFt, rxTopFt) - 25;
+      maxElevFt = Math.max(maxElevFt, txTopFt + 28, rxTopFt + 28);
+
+      const xOf = (frac) => padL + frac * plotW;
+      const yOf = (elevFt) => padT + plotH - ((elevFt - minElevFt) / (maxElevFt - minElevFt)) * plotH;
+
+      // Grid lines
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px "JetBrains Mono", monospace';
+      for (let k = 0; k <= 3; k++) {
+        const val = minElevFt + (k / 3) * (maxElevFt - minElevFt);
+        const y = yOf(val);
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+        ctx.fillText(`${Math.round(val)}ft`, 6, y + 3);
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(padL, padT, plotW, plotH);
+      ctx.clip();
+
+      const distFt = link.distFeet;
+      const txX = xOf(0), txY = yOf(txTopFt);
+      const rxX = xOf(1), rxY = yOf(rxTopFt);
+
+      // 1. Node A Vertical Beamwidth Cone (Left -> Right)
+      const specA = ANTENNA_SPECS[nodeA.gain] || ANTENNA_SPECS[5.8];
+      const halfRadA = (specA.halfAngle * Math.PI) / 180;
+      const upAFt = txTopFt + Math.tan(halfRadA) * distFt;
+      const dnAFt = txTopFt - Math.tan(halfRadA) * distFt;
+
+      ctx.beginPath();
+      ctx.moveTo(txX, txY);
+      ctx.lineTo(rxX, yOf(upAFt));
+      ctx.lineTo(rxX, yOf(dnAFt));
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.13)';
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(txX, txY);
+      ctx.lineTo(rxX, yOf(upAFt));
+      ctx.moveTo(txX, txY);
+      ctx.lineTo(rxX, yOf(dnAFt));
+      ctx.stroke();
+
+      // 2. Node B Vertical Beamwidth Cone (Right -> Left, if Target is a Mesh Node)
+      if (targetB.id) {
+        const specB = ANTENNA_SPECS[targetB.gain] || ANTENNA_SPECS[5.8];
+        const halfRadB = (specB.halfAngle * Math.PI) / 180;
+        const upBFt = rxTopFt + Math.tan(halfRadB) * distFt;
+        const dnBFt = rxTopFt - Math.tan(halfRadB) * distFt;
+
+        ctx.beginPath();
+        ctx.moveTo(rxX, rxY);
+        ctx.lineTo(txX, yOf(upBFt));
+        ctx.lineTo(txX, yOf(dnBFt));
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(34, 211, 238, 0.11)';
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(34, 211, 238, 0.45)';
+        ctx.beginPath();
+        ctx.moveTo(rxX, rxY);
+        ctx.lineTo(txX, yOf(upBFt));
+        ctx.moveTo(rxX, rxY);
+        ctx.lineTo(txX, yOf(dnBFt));
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      // 3. Tree Canopy Polygon
+      ctx.beginPath();
+      ctx.moveTo(xOf(0), yOf(minElevFt));
+      samples.forEach(s => ctx.lineTo(xOf(s.frac), yOf(s.treeFt)));
+      ctx.lineTo(xOf(1), yOf(minElevFt));
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(22, 101, 52, 0.35)';
+      ctx.fill();
+
+      // 4. Bare Ground Terrain Polygon
+      ctx.beginPath();
+      ctx.moveTo(xOf(0), yOf(minElevFt));
+      samples.forEach(s => ctx.lineTo(xOf(s.frac), yOf(s.gFt)));
+      ctx.lineTo(xOf(1), yOf(minElevFt));
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+      grad.addColorStop(0, '#334155');
+      grad.addColorStop(1, '#0f172a');
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // 5. 60% First Fresnel Zone Ellipse & Direct Sightline
+      const wavelengthFt = (299.792458 / HOME_SITE.freqMHz) * 3.28084;
+      ctx.beginPath();
+      samples.forEach((s, i) => {
+        const losFt = txTopFt + (rxTopFt - txTopFt) * s.frac;
+        const r1Ft = 0.6 * Math.sqrt((wavelengthFt * (s.d1 * 3.28084) * (s.d2 * 3.28084)) / Math.max(1, distFt));
+        if (i === 0) ctx.moveTo(xOf(s.frac), yOf(losFt + r1Ft));
+        else ctx.lineTo(xOf(s.frac), yOf(losFt + r1Ft));
+      });
+      for (let i = steps; i >= 0; i--) {
+        const s = samples[i];
+        const losFt = txTopFt + (rxTopFt - txTopFt) * s.frac;
+        const r1Ft = 0.6 * Math.sqrt((wavelengthFt * (s.d1 * 3.28084) * (s.d2 * 3.28084)) / Math.max(1, distFt));
+        ctx.lineTo(xOf(s.frac), yOf(losFt - r1Ft));
+      }
+      ctx.closePath();
+      ctx.fillStyle = link.rssiDbm >= -124 ? 'rgba(34, 211, 238, 0.16)' : 'rgba(244, 63, 94, 0.16)';
+      ctx.fill();
+
+      ctx.strokeStyle = link.rssiDbm >= -112 ? '#10b981' : (link.rssiDbm >= -128 ? '#fbbf24' : '#f43f5e');
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(txX, txY);
+      ctx.lineTo(rxX, rxY);
+      ctx.stroke();
+
+      // Masts & Dots
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(txX, yOf(samples[0].gFt));
+      ctx.lineTo(txX, txY);
+      ctx.moveTo(rxX, yOf(samples[steps].gFt));
+      ctx.lineTo(rxX, rxY);
+      ctx.stroke();
+
+      ctx.fillStyle = nodeA.color || '#10b981';
+      ctx.beginPath();
+      ctx.arc(txX, txY, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = targetB.color || '#22d3ee';
+      ctx.beginPath();
+      ctx.arc(rxX, rxY, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // Axis labels
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.fillText(`${nodeA.shortName} (${Math.round(txTopFt)}ft)`, padL, H - 6);
+      const endLbl = targetB.id ? `${targetB.shortName} (${Math.round(rxTopFt)}ft)` : `Target (${Math.round(rxTopFt)}ft)`;
+      ctx.fillText(endLbl, W - padR - 80, H - 6);
+    }
+
+    /***********************************************************************
+     * 7. IDEAL / IDLE MESH CONFIGURATOR & CLI GENERATOR
+     ***********************************************************************/
+    function computeNodePowerAndCli(nd) {
+      const hw = HARDWARE_SPECS[nd.hardware] || HARDWARE_SPECS.rak4631;
+      const groundFt = Math.round(getElevationMeters(nd.lat, nd.lon) * 3.28084);
+      const totalAltFt = groundFt + nd.heightFt;
+
+      // Calculate daily Ah consumption at 98% Idle / 2% TX duty cycle (optimized Idle Mesh intervals)
+      const avgCurrentMa = hw.idleCurrentMa * 0.98 + hw.txCurrentMa * 0.02;
+      const dailyAh = (avgCurrentMa * 24) / 1000;
+      const batteryMah = hw.recommendedBatteryMah;
+      const darkDaysAutonomy = ((batteryMah / 1000) * 0.85) / dailyAh; // 85% usable DoD
+
+      // Recommended Role logic based on elevation and 1W vs 0.1W pairing
+      let recommendedRole = "CLIENT";
+      let roleReason = "Smart-flooding CLIENT balances local coverage and multi-hop forwarding without hogging airtime.";
+      if (hw.txPowerDbm >= 30 && nd.heightFt >= 20) {
+        recommendedRole = "CLIENT (1W Chimney Base)";
+        roleReason = "1W (30 dBm) + 5.8 dBi on your 30 ft chimney achieves ~35.3 dBm EIRP & LNA RX boost. Keep as CLIENT so it relays packets for your 0.1W handheld across Northville, Maybury, and South Lyon.";
+      } else if (nd.role === 'CLIENT_MUTE' || nd.heightFt <= 10) {
+        recommendedRole = "CLIENT_MUTE (Personal / Mobile)";
+        roleReason = "Set your 0.1W personal/truck node to CLIENT_MUTE so it never steals hops inside the house or driveway—letting your 1W Chimney Base handle 100% of repeating.";
+      } else if (totalAltFt >= 965 && nd.heightFt >= 25) {
+        recommendedRole = "CLIENT (or ROUTER)";
+        roleReason = "Sits on a dominant 965+ ft glacial crest. Ideal regional relay; keep as CLIENT or ROUTER.";
+      }
+
+      const isMobile = nd.role === 'CLIENT_MUTE' || nd.power === 'battery';
+      const posCmd = isMobile
+        ? `meshtastic --set position.smart_broadcast_enabled true --set position.position_broadcast_secs 1800`
+        : `meshtastic --set position.fixed_position true --setlat ${nd.lat.toFixed(5)} --setlon ${nd.lon.toFixed(5)} --setalt ${Math.round(totalAltFt * 0.3048)}`;
+
+      // Generate exact Meshtastic CLI command block for this node
+      const cliCmd = [
+        `# === ${nd.name} (${nd.shortName}) — ${hw.name} ===`,
+        `meshtastic --set-owner "${nd.name}" --set-owner-short "${nd.shortName}"`,
+        `meshtastic --set lora.region US --set lora.modem_preset LONG_FAST --set lora.channel_num 20 --set lora.tx_power ${hw.txPowerDbm}`,
+        `meshtastic --set lora.hop_limit 3 --set lora.sx126x_rx_boosted_gain true`,
+        `meshtastic --set device.role ${nd.role} --set device.node_info_broadcast_secs 10800`,
+        posCmd,
+        `meshtastic --set telemetry.device_update_interval 3600 ${hw.sleepFlag}`
+      ].join('\n');
+
+      return {
+        hw,
+        groundFt,
+        totalAltFt,
+        avgCurrentMa,
+        dailyAh,
+        batteryMah,
+        darkDaysAutonomy,
+        recommendedRole,
+        roleReason,
+        cliCmd
+      };
+    }
+
+    function renderIdleMeshConfigPanels() {
+      const sidebarBox = document.getElementById('sidebarIdleSummaryCards');
+      const modalBox = document.getElementById('modalNodeConfigCards');
+      if (!sidebarBox || !modalBox) return;
+
+      sidebarBox.innerHTML = '';
+      modalBox.innerHTML = '';
+
+      state.nodes.forEach((nd, idx) => {
+        const info = computeNodePowerAndCli(nd);
+        const cmdId = `cliBlock_${nd.id}`;
+
+        // Compact Sidebar Card
+        const sCard = document.createElement('div');
+        sCard.className = "p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5";
+        sCard.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white">${idx + 1}. ${nd.name} (${nd.shortName})</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300">${nd.role}</span>
+          </div>
+          <div class="text-[11px] font-mono text-slate-400 flex justify-between">
+            <span>Draw: <strong class="text-emerald-300">${info.avgCurrentMa.toFixed(1)} mA</strong></span>
+            <span>No-Sun Autonomy: <strong class="text-cyan-300">${info.darkDaysAutonomy.toFixed(1)} Days</strong></span>
+          </div>
+          <button onclick="copyCliText('${nd.id}')" class="w-full py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[11px] font-mono border border-slate-700">
+            📋 Copy Meshtastic CLI Setup
+          </button>
+        `;
+        sidebarBox.appendChild(sCard);
+
+        // Full Modal Card
+        const mCard = document.createElement('div');
+        mCard.className = "bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between space-y-3";
+        mCard.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full" style="background-color:${nd.color}"></span>
+                <h4 class="text-sm font-bold text-white">${nd.name} <span class="font-mono text-emerald-400">(${nd.shortName})</span></h4>
+              </div>
+              <span class="text-xs font-mono text-cyan-300">${info.totalAltFt} ft ASL (${nd.gain} dBi)</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-[11px] font-mono">
+              <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                <div class="text-slate-400 text-[10px]">Avg Idle Draw</div>
+                <div class="text-emerald-400 font-bold">${info.avgCurrentMa.toFixed(1)} mA</div>
+                <div class="text-[9px] text-slate-500">${info.dailyAh.toFixed(2)} Ah / day</div>
+              </div>
+              <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                <div class="text-slate-400 text-[10px]">Dark Autonomy</div>
+                <div class="text-cyan-400 font-bold">${info.darkDaysAutonomy.toFixed(1)} Days</div>
+                <div class="text-[9px] text-slate-500">on ${info.batteryMah}mAh cell</div>
+              </div>
+              <div class="bg-slate-900 p-2 rounded border border-slate-800">
+                <div class="text-slate-400 text-[10px]">MI Winter Solar</div>
+                <div class="text-amber-300 font-bold">${info.hw.recommendedSolarWatts}W Panel</div>
+                <div class="text-[9px] text-slate-500">Recommended</div>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-300 bg-slate-900/70 p-2 rounded border border-slate-800/80">
+              <strong class="text-indigo-300">Role Advisor (${info.recommendedRole}):</strong> ${info.roleReason}
+            </p>
+
+            <div class="relative">
+              <pre id="${cmdId}" class="bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-[11px] font-mono text-emerald-300 overflow-x-auto leading-relaxed select-all">${info.cliCmd}</pre>
+              <button onclick="copyCliText('${nd.id}')" id="copyBtn_${nd.id}" class="absolute top-2 right-2 px-2 py-1 rounded bg-slate-800 hover:bg-emerald-600 text-white text-[10px] font-mono border border-slate-600 transition">
+                Copy CLI
+              </button>
+            </div>
+          </div>
+        `;
+        modalBox.appendChild(mCard);
+      });
+    }
+
+    function copyCliText(nodeId) {
+      const nd = state.nodes.find(n => n.id === nodeId);
+      if (!nd) return;
+      const info = computeNodePowerAndCli(nd);
+      const ta = document.createElement('textarea');
+      ta.value = info.cliCmd;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+
+      const btn = document.getElementById(`copyBtn_${nodeId}`);
+      if (btn) {
+        const orig = btn.textContent;
+        btn.textContent = "✓ Copied!";
+        setTimeout(() => { btn.textContent = orig; }, 1600);
+      }
+    }
+
+    /***********************************************************************
+     * 8. VIEW CONTROLS, TABS & INITIALIZATION
+     ***********************************************************************/
+    function switchSidebarTab(tabName) {
+      ['nodes', 'links', 'idle'].forEach(t => {
+        const panel = document.getElementById(`sidebarTab_${t}`);
+        if (panel) panel.classList.toggle('hidden', t !== tabName);
+      });
+
+      document.getElementById('tabBtnNodes').className = tabName === 'nodes'
+        ? "py-2.5 px-2 border-b-2 border-emerald-500 text-emerald-400 bg-slate-900/60 transition"
+        : "py-2.5 px-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition";
+      document.getElementById('tabBtnLinks').className = tabName === 'links'
+        ? "py-2.5 px-2 border-b-2 border-cyan-400 text-cyan-300 bg-slate-900/60 transition"
+        : "py-2.5 px-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition";
+      document.getElementById('tabBtnIdle').className = tabName === 'idle'
+        ? "py-2.5 px-2 border-b-2 border-indigo-400 text-indigo-300 bg-slate-900/60 transition"
+        : "py-2.5 px-2 border-b-2 border-transparent text-indigo-300 hover:text-indigo-200 transition";
+    }
+
+    function setCoverageMode(mode) {
+      state.coverageMode = mode;
+      const bComb = document.getElementById('btnCovCombined');
+      const bSel = document.getElementById('btnCovSelected');
+      const bOvr = document.getElementById('btnCovOverlap');
+      const bDiff = document.getElementById('btnCovDiff1W');
+      const stdLeg = document.getElementById('standardLegend');
+      const ovrLeg = document.getElementById('overlapLegend');
+      const diffLeg = document.getElementById('diff1WLegend');
+      const title = document.getElementById('legendTitle');
+
+      bComb.className = mode === 'combined'
+        ? "px-2.5 py-1.5 rounded text-xs font-medium transition flex items-center gap-1.5 bg-emerald-600 text-white shadow"
+        : "px-2.5 py-1.5 rounded text-xs font-medium transition text-slate-300 hover:text-white hover:bg-slate-800";
+      bSel.className = mode === 'selected'
+        ? "px-2.5 py-1.5 rounded text-xs font-medium transition flex items-center gap-1.5 bg-emerald-600 text-white shadow"
+        : "px-2.5 py-1.5 rounded text-xs font-medium transition text-slate-300 hover:text-white hover:bg-slate-800";
+      bOvr.className = mode === 'overlap'
+        ? "px-2.5 py-1.5 rounded text-xs font-medium transition flex items-center gap-1.5 bg-cyan-500 text-slate-950 font-bold shadow"
+        : "px-2.5 py-1.5 rounded text-xs font-medium transition text-cyan-300 hover:bg-slate-800";
+      if (bDiff) {
+        bDiff.className = mode === 'diff_1w'
+          ? "px-2.5 py-1.5 rounded text-xs font-bold transition bg-fuchsia-600 text-white shadow"
+          : "px-2.5 py-1.5 rounded text-xs font-semibold transition text-fuchsia-300 bg-fuchsia-500/10 border border-fuchsia-500/30 hover:bg-fuchsia-500/20";
+      }
+
+      stdLeg.classList.add('hidden');
+      ovrLeg.classList.add('hidden');
+      if (diffLeg) diffLeg.classList.add('hidden');
+
+      if (mode === 'overlap') {
+        ovrLeg.classList.remove('hidden');
+        title.textContent = "Multi-Node Handoff Overlap";
+      } else if (mode === 'diff_1w') {
+        if (diffLeg) diffLeg.classList.remove('hidden');
+        title.textContent = "Δ 1W (30dBm) vs 0.1W Chimney";
+      } else {
+        stdLeg.classList.remove('hidden');
+        title.textContent = mode === 'selected' ? "Selected Node Coverage" : "Combined Mesh Coverage";
+      }
+
+      renderCoverageOverlay();
+    }
+
+    function zoomToSelectedNodeClose() {
+      const nd = getSelectedNode();
+      if (nd && map) {
+        map.setView([nd.lat, nd.lon], 16);
+      }
+    }
+
+    function toggleIdleMeshModal(show) {
+      const modal = document.getElementById('idleMeshModal');
+      if (modal) {
+        modal.classList.toggle('hidden', !show);
+        if (show) renderIdleMeshConfigPanels();
+      }
+    }
+
+    function setBaseMap(type) {
+      if (activeBaseLayer) map.removeLayer(activeBaseLayer);
+      activeBaseLayer = baseLayers[type] || baseLayers.gterrain;
+      activeBaseLayer.addTo(map);
+
+      ['gterrain', 'ghybrid', 'gstreets', 'usgstopo'].forEach(k => {
+        const btn = document.getElementById('mapBtn_' + k);
+        if (btn) {
+          btn.className = (k === type)
+            ? "px-1.5 py-1 rounded text-[10px] bg-emerald-600 text-white font-medium transition"
+            : "px-1.5 py-1 rounded text-[10px] bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
+        }
+      });
+    }
+
+    function renderCoverageOverlay() {
+      if (heatOverlayInstance) heatOverlayInstance.draw();
+    }
+
+    function updateAllVisuals() {
+      renderNodeRoster();
+      populateSelectedNodeEditor();
+      renderMapMarkersAndLinks();
+      renderMeshLinksTab();
+      renderIdleMeshConfigPanels();
+      renderCoverageOverlay();
+      updateCrossSectionProfiler();
+    }
+
+    window.addEventListener('resize', () => {
+      updateCrossSectionProfiler();
+    });
+
+    window.onload = () => {
+      initMap();
+      updateAllVisuals();
+      fetchLiveOpenMeteoDEM();
+    };
+  </script>
+</body>
+</html>

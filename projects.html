@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
-  <title>CHAZFAB // Projects &amp; Hardware</title>
+  <title>CHAZFAB // Projects &amp; Tools</title>
   <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png">
   <link rel="stylesheet" href="./style.css">
   <script defer src="./mainframe.js"></script>
@@ -19,9 +19,9 @@
         </div>
         <ul class="drawer-list">
           <li><a class="drawer-link" href="./index.html"><span>[MAINFRAME]</span></a></li>
-          <li><a class="drawer-link" href="./games.html"><span>[GAMES]</span></a></li>
-          <li><a class="drawer-link" href="./projects.html" aria-current="page"><span>[PROJECTS]</span></a></li>
-          <li><a class="drawer-link" href="./labs.html"><span>[LABS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/number-munchers/index.html"><span>[MUNCHERS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/salmon-tracker/index.html"><span>[SALMON]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/meshtastic-planner.html"><span>[MESHTASTIC]</span></a></li>
           <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span></a></li>
         </ul>
       </nav>
@@ -42,9 +42,9 @@
 
       <nav class="top-nav" aria-label="Primary navigation">
         <a class="nav-tab" href="./index.html">[MAINFRAME]</a>
-        <a class="nav-tab" href="./games.html">[GAMES]</a>
-        <a class="nav-tab" href="./projects.html" aria-current="page">[PROJECTS *]</a>
-        <a class="nav-tab" href="./labs.html">[LABS]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/number-munchers/index.html">[MUNCHERS]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/salmon-tracker/index.html">[SALMON]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/meshtastic-planner.html">[MESHTASTIC]</a>
         <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
       </nav>
 
@@ -58,67 +58,56 @@
 
     <main class="mainframe-stage">
       <div class="page-intro">
-        <h1 class="page-title">3D, Hardware &amp; Off-Grid Lab</h1>
-        <p class="page-note">Physical builds, CAD slots, and radio hardware templates.</p>
+        <h1 class="page-title">Off-Grid &amp; Great Lakes Tools</h1>
+        <p class="page-note">Live browser engineering tools and real-time environmental dashboards.</p>
       </div>
 
-      <section class="hub-grid" aria-label="Hardware projects">
-        <!-- 3D Scanner Project Placeholder -->
-        <article class="clean-card" id="hardware">
-          <div class="card-head">
-            <h2 class="card-title">3D Scanner</h2>
-            <span class="status-pill status-pill--wip">WIP</span>
-          </div>
-          <div class="card-art" aria-hidden="true">
-            <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
-              <rect x="26" y="72" width="142" height="44" rx="4" fill="none" stroke="#00e5ff" stroke-width="2"/>
-              <ellipse cx="97" cy="84" rx="48" ry="15" fill="none" stroke="#00ff41" stroke-width="2"/>
-              <rect x="216" y="22" width="32" height="22" fill="none" stroke="#00ff41" stroke-width="2"/>
-              <line x1="216" y1="33" x2="115" y2="80" stroke="#ff2800" stroke-width="1.4" stroke-dasharray="4 3"/>
-              <line x1="232" y1="44" x2="216" y2="122" stroke="#00e5ff" stroke-width="1.6"/>
-              <line x1="232" y1="44" x2="248" y2="122" stroke="#00e5ff" stroke-width="1.6"/>
-            </svg>
-          </div>
-          <table class="spec-table" aria-label="3D Scanner deliverables">
-            <tbody>
-              <tr><th>Print Plate (.3MF)</th><td>Pending</td></tr>
-              <tr><th>2D Blueprint</th><td>Slot Ready</td></tr>
-            </tbody>
-          </table>
-          <div class="action-row">
-            <a class="enter-btn" href="./projects/3d-scanner.html">[OPEN STUB]</a>
-          </div>
-        </article>
-
-        <!-- Off-Grid Radio Starter Slot -->
+      <section class="hub-grid" aria-label="Live tools and apps">
+        <!-- Meshtastic 915 MHz RF Planner -->
         <article class="clean-card" id="offgrid">
           <div class="card-head">
-            <h2 class="card-title">Off-Grid Lab</h2>
-            <span class="status-pill">STARTER</span>
+            <h2 class="card-title">Meshtastic 915 MHz RF Planner</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
           </div>
           <div class="card-art" aria-hidden="true">
-            <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
-              <line x1="64" y1="40" x2="210" y2="40" stroke="#00ff41" stroke-width="2" stroke-dasharray="5 3"/>
-              <line x1="64" y1="40" x2="64" y2="105" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="210" y1="40" x2="210" y2="105" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="64" y1="105" x2="210" y2="105" stroke="#00ff41" stroke-width="2" stroke-dasharray="5 3"/>
-              <rect x="44" y="24" width="40" height="32" fill="#031410" stroke="#00ff41" stroke-width="2"/>
-              <rect x="190" y="24" width="40" height="32" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="44" y="88" width="40" height="32" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="190" y="88" width="40" height="32" fill="#031410" stroke="#00ff41" stroke-width="2"/>
-              <text x="48" y="44" fill="#00ff41" font-family="monospace" font-size="8">BASE_01</text>
-              <text x="194" y="44" fill="#00e5ff" font-family="monospace" font-size="8">RELAY_1</text>
-              <text x="48" y="108" fill="#00e5ff" font-family="monospace" font-size="8">NODE_RX</text>
-              <text x="194" y="108" fill="#00ff41" font-family="monospace" font-size="8">FIELD_2</text>
+            <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 124 L72 96 L122 108 L178 72 L238 102 L304 82 L304 136 L16 136 Z" fill="#03121d" stroke="#00e5ff" stroke-opacity="0.55" stroke-width="1.4"/>
+              <line x1="72" y1="62" x2="178" y2="42" stroke="#00ff41" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <line x1="178" y1="42" x2="254" y2="66" stroke="#00ff41" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <circle cx="72" cy="62" r="5" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
+              <circle cx="178" cy="42" r="6" fill="#031410" stroke="#00ff41" stroke-width="2"/>
+              <circle cx="254" cy="66" r="5" fill="#03121d" stroke="#9d4edd" stroke-width="2"/>
+              <text x="18" y="24" fill="#00ff41" font-family="monospace" font-size="11" font-weight="700">US915 // 906.875 MHz</text>
             </svg>
           </div>
-          <p class="card-desc">Clean starter slot ready for field mesh nodes, antenna measurements, and enclosure BOMs.</p>
-          <table class="spec-table" aria-label="Off-Grid Starter Specs">
-            <tbody>
-              <tr><th>Radio Band</th><td>915 MHz LoRa</td></tr>
-              <tr><th>Node Notes</th><td>Empty Slot</td></tr>
-            </tbody>
-          </table>
+          <p class="card-desc">Interactive Southeast Michigan multi-node LoRa planner with SRTM 30m DEM, dual-cone Fresnel profiler &amp; CLI config export.</p>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/meshtastic-planner.html">[LAUNCH]<span class="visually-hidden"> Meshtastic 915 MHz RF Planner</span></a>
+            <a class="btn-raw" href="./labs/meshtastic-planner.html">[FULLSCREEN]<span class="visually-hidden"> Meshtastic 915 MHz RF Planner</span></a>
+          </footer>
+        </article>
+
+        <!-- Michigan Salmon Staging Tracker -->
+        <article class="clean-card clean-card--green" id="salmon">
+          <div class="card-head">
+            <h2 class="card-title">Michigan Salmon Staging Tracker</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 106 Q72 88 126 106 T234 106 T304 102" fill="none" stroke="#00e5ff" stroke-width="1.6" stroke-opacity="0.75"/>
+              <path d="M62 66 C94 40 148 40 184 62 L212 46 L204 66 L212 86 L184 70 C148 92 94 92 62 66 Z" fill="#031622" stroke="#00ff41" stroke-width="2"/>
+              <circle cx="84" cy="62" r="3" fill="#00e5ff"/>
+              <circle cx="256" cy="40" r="6" fill="#00ff41" fill-opacity="0.22" stroke="#00ff41" stroke-width="1.6"/>
+              <circle cx="256" cy="40" r="2.5" fill="#00ff41"/>
+              <text x="20" y="26" fill="#00e5ff" font-family="monospace" font-size="11" font-weight="700">GREAT LAKES // MI</text>
+            </svg>
+          </div>
+          <p class="card-desc">Interactive Michigan DNR hotspot map, NOAA buoy upwelling vectors, USGS river discharge hydrographs &amp; 6-species run evaluator.</p>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/salmon-tracker/index.html">[LAUNCH]<span class="visually-hidden"> Michigan Salmon Staging Tracker</span></a>
+            <a class="btn-raw" href="./labs/salmon-tracker/index.html">[FULLSCREEN]<span class="visually-hidden"> Michigan Salmon Staging Tracker</span></a>
+          </footer>
         </article>
       </section>
     </main>
@@ -129,7 +118,7 @@
           <label class="terminal-prompt-label" for="terminalInput">
             C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span>
           </label>
-          <input class="terminal-input" id="terminalInput" type="text" placeholder="scanner, games, labs, home, help..." autocomplete="off" spellcheck="false">
+          <input class="terminal-input" id="terminalInput" type="text" placeholder="mesh, salmon, munchers, sysop, home, help..." autocomplete="off" spellcheck="false">
         </form>
         <span class="terminal-output" id="terminalOutput" aria-live="polite"></span>
       </div>

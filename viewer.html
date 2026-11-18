@@ -11,13 +11,13 @@
 <body class="viewer-body">
   <header class="viewer-topbar">
     <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
-      <a class="btn-play" id="backBtn" href="./labs.html" style="min-height:32px;padding:0.2rem 0.65rem;flex:0 0 auto;">&larr; BACK</a>
-      <span class="viewer-file-label" id="fileReadout">labs/tron-grid-test.html</span>
+      <a class="btn-play" id="backBtn" href="./index.html" style="min-height:32px;padding:0.2rem 0.65rem;flex:0 0 auto;">&larr; MAINFRAME</a>
+      <span class="viewer-file-label" id="fileReadout">labs/number-munchers/index.html</span>
     </div>
-    <a class="btn-raw" id="rawBtn" href="./labs/tron-grid-test.html" style="min-height:32px;padding:0.2rem 0.65rem;flex:0 0 auto;">RAW .HTML &rarr;</a>
+    <a class="btn-raw" id="rawBtn" href="./labs/number-munchers/index.html" style="min-height:32px;padding:0.2rem 0.65rem;flex:0 0 auto;">FULLSCREEN &#8599;</a>
   </header>
 
-  <iframe class="viewer-frame" id="appFrame" title="CHAZFAB Mainframe App Viewer" src="./labs/tron-grid-test.html"></iframe>
+  <iframe class="viewer-frame" id="appFrame" title="CHAZFAB Mainframe App Viewer" src="./labs/number-munchers/index.html?theme=dark"></iframe>
 
   <script>
     (function () {
@@ -25,20 +25,19 @@
       const requested = (params.get('app') || '').trim();
       const safePattern = /^(labs|projects)\/[a-zA-Z0-9_./-]+\.html$/;
       const isSafe = safePattern.test(requested) && !requested.includes('..');
-      const target = isSafe ? requested : 'labs/tron-grid-test.html';
+      const target = isSafe ? requested : 'labs/number-munchers/index.html';
 
       const appFrame = document.getElementById('appFrame');
       const fileReadout = document.getElementById('fileReadout');
       const rawBtn = document.getElementById('rawBtn');
       const backBtn = document.getElementById('backBtn');
 
-      appFrame.src = './' + target;
+      const sep = target.includes('?') ? '&' : '?';
+      appFrame.src = './' + target + sep + 'theme=dark';
       rawBtn.href = './' + target;
       fileReadout.textContent = target;
 
-      if (target.startsWith('labs/number-munchers')) {
-        backBtn.href = './games.html';
-      } else if (document.referrer && document.referrer.startsWith(window.location.origin)) {
+      if (document.referrer && document.referrer.startsWith(window.location.origin)) {
         backBtn.addEventListener('click', (e) => {
           e.preventDefault();
           history.back();

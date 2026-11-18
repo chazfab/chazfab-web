@@ -1,0 +1,11 @@
+{
+  "name": "chazfab-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "cf deploy ."
+  },
+  "devDependencies": {
+    "cf": "^0.15.0"
+  }
+}

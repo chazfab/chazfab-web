@@ -19,9 +19,9 @@
         </div>
         <ul class="drawer-list">
           <li><a class="drawer-link" href="./index.html"><span>[MAINFRAME]</span></a></li>
-          <li><a class="drawer-link" href="./games.html"><span>[GAMES]</span></a></li>
-          <li><a class="drawer-link" href="./projects.html"><span>[PROJECTS]</span></a></li>
-          <li><a class="drawer-link" href="./labs.html" aria-current="page"><span>[LABS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/number-munchers/index.html"><span>[MUNCHERS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/salmon-tracker/index.html"><span>[SALMON]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/meshtastic-planner.html"><span>[MESHTASTIC]</span></a></li>
           <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span></a></li>
         </ul>
       </nav>
@@ -42,9 +42,9 @@
 
       <nav class="top-nav" aria-label="Primary navigation">
         <a class="nav-tab" href="./index.html">[MAINFRAME]</a>
-        <a class="nav-tab" href="./games.html">[GAMES]</a>
-        <a class="nav-tab" href="./projects.html">[PROJECTS]</a>
-        <a class="nav-tab" href="./labs.html" aria-current="page">[LABS *]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/number-munchers/index.html">[MUNCHERS]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/salmon-tracker/index.html">[SALMON]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/meshtastic-planner.html">[MESHTASTIC]</a>
         <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
       </nav>
 
@@ -59,32 +59,14 @@
     <main class="mainframe-stage">
       <div class="page-intro">
         <h1 class="page-title">HTML Sandbox</h1>
-        <p class="page-note">Drop any standalone <code>.html</code> file into <code>/labs/</code> to share it.</p>
+        <p class="page-note">Live standalone web applications running inside <code>/labs/</code>.</p>
       </div>
 
-      <section class="hub-grid hub-grid--3" aria-label="HTML lab experiments">
-        <!-- Lab 1: Shot Couch Coach -->
-        <article class="clean-card clean-card--violet">
-          <div class="card-head">
-            <h2 class="card-title">Shot Couch Coach</h2>
-            <span class="status-pill status-pill--wip">STUB</span>
-          </div>
-          <div class="card-art" aria-hidden="true">
-            <pre class="code-preview">&lt;!DOCTYPE html&gt;
-&lt;title&gt;Shot Couch Coach&lt;/title&gt;
-&lt;!-- Drop built app at:
-     labs/shot-couch-coach.html --&gt;</pre>
-          </div>
-          <div class="action-row">
-            <a class="btn-play" href="./viewer.html?app=labs/shot-couch-coach.html">[OPEN]</a>
-            <a class="btn-raw" href="./labs/shot-couch-coach.html">[RAW .HTML]</a>
-          </div>
-        </article>
-
-        <!-- Lab 2: Number Munchers -->
+      <section class="hub-grid" aria-label="HTML lab applications">
+        <!-- Lab 1: Number Munchers Deluxe -->
         <article class="clean-card clean-card--green">
           <div class="card-head">
-            <h2 class="card-title">Number Munchers</h2>
+            <h2 class="card-title">Number Munchers Deluxe</h2>
             <span class="status-pill status-pill--live">LIVE</span>
           </div>
           <div class="card-art" aria-hidden="true">
@@ -94,14 +76,55 @@
               <rect x="137" y="60" width="18" height="14" rx="3" fill="#00ff41"/>
             </svg>
           </div>
-          <div class="action-row">
-            <a class="btn-play" href="./viewer.html?app=labs/number-munchers/index.html">[OPEN]</a>
-            <a class="btn-raw" href="./labs/number-munchers/index.html">[RAW .HTML]</a>
-          </div>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/number-munchers/index.html">[PLAY]<span class="visually-hidden"> Number Munchers Deluxe</span></a>
+            <a class="btn-raw" href="./labs/number-munchers/index.html">[FULLSCREEN]<span class="visually-hidden"> Number Munchers Deluxe</span></a>
+          </footer>
         </article>
 
-        <!-- Lab 3: TRON Grid Test -->
+        <!-- Lab 2: Salmon Staging Tracker -->
         <article class="clean-card">
+          <div class="card-head">
+            <h2 class="card-title">Salmon Staging Tracker</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <svg viewBox="0 0 220 110" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 80 Q64 68 110 80 T206 76" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+              <path d="M44 50 C72 30 112 30 140 46 L162 34 L156 50 L162 66 L140 54 C112 70 72 70 44 50 Z" fill="#031622" stroke="#00ff41" stroke-width="1.8"/>
+              <circle cx="186" cy="34" r="4" fill="#00ff41"/>
+            </svg>
+          </div>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/salmon-tracker/index.html">[LAUNCH]<span class="visually-hidden"> Salmon Staging Tracker</span></a>
+            <a class="btn-raw" href="./labs/salmon-tracker/index.html">[FULLSCREEN]<span class="visually-hidden"> Salmon Staging Tracker</span></a>
+          </footer>
+        </article>
+
+        <!-- Lab 3: Meshtastic RF Planner -->
+        <article class="clean-card">
+          <div class="card-head">
+            <h2 class="card-title">Meshtastic RF Planner</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <svg viewBox="0 0 220 110" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 92 L58 66 L112 52 L168 72 L208 58" fill="none" stroke="#00e5ff" stroke-width="1.6"/>
+              <line x1="58" y1="42" x2="112" y2="28" stroke="#00ff41" stroke-width="1.8" stroke-dasharray="4 3"/>
+              <line x1="112" y1="28" x2="168" y2="46" stroke="#00ff41" stroke-width="1.8" stroke-dasharray="4 3"/>
+              <circle cx="58" cy="42" r="4" fill="#00e5ff"/>
+              <circle cx="112" cy="28" r="5" fill="#00ff41"/>
+              <circle cx="168" cy="46" r="4" fill="#9d4edd"/>
+            </svg>
+          </div>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/meshtastic-planner.html">[LAUNCH]<span class="visually-hidden"> Meshtastic RF Planner</span></a>
+            <a class="btn-raw" href="./labs/meshtastic-planner.html">[FULLSCREEN]<span class="visually-hidden"> Meshtastic RF Planner</span></a>
+          </footer>
+        </article>
+
+        <!-- Lab 4: TRON Grid Test -->
+        <article class="clean-card clean-card--violet">
           <div class="card-head">
             <h2 class="card-title">TRON Grid Test</h2>
             <span class="status-pill status-pill--live">LIVE</span>
@@ -113,10 +136,10 @@
               <path d="M40 54 H180 M28 70 H192 M16 88 H204" stroke="#00e5ff" stroke-width="1.2"/>
             </svg>
           </div>
-          <div class="action-row">
-            <a class="btn-play" href="./viewer.html?app=labs/tron-grid-test.html">[OPEN]</a>
-            <a class="btn-raw" href="./labs/tron-grid-test.html">[RAW .HTML]</a>
-          </div>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/tron-grid-test.html">[OPEN]<span class="visually-hidden"> TRON Grid Test</span></a>
+            <a class="btn-raw" href="./labs/tron-grid-test.html">[FULLSCREEN]<span class="visually-hidden"> TRON Grid Test</span></a>
+          </footer>
         </article>
       </section>
     </main>
@@ -127,7 +150,7 @@
           <label class="terminal-prompt-label" for="terminalInput">
             C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span>
           </label>
-          <input class="terminal-input" id="terminalInput" type="text" placeholder="coach, munchers, tron, home, help..." autocomplete="off" spellcheck="false">
+          <input class="terminal-input" id="terminalInput" type="text" placeholder="munchers, salmon, mesh, tron, sysop, home, help..." autocomplete="off" spellcheck="false">
         </form>
         <span class="terminal-output" id="terminalOutput" aria-live="polite"></span>
       </div>

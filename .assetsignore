@@ -1,0 +1,13 @@
+.git
+.gitignore
+.nojekyll
+.assetsignore
+.cloudflare
+.wrangler
+node_modules
+archive
+sync-labs.ps1
+package.json
+package-lock.json
+cloudflare.config.ts
+wrangler.config.ts

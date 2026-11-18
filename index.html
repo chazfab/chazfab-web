@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
   <title>CHAZFAB // Mainframe Hub</title>
-  <meta name="description" content="CHAZFAB Mainframe — Indie arcade games, 3D hardware fabrication, off-grid radio labs, and standalone HTML experiments.">
+  <meta name="description" content="CHAZFAB Mainframe — SYSOP dossier, Number Munchers Deluxe, Michigan Salmon Staging Tracker, and Meshtastic 915 MHz RF Planner.">
   <link rel="canonical" href="https://chazfab.com/">
   <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CHAZFAB">
   <meta property="og:title" content="CHAZFAB // Mainframe Hub">
-  <meta property="og:description" content="CHAZFAB Mainframe — Indie arcade games, 3D hardware fabrication, off-grid radio labs, and standalone HTML experiments.">
+  <meta property="og:description" content="CHAZFAB Mainframe — SYSOP dossier, Number Munchers Deluxe, Michigan Salmon Staging Tracker, and Meshtastic 915 MHz RF Planner.">
   <meta property="og:url" content="https://chazfab.com/">
   <meta property="og:image" content="https://chazfab.com/assets/og-chazfab-mainframe.png">
   <meta property="og:image:type" content="image/png">
@@ -22,7 +22,7 @@
   <meta name="twitter:site" content="@chazfabofficial">
   <meta name="twitter:creator" content="@chazfabofficial">
   <meta name="twitter:title" content="CHAZFAB // Mainframe Hub">
-  <meta name="twitter:description" content="CHAZFAB Mainframe — Indie arcade games, 3D hardware fabrication, off-grid radio labs, and standalone HTML experiments.">
+  <meta name="twitter:description" content="CHAZFAB Mainframe — SYSOP dossier, Number Munchers Deluxe, Michigan Salmon Staging Tracker, and Meshtastic 915 MHz RF Planner.">
   <meta name="twitter:image" content="https://chazfab.com/assets/og-chazfab-mainframe.png">
   <meta name="twitter:image:alt" content="CHAZFAB Mainframe Hub featuring pixel neon branding and pixel cyborg operator avatar">
   <link rel="stylesheet" href="./style.css">
@@ -39,9 +39,9 @@
         </div>
         <ul class="drawer-list">
           <li><a class="drawer-link" href="./index.html" aria-current="page"><span>[MAINFRAME]</span></a></li>
-          <li><a class="drawer-link" href="./games.html"><span>[GAMES]</span></a></li>
-          <li><a class="drawer-link" href="./projects.html"><span>[PROJECTS]</span></a></li>
-          <li><a class="drawer-link" href="./labs.html"><span>[LABS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/number-munchers/index.html"><span>[MUNCHERS]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/salmon-tracker/index.html"><span>[SALMON]</span></a></li>
+          <li><a class="drawer-link" href="./viewer.html?app=labs/meshtastic-planner.html"><span>[MESHTASTIC]</span></a></li>
           <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span></a></li>
         </ul>
       </nav>
@@ -63,9 +63,9 @@
 
       <nav class="top-nav" aria-label="Primary navigation">
         <a class="nav-tab" href="./index.html" aria-current="page">[MAINFRAME *]</a>
-        <a class="nav-tab" href="./games.html">[GAMES]</a>
-        <a class="nav-tab" href="./projects.html">[PROJECTS]</a>
-        <a class="nav-tab" href="./labs.html">[LABS]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/number-munchers/index.html">[MUNCHERS]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/salmon-tracker/index.html">[SALMON]</a>
+        <a class="nav-tab" href="./viewer.html?app=labs/meshtastic-planner.html">[MESHTASTIC]</a>
         <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
       </nav>
 
@@ -84,101 +84,116 @@
       </div>
     </header>
 
-    <!-- Zone 2: Spacious 2x2 Visual Category Hub -->
+    <!-- Zone 2: Spacious 2x2 Live Apps & SYSOP Hub -->
     <main class="mainframe-stage">
       <h1 class="visually-hidden">CHAZFAB Mainframe Hub</h1>
 
-      <section class="hub-grid" aria-label="Mainframe sectors">
-        <!-- Card 1: Game Studio -->
+      <section class="hub-grid" aria-label="Live mainframe modules">
+        <!-- Card 1: Number Munchers Deluxe -->
         <article class="clean-card clean-card--green">
           <div class="card-head">
-            <h2 class="card-title">Game Studio</h2>
-            <span class="status-pill status-pill--live">1 LIVE</span>
+            <h2 class="card-title">Number Munchers Deluxe</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
           </div>
           <div class="card-art" aria-hidden="true">
             <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="12" width="142" height="126" rx="3" fill="#020804" stroke="#00ff41" stroke-width="1.6"/>
-              <path d="M10 38 H152 M10 64 H152 M10 90 H152 M10 116 H152 M46 12 V138 M82 12 V138 M118 12 V138" stroke="#00ff41" stroke-opacity="0.32" stroke-width="1"/>
-              <text x="20" y="30" fill="#00ff41" font-family="monospace" font-size="11">3   6   9  12</text>
-              <text x="20" y="56" fill="#00e5ff" font-family="monospace" font-size="11">15  4  21  24</text>
-              <rect x="89" y="69" width="22" height="16" rx="3" fill="#00ff41"/>
-              <circle cx="96" cy="75" r="2" fill="#020406"/><circle cx="105" cy="75" r="2" fill="#020406"/>
-              <text x="170" y="42" fill="#00ff41" font-family="monospace" font-size="12" font-weight="700">NUMBER MUNCHERS</text>
-              <text x="170" y="58" fill="#8ec9a9" font-family="monospace" font-size="10">Playable Remake</text>
-              <polygon points="242,76 286,128 198,128" fill="none" stroke="#9d4edd" stroke-width="1.6"/>
-              <line x1="216" y1="104" x2="268" y2="104" stroke="#00e5ff" stroke-width="1.2"/>
-              <text x="170" y="136" fill="#9d4edd" font-family="monospace" font-size="10">CLIMB FOOD CHAIN</text>
+              <rect x="14" y="12" width="152" height="126" rx="3" fill="#020804" stroke="#00ff41" stroke-width="1.6"/>
+              <path d="M14 38 H166 M14 64 H166 M14 90 H166 M14 116 H166 M52 12 V138 M90 12 V138 M128 12 V138" stroke="#00ff41" stroke-opacity="0.32" stroke-width="1"/>
+              <text x="24" y="30" fill="#00ff41" font-family="monospace" font-size="11">3   6   9  12</text>
+              <text x="24" y="56" fill="#00e5ff" font-family="monospace" font-size="11">15  4  21  24</text>
+              <rect x="98" y="69" width="22" height="16" rx="3" fill="#00ff41"/>
+              <circle cx="105" cy="75" r="2" fill="#020406"/><circle cx="114" cy="75" r="2" fill="#020406"/>
+              <text x="184" y="48" fill="#00ff41" font-family="monospace" font-size="12" font-weight="700">6x5 ARCADE</text>
+              <text x="184" y="68" fill="#8ec9a9" font-family="monospace" font-size="10">Troggles + Theater</text>
+              <text x="184" y="88" fill="#00e5ff" font-family="monospace" font-size="10">Multi-Rule Packs</text>
+              <text x="184" y="114" fill="#00ff41" font-family="monospace" font-size="10">STATUS: PLAYABLE</text>
             </svg>
           </div>
-          <a class="enter-btn" href="./games.html">[ENTER]</a>
+          <p class="card-desc">6&times;5 retro math arcade remake with Troggles, Muncher Theater skits &amp; custom packs.</p>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/number-munchers/index.html">[PLAY]<span class="visually-hidden"> Number Munchers Deluxe</span></a>
+            <a class="btn-raw" href="./labs/number-munchers/index.html">[FULLSCREEN]<span class="visually-hidden"> Number Munchers Deluxe</span></a>
+          </footer>
         </article>
 
-        <!-- Card 2: 3D & Hardware -->
+        <!-- Card 2: Salmon Staging Tracker -->
         <article class="clean-card">
           <div class="card-head">
-            <h2 class="card-title">3D &amp; Hardware</h2>
-            <span class="status-pill status-pill--wip">WIP</span>
+            <h2 class="card-title">Salmon Staging Tracker</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
           </div>
           <div class="card-art" aria-hidden="true">
             <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="145" cy="96" rx="74" ry="24" fill="none" stroke="#00ff41" stroke-width="2"/>
-              <ellipse cx="145" cy="105" rx="80" ry="26" fill="none" stroke="#00e5ff" stroke-width="1.4"/>
-              <path d="M114 66 L145 50 L176 66 V92 L145 108 L114 92 Z" fill="none" stroke="#00ff41" stroke-width="1.8"/>
-              <path d="M114 66 L145 82 L176 66 M145 82 V108" fill="none" stroke="#00ff41" stroke-width="1.3"/>
-              <rect x="242" y="28" width="32" height="22" fill="none" stroke="#00e5ff" stroke-width="1.8"/>
-              <line x1="242" y1="39" x2="176" y2="76" stroke="#ff2800" stroke-width="1.5" stroke-dasharray="4 3"/>
-              <line x1="258" y1="50" x2="246" y2="128" stroke="#00e5ff" stroke-width="1.4"/>
-              <line x1="258" y1="50" x2="270" y2="128" stroke="#00e5ff" stroke-width="1.4"/>
-              <text x="20" y="28" fill="#00ff41" font-family="monospace" font-size="11">3D SCANNER // CAD RIG</text>
+              <path d="M18 106 Q72 88 126 106 T234 106 T304 102" fill="none" stroke="#00e5ff" stroke-width="1.6" stroke-opacity="0.75"/>
+              <path d="M18 122 Q72 108 126 122 T234 122 T304 118" fill="none" stroke="#00e5ff" stroke-width="1.2" stroke-opacity="0.45"/>
+              <path d="M62 66 C94 40 148 40 184 62 L212 46 L204 66 L212 86 L184 70 C148 92 94 92 62 66 Z" fill="#031622" stroke="#00ff41" stroke-width="2"/>
+              <circle cx="84" cy="62" r="3" fill="#00e5ff"/>
+              <circle cx="256" cy="40" r="6" fill="#00ff41" fill-opacity="0.22" stroke="#00ff41" stroke-width="1.6"/>
+              <circle cx="256" cy="40" r="2.5" fill="#00ff41"/>
+              <circle cx="282" cy="70" r="6" fill="#00e5ff" fill-opacity="0.22" stroke="#00e5ff" stroke-width="1.6"/>
+              <circle cx="282" cy="70" r="2.5" fill="#00e5ff"/>
+              <text x="20" y="26" fill="#00e5ff" font-family="monospace" font-size="11" font-weight="700">GREAT LAKES // MI</text>
+              <text x="20" y="138" fill="#8ec9a9" font-family="monospace" font-size="10">USGS + NOAA + 6-SPECIES RUNS</text>
             </svg>
           </div>
-          <a class="enter-btn" href="./projects.html#hardware">[ENTER]</a>
+          <p class="card-desc">Live Michigan Great Lakes DNR action map, USGS river hydrographs, NOAA buoys &amp; 6-species run curves.</p>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/salmon-tracker/index.html">[LAUNCH]<span class="visually-hidden"> Salmon Staging Tracker</span></a>
+            <a class="btn-raw" href="./labs/salmon-tracker/index.html">[FULLSCREEN]<span class="visually-hidden"> Salmon Staging Tracker</span></a>
+          </footer>
         </article>
 
-        <!-- Card 3: Off-Grid Lab -->
+        <!-- Card 3: Meshtastic RF Planner -->
         <article class="clean-card">
           <div class="card-head">
-            <h2 class="card-title">Off-Grid Lab</h2>
-            <span class="status-pill">STARTER</span>
+            <h2 class="card-title">Meshtastic RF Planner</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
           </div>
           <div class="card-art" aria-hidden="true">
             <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg">
-              <line x1="160" y1="24" x2="96" y2="58" stroke="#00e5ff" stroke-width="1.8"/>
-              <line x1="160" y1="24" x2="224" y2="58" stroke="#00e5ff" stroke-width="1.8"/>
-              <line x1="96" y1="58" x2="96" y2="112" stroke="#00e5ff" stroke-width="1.8"/>
-              <line x1="224" y1="58" x2="224" y2="112" stroke="#00e5ff" stroke-width="1.8"/>
-              <line x1="96" y1="112" x2="160" y2="132" stroke="#00e5ff" stroke-width="1.8"/>
-              <line x1="224" y1="112" x2="160" y2="132" stroke="#00e5ff" stroke-width="1.8"/>
-              <line x1="96" y1="58" x2="224" y2="112" stroke="#00ff41" stroke-width="1.4" stroke-dasharray="4 3"/>
-              <line x1="224" y1="58" x2="96" y2="112" stroke="#00ff41" stroke-width="1.4" stroke-dasharray="4 3"/>
-              <line x1="160" y1="24" x2="160" y2="132" stroke="#9d4edd" stroke-width="1.4"/>
-              <circle cx="160" cy="24" r="8" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
-              <circle cx="96" cy="58" r="8" fill="#03121d" stroke="#00ff41" stroke-width="2"/>
-              <circle cx="224" cy="58" r="8" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
-              <circle cx="160" cy="78" r="9" fill="#03121d" stroke="#00ff41" stroke-width="2"/>
-              <circle cx="96" cy="112" r="8" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
-              <circle cx="224" cy="112" r="8" fill="#03121d" stroke="#00ff41" stroke-width="2"/>
-              <circle cx="160" cy="132" r="7" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
+              <path d="M16 124 L72 96 L122 108 L178 72 L238 102 L304 82 L304 136 L16 136 Z" fill="#03121d" stroke="#00e5ff" stroke-opacity="0.55" stroke-width="1.4"/>
+              <line x1="72" y1="62" x2="178" y2="42" stroke="#00ff41" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <line x1="178" y1="42" x2="254" y2="66" stroke="#00ff41" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <line x1="72" y1="96" x2="72" y2="62" stroke="#00e5ff" stroke-width="2"/>
+              <line x1="178" y1="72" x2="178" y2="42" stroke="#00ff41" stroke-width="2"/>
+              <circle cx="72" cy="62" r="5" fill="#03121d" stroke="#00e5ff" stroke-width="2"/>
+              <circle cx="178" cy="42" r="6" fill="#031410" stroke="#00ff41" stroke-width="2"/>
+              <circle cx="254" cy="66" r="5" fill="#03121d" stroke="#9d4edd" stroke-width="2"/>
+              <text x="18" y="24" fill="#00ff41" font-family="monospace" font-size="11" font-weight="700">US915 // 906.875 MHz</text>
+              <text x="18" y="40" fill="#8ec9a9" font-family="monospace" font-size="10">Fresnel + Vertical Beam Cones</text>
             </svg>
           </div>
-          <a class="enter-btn" href="./projects.html#offgrid">[ENTER]</a>
+          <p class="card-desc">Interactive 915 MHz LoRa terrain coverage map, dual-cone Fresnel profiler &amp; CLI config generator.</p>
+          <footer class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/meshtastic-planner.html">[LAUNCH]<span class="visually-hidden"> Meshtastic RF Planner</span></a>
+            <a class="btn-raw" href="./labs/meshtastic-planner.html">[FULLSCREEN]<span class="visually-hidden"> Meshtastic RF Planner</span></a>
+          </footer>
         </article>
 
-        <!-- Card 4: HTML Sandbox -->
-        <article class="clean-card">
+        <!-- Card 4: SYSOP // Chaz -->
+        <article class="clean-card clean-card--violet">
           <div class="card-head">
-            <h2 class="card-title">HTML Sandbox</h2>
-            <span class="status-pill status-pill--live">/LABS/</span>
+            <h2 class="card-title">SYSOP // Chaz</h2>
+            <span class="status-pill status-pill--live">ONLINE</span>
           </div>
           <div class="card-art" aria-hidden="true">
             <svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg">
-              <path d="M84 52 L54 75 L84 98 M124 52 L154 75 L124 98 M112 46 L96 104" fill="none" stroke="#00e5ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-              <line x1="176" y1="36" x2="176" y2="114" stroke="#00e5ff" stroke-opacity="0.3" stroke-width="1.5"/>
-              <text x="192" y="64" fill="#e8fff0" font-family="monospace" font-size="13" font-weight="700">Shot Couch Coach</text>
-              <text x="192" y="96" fill="#00ff41" font-family="monospace" font-size="13" font-weight="700">TRON Grid Test</text>
+              <rect x="20" y="18" width="96" height="114" rx="4" fill="#020804" stroke="#9d4edd" stroke-width="1.8"/>
+              <circle cx="68" cy="54" r="18" fill="none" stroke="#00ff41" stroke-width="1.8"/>
+              <path d="M68 36 V72 M50 54 H86" stroke="#00e5ff" stroke-opacity="0.5" stroke-width="1"/>
+              <rect x="64" y="48" width="14" height="6" rx="2" fill="#9d4edd"/>
+              <circle cx="71" cy="51" r="2" fill="#ff2800"/>
+              <path d="M40 112 C42 88 94 88 96 112" fill="none" stroke="#00ff41" stroke-width="1.8"/>
+              <text x="132" y="42" fill="#e8fff0" font-family="monospace" font-size="12" font-weight="700">SYSOP DOSSIER</text>
+              <text x="132" y="64" fill="#00e5ff" font-family="monospace" font-size="10">Bambu H2C // ESP32 LoRa</text>
+              <text x="132" y="84" fill="#00ff41" font-family="monospace" font-size="10">Pure HTML // Indie Arcade</text>
+              <text x="132" y="112" fill="#8ec9a9" font-family="monospace" font-size="10">8 Official Channel Links</text>
             </svg>
           </div>
-          <a class="enter-btn" href="./labs.html">[ENTER]</a>
+          <p class="card-desc">Operator dossier, workshop bench &amp; official GitHub, X, YouTube, MakerWorld &amp; email uplinks.</p>
+          <footer class="action-row">
+            <a class="enter-btn" href="./sysop.html">[OPEN DOSSIER]</a>
+          </footer>
         </article>
       </section>
     </main>
@@ -194,7 +209,7 @@
             class="terminal-input"
             id="terminalInput"
             type="text"
-            placeholder="type command (help, games, munchers, projects, labs, sysop, grid)..."
+            placeholder="type command (help, munchers, salmon, mesh, sysop, labs, grid)..."
             autocomplete="off"
             spellcheck="false"
           >
