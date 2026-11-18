@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "deploy": "cf deploy ."
+    "stage": "node stage-public.mjs",
+    "deploy": "node stage-public.mjs && cf deploy .cloudflare/public-stage"
   },
   "devDependencies": {
-    "cf": "^0.15.0"
+    "cf": "^1.0.0-rc.1"
   }
 }

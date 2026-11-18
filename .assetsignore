@@ -11,3 +11,4 @@ package.json
 package-lock.json
 cloudflare.config.ts
 wrangler.config.ts
+stage-public.mjs
