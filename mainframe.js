@@ -1,14 +1,14 @@
 /* ==========================================================================
-   CHAZFAB SYSOP // Interactive Terminal Shell, CRT Controls & SFX
-   Zero dependencies — works offline & across all desktop/tablet/mobile browsers.
+   CHAZFAB MAINFRAME // Interactive Shell, Mobile Drawer, Command Bar & SFX
+   Zero dependencies — works offline & across desktop/tablet/mobile browsers.
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  const crt = document.getElementById('crtMonitor');
+  const ROOT = document.body.dataset.rootPrefix || './';
+  const shell = document.getElementById('mainframeShell');
   const gridDrive = document.getElementById('gridDrive');
-  const scanlines = document.getElementById('scanlinesToggle');
   const sfxToggle = document.getElementById('sfxToggle');
 
   /* ------------------------------------------------------------------------
@@ -43,41 +43,29 @@
   }
 
   /* ------------------------------------------------------------------------
-     2. PERSISTED BEZEL DISPLAY TOGGLES + :has() CSS FALLBACK
+     2. PERSISTED BOTTOM TOGGLES + :has() CSS FALLBACK
      ------------------------------------------------------------------------ */
-  function applyCrtClasses() {
-    if (!crt) return;
-    if (gridDrive) crt.classList.toggle('has-grid-drive', gridDrive.checked);
-    if (scanlines) crt.classList.toggle('no-scanlines', !scanlines.checked);
+  function applyShellClasses() {
+    if (!shell || !gridDrive) return;
+    shell.classList.toggle('has-grid-drive', gridDrive.checked);
   }
 
   try {
     if (gridDrive && localStorage.getItem('chazfab_grid') === '1') {
       gridDrive.checked = true;
     }
-    if (scanlines && localStorage.getItem('chazfab_scanlines') === '0') {
-      scanlines.checked = false;
-    }
     if (sfxToggle) {
       sfxToggle.checked = sfxEnabled;
     }
   } catch (_) {}
 
-  applyCrtClasses();
+  applyShellClasses();
 
   if (gridDrive) {
     gridDrive.addEventListener('change', () => {
       try { localStorage.setItem('chazfab_grid', gridDrive.checked ? '1' : '0'); } catch (_) {}
-      applyCrtClasses();
+      applyShellClasses();
       playBlip(gridDrive.checked ? 760 : 440);
-    });
-  }
-
-  if (scanlines) {
-    scanlines.addEventListener('change', () => {
-      try { localStorage.setItem('chazfab_scanlines', scanlines.checked ? '1' : '0'); } catch (_) {}
-      applyCrtClasses();
-      playBlip(scanlines.checked ? 680 : 420);
     });
   }
 
@@ -90,21 +78,123 @@
   }
 
   /* ------------------------------------------------------------------------
-     3. INTERACTIVE C:\CHAZFAB> COMMAND PROMPT & SHORTCUT CHIPS
+     3. MOBILE <DIALOG> SWIPE NAVIGATION DRAWER (navigation-drawer guide)
+     ------------------------------------------------------------------------ */
+  const drawer = document.getElementById('mobileDrawer');
+  const openBtn = document.getElementById('drawerOpenBtn');
+  const closeBtn = document.getElementById('drawerCloseBtn');
+
+  if (drawer && openBtn && closeBtn) {
+    const scroller = drawer.querySelector('.Drawer-scroller');
+    const sheet = drawer.querySelector('.Drawer-sheet');
+    let hasEnteredViewport = false;
+
+    async function openDrawer() {
+      playBlip(720);
+      hasEnteredViewport = false;
+      drawer.showModal();
+
+      if (!CSS.supports('scroll-initial-target', 'nearest')) {
+        scroller.scrollTo({ left: scroller.offsetWidth, behavior: 'instant' });
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      }
+
+      scroller.scrollTo({ left: 0, behavior: 'auto' });
+    }
+
+    function closeDrawer() {
+      playBlip(460);
+      scroller.scrollTo({ left: scroller.offsetWidth, behavior: 'auto' });
+    }
+
+    function onDrawerOpened() {
+      openBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function onDrawerClosed() {
+      if (drawer.open) drawer.close();
+      hasEnteredViewport = false;
+      openBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    const visibleThreshold = 1 / Math.max(window.innerWidth, 320);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries.at(-1);
+        if (!entry) return;
+        if (entry.intersectionRatio >= visibleThreshold) {
+          hasEnteredViewport = true;
+        }
+        if (hasEnteredViewport && entry.intersectionRatio < visibleThreshold) {
+          onDrawerClosed();
+        }
+        if (entry.intersectionRatio === 1) {
+          onDrawerOpened();
+        }
+      },
+      { root: drawer, threshold: [visibleThreshold, 1] }
+    );
+    observer.observe(sheet);
+
+    if (!CSS.supports('animation-timeline: scroll()')) {
+      scroller.addEventListener('scroll', () => {
+        const ratio = Math.max(0, Math.min(1, 1 - scroller.scrollLeft / Math.max(sheet.offsetWidth, 1)));
+        drawer.style.setProperty('--drawer-backdrop', String(ratio));
+      });
+    }
+
+    openBtn.addEventListener('click', openDrawer);
+    closeBtn.addEventListener('click', closeDrawer);
+
+    drawer.addEventListener('click', (event) => {
+      if (!sheet.contains(event.target)) {
+        closeDrawer();
+      }
+    });
+
+    drawer.addEventListener('cancel', (event) => {
+      if (event.cancelable) {
+        event.preventDefault();
+        closeDrawer();
+      }
+    });
+
+    window.matchMedia('(min-width: 680px)').addEventListener('change', (mq) => {
+      if (mq.matches && drawer.open) {
+        onDrawerClosed();
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------------------
+     4. INTERACTIVE C:\CHAZFAB> COMMAND PROMPT
      ------------------------------------------------------------------------ */
   const cmdForm = document.getElementById('terminalForm');
   const cmdInput = document.getElementById('terminalInput');
   const cmdOutput = document.getElementById('terminalOutput');
-  const cmdChips = document.querySelectorAll('.cmd-chip');
 
-  const SECTION_TARGETS = {
-    home: 'top',
-    top: 'top',
-    sysop: 'top',
-    about: 'dossier',
-    bio: 'dossier',
-    dossier: 'dossier',
-    uplinks: 'uplinks'
+  const ROUTES = {
+    home: 'index.html',
+    mainframe: 'index.html',
+    index: 'index.html',
+    games: 'games.html',
+    game: 'games.html',
+    munchers: 'viewer.html?app=labs/number-munchers/index.html',
+    climb: 'projects/climb-the-food-chain.html',
+    projects: 'projects.html',
+    cad: 'projects.html#hardware',
+    hardware: 'projects.html#hardware',
+    scanner: 'projects/3d-scanner.html',
+    mesh: 'projects.html#offgrid',
+    meshtastic: 'projects.html#offgrid',
+    offgrid: 'projects.html#offgrid',
+    labs: 'labs.html',
+    lab: 'labs.html',
+    coach: 'viewer.html?app=labs/shot-couch-coach.html',
+    tron: 'viewer.html?app=labs/tron-grid-test.html',
+    sysop: 'sysop.html',
+    about: 'sysop.html',
+    socials: 'sysop.html'
   };
 
   const EXTERNAL_UPLINKS = {
@@ -113,16 +203,10 @@
     twitter: 'https://x.com/chazfabofficial',
     reddit: 'https://www.reddit.com/user/chazfab/',
     instagram: 'https://www.instagram.com/chazfabofficial/',
-    ig: 'https://www.instagram.com/chazfabofficial/',
     tiktok: 'https://www.tiktok.com/@chazfabofficial',
     youtube: 'https://www.youtube.com/@chazfab',
-    yt: 'https://www.youtube.com/@chazfab'
+    makerworld: 'https://makerworld.com/en/@chazfab'
   };
-
-  function scrollToSection(id) {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
 
   function runCommand(raw) {
     const cmd = (raw || '').trim().toLowerCase();
@@ -132,34 +216,7 @@
 
     if (cmd === 'help' || cmd === '?') {
       if (cmdOutput) {
-        cmdOutput.textContent =
-          'COMMANDS: home | dossier | bio | uplinks | socials | bench | github | x | reddit | instagram | tiktok | youtube | email | grid | scanlines | sfx | clear';
-      }
-      return;
-    }
-
-    if (cmd === 'socials' || cmd === 'links' || cmd === 'contact' || cmd === 'email') {
-      if (cmdOutput) {
-        cmdOutput.textContent =
-          'UPLINKS: github.com/chazfab | x.com/chazfabofficial | reddit.com/u/chazfab | instagram.com/chazfabofficial | tiktok.com/@chazfabofficial | youtube.com/@chazfab | hello@chazfab.com';
-      }
-      scrollToSection('uplinks');
-      return;
-    }
-
-    if (cmd === 'bench') {
-      if (cmdOutput) {
-        cmdOutput.textContent =
-          'BENCH: Bambu Lab H2C (0.2 / 0.4 / 0.6mm) | ESP32 / LoRa / MeshCore / Meshtastic | Retro Arcade & Pure HTML/CSS';
-      }
-      scrollToSection('dossier');
-      return;
-    }
-
-    if (cmd === 'dir' || cmd === 'ls') {
-      if (cmdOutput) {
-        cmdOutput.textContent =
-          'DIR C:\\CHAZFAB\\ -> SYSOP.EXE  OPERATOR_BIO.TXT  COMMS_UPLINK.SYS  SYSOP_AVATAR.PNG';
+        cmdOutput.textContent = 'home | games | munchers | projects | labs | coach | tron | sysop | grid | sfx | clear';
       }
       return;
     }
@@ -172,43 +229,31 @@
     if (cmd === 'grid' && gridDrive) {
       gridDrive.checked = !gridDrive.checked;
       gridDrive.dispatchEvent(new Event('change'));
-      if (cmdOutput) cmdOutput.textContent = `GRID DRIVE => ${gridDrive.checked ? 'ON' : 'OFF'}`;
-      return;
-    }
-
-    if (cmd === 'scanlines' && scanlines) {
-      scanlines.checked = !scanlines.checked;
-      scanlines.dispatchEvent(new Event('change'));
-      if (cmdOutput) cmdOutput.textContent = `SCANLINES => ${scanlines.checked ? 'ON' : 'OFF'}`;
+      if (cmdOutput) cmdOutput.textContent = `GRID => ${gridDrive.checked ? 'ON' : 'OFF'}`;
       return;
     }
 
     if (cmd === 'sfx' && sfxToggle) {
       sfxToggle.checked = !sfxToggle.checked;
       sfxToggle.dispatchEvent(new Event('change'));
-      if (cmdOutput) cmdOutput.textContent = `SFX BLIPS => ${sfxToggle.checked ? 'ON' : 'OFF'}`;
+      if (cmdOutput) cmdOutput.textContent = `SFX => ${sfxToggle.checked ? 'ON' : 'OFF'}`;
       return;
     }
 
     if (Object.hasOwn(EXTERNAL_UPLINKS, cmd)) {
-      if (cmdOutput) cmdOutput.textContent = `OPENING ${EXTERNAL_UPLINKS[cmd]} ...`;
+      if (cmdOutput) cmdOutput.textContent = `OPENING ${EXTERNAL_UPLINKS[cmd]}`;
       window.open(EXTERNAL_UPLINKS[cmd], '_blank', 'noopener,noreferrer');
       return;
     }
 
-    if (Object.hasOwn(SECTION_TARGETS, cmd)) {
-      const target = SECTION_TARGETS[cmd];
-      if (cmdOutput) {
-        cmdOutput.textContent = target === 'dossier'
-          ? 'CHAZ // CHAZFAB — Indie Games • 3D Printing CAD • Meshtastic Off-Grid • Raw .HTML Labs (hello@chazfab.com)'
-          : `FOCUSING #${target.toUpperCase()} ...`;
-      }
-      scrollToSection(target);
+    if (Object.hasOwn(ROUTES, cmd)) {
+      if (cmdOutput) cmdOutput.textContent = `LOADING ${ROUTES[cmd]} ...`;
+      window.location.href = ROOT + ROUTES[cmd];
       return;
     }
 
     if (cmdOutput) {
-      cmdOutput.textContent = `UNKNOWN COMMAND "${cmd}". TYPE "help" FOR LIST.`;
+      cmdOutput.textContent = `UNKNOWN: "${cmd}" (type help)`;
     }
   }
 
@@ -220,16 +265,7 @@
     });
   }
 
-  cmdChips.forEach((chip) => {
-    chip.addEventListener('click', () => {
-      const cmd = chip.dataset.cmd || '';
-      if (cmdInput) cmdInput.value = cmd;
-      runCommand(cmd);
-      if (cmdInput) cmdInput.value = '';
-    });
-  });
-
-  document.querySelectorAll('.nav-tab, .btn-mainframe, .btn-raw, .btn-violet, .uplink-card').forEach((el) => {
+  document.querySelectorAll('.nav-tab, .enter-btn, .btn-play, .btn-raw, .social-tile').forEach((el) => {
     el.addEventListener('click', () => playBlip(740, 0.04));
   });
 })();

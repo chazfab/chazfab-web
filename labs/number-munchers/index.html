@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MECC Munchers Classic Collection (1985-1991)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=VT323&amp;display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/audio.js"></script>
+  <script defer src="js/sprites.js"></script>
+  <script defer src="js/math-engine.js"></script>
+  <script defer src="js/content-packs.js"></script>
+  <script defer src="js/cutscenes.js"></script>
+  <script defer src="js/game.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <main class="arcade-cabinet" id="arcadeCabinet" data-monitor="vga">
+      <!-- Compact DOS Function-Key Strip -->
+      <header class="dos-fkey-bar toolbar" aria-label="System commands">
+        <button type="button" class="fkey-btn" id="homeBtn" title="Return to Main Menu">
+          <span class="fkey-key">ESC</span><span class="fkey-label">:Menu</span>
+        </button>
+        <button type="button" class="fkey-btn" id="guideBtn">
+          <span class="fkey-key">F1</span><span class="fkey-label">:Info</span>
+        </button>
+        <button type="button" class="fkey-btn" id="optionsBtn">
+          <span class="fkey-key">F2</span><span class="fkey-label">:Options</span>
+        </button>
+        <button type="button" class="fkey-btn" id="hofBtn">
+          <span class="fkey-key">F3</span><span class="fkey-label">:Hall of Fame</span>
+        </button>
+        <button type="button" class="fkey-btn" id="diskBtn" title="Switch MECC Game Disk">
+          <span class="fkey-key">F4</span><span class="fkey-label">:Disk</span>
+        </button>
+        <button type="button" class="fkey-btn" id="pauseBtn" hidden>
+          <span class="fkey-key">P</span><span class="fkey-label" id="pauseLabel">:Pause</span>
+        </button>
+        <button type="button" class="fkey-btn" id="muteBtn" aria-label="Mute sound">
+          <span class="fkey-key">M</span><span class="fkey-label" id="muteLabel">:Sound ON</span>
+        </button>
+        <button type="button" class="fkey-btn" id="fullscreenBtn" aria-label="Toggle fullscreen">
+          <span class="fkey-key">F</span><span class="fkey-label" id="fullscreenLabel">:Full</span>
+        </button>
+      </header>
+
+      <!-- Authentic MECC Boot & Menu Screen -->
+      <section class="title-screen" id="titleScreen" aria-labelledby="titleHeading">
+        <div class="retro-double-box title-banner-box">
+          <div class="title-mascot" id="heroMascot" aria-hidden="true"></div>
+          <div class="title-heading-group">
+            <h1 class="retro-title" id="titleHeading">NUMBER MUNCHERS</h1>
+            <p class="retro-subtitle" id="retroSubtitle">1986 / 1990 MECC CLASSIC EDITION</p>
+          </div>
+          <div class="title-mascot" id="heroTroggle" aria-hidden="true"></div>
+        </div>
+
+        <fieldset class="disk-strip" id="diskStrip">
+          <legend class="sr-only">Select MECC Game Disk</legend>
+          <label class="disk-chip">
+            <input type="radio" name="activeDisk" value="number" checked>
+            <span>[1] NUMBER</span>
+          </label>
+          <label class="disk-chip">
+            <input type="radio" name="activeDisk" value="word">
+            <span>[2] WORD</span>
+          </label>
+          <label class="disk-chip">
+            <input type="radio" name="activeDisk" value="fraction">
+            <span>[3] FRACTION</span>
+          </label>
+          <label class="disk-chip">
+            <input type="radio" name="activeDisk" value="super">
+            <span>[4] SUPER</span>
+          </label>
+        </fieldset>
+
+        <!-- Main Menu Highlight List -->
+        <div class="retro-double-box menu-box" id="mainMenuBox">
+          <div class="menu-box-header">MAIN MENU</div>
+          <ul class="retro-menu-list" role="menu" aria-label="Main menu">
+            <li><button type="button" class="retro-menu-item is-active" data-action="play" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> <span id="playMainMenuText">Play Number Munchers</span></button></li>
+            <li><button type="button" class="retro-menu-item" data-action="disk" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Switch MECC Disk (4 Games)</button></li>
+            <li><button type="button" class="retro-menu-item" data-action="hof" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Hall of Fame</button></li>
+            <li><button type="button" class="retro-menu-item" data-action="info" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Information</button></li>
+            <li><button type="button" class="retro-menu-item" data-action="options" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Options</button></li>
+          </ul>
+          <p class="menu-status-line" id="mainMenuMeta">Monitor: IBM DOS VGA | Difficulty: Classic | Bonus Items: OFF</p>
+        </div>
+
+        <!-- Game Mode Select Menu (Populated dynamically per disk) -->
+        <div class="retro-double-box menu-box" id="modeMenuBox" hidden>
+          <div class="menu-box-header" id="modeMenuHeader">CHOOSE A GAME</div>
+          <ul class="retro-menu-list" id="modeMenuList" role="menu" aria-label="Choose a game mode">
+            <li><button type="button" class="retro-menu-item is-active" data-mode="multiples" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Multiples</button></li>
+            <li><button type="button" class="retro-menu-item" data-mode="factors" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Factors</button></li>
+            <li><button type="button" class="retro-menu-item" data-mode="primes" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Primes</button></li>
+            <li><button type="button" class="retro-menu-item" data-mode="equality" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Equality</button></li>
+            <li><button type="button" class="retro-menu-item" data-mode="inequality" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Inequality</button></li>
+            <li><button type="button" class="retro-menu-item" data-mode="challenge" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Challenge (All 5 Mix)</button></li>
+            <li><button type="button" class="retro-menu-item retro-menu-item--back" data-action="back" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Return to Main Menu</button></li>
+          </ul>
+        </div>
+
+        <!-- Switch MECC Disk Menu -->
+        <div class="retro-double-box menu-box" id="diskMenuBox" hidden>
+          <div class="menu-box-header">INSERT MECC 5.25" DISK</div>
+          <ul class="retro-menu-list" role="menu" aria-label="Choose a Munchers disk">
+            <li><button type="button" class="retro-menu-item is-active" data-disk="number" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Number Munchers (1986/1990) - Math</button></li>
+            <li><button type="button" class="retro-menu-item" data-disk="word" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Word Munchers (1985) - Vowels &amp; Grammar</button></li>
+            <li><button type="button" class="retro-menu-item" data-disk="fraction" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Fraction Munchers (1987) - Fractions</button></li>
+            <li><button type="button" class="retro-menu-item" data-disk="super" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Super Munchers (1991) - Trivia Challenge</button></li>
+            <li><button type="button" class="retro-menu-item retro-menu-item--back" data-action="back" role="menuitem"><span class="menu-arrow" aria-hidden="true">&gt;</span> Return to Main Menu</button></li>
+          </ul>
+        </div>
+
+        <p class="menu-prompt">Use ARROW KEYS + ENTER (or CLICK) to select &bull; SPACE to munch</p>
+      </section>
+
+      <!-- Active Gameplay Stage -->
+      <section class="game-stage" id="gameStage" hidden aria-label="Game board">
+        <div class="retro-hud-top">
+          <div class="hud-left">
+            <span class="hud-text">Level: <strong id="hudLevel">1</strong></span>
+            <span class="hud-text hud-left-count">Left: <strong id="hudRemaining">12</strong></span>
+          </div>
+
+          <div class="rule-banner-wrap">
+            <h1 class="rule-banner" id="ruleBanner">Multiples of 2</h1>
+          </div>
+
+          <div class="hud-right">
+            <span class="hud-text">Score: <strong id="hudScore">0</strong></span>
+            <span class="hud-text hud-streak" id="streakStat"><strong id="hudStreak">x1</strong></span>
+          </div>
+        </div>
+
+        <div class="powerup-meter" id="powerupMeter" aria-live="polite" hidden>
+          <span class="powerup-meter-text" id="powerupMeterText"></span>
+          <div class="powerup-meter-track">
+            <div class="powerup-meter-fill" id="powerupMeterFill"></div>
+          </div>
+        </div>
+
+        <!-- Board Arena with Perimeter Edge Warnings + 6x5 Pixel Grid -->
+        <div class="arena-frame" id="arenaFrame">
+          <div class="edge-warnings edge-warnings--top" id="warnTop" aria-hidden="true"></div>
+          <div class="arena-middle">
+            <div class="edge-warnings edge-warnings--left" id="warnLeft" aria-hidden="true"></div>
+
+            <div class="board-viewport" id="boardViewport">
+              <div
+                class="board-grid"
+                id="boardGrid"
+                role="grid"
+                aria-label="Number Munchers 6 by 5 board"
+              ></div>
+
+              <div class="actor-layer" id="actorLayer" aria-hidden="true">
+                <div class="actor actor--muncher" id="muncherActor"></div>
+                <div class="troggles-container" id="trogglesContainer"></div>
+                <div class="popups-container" id="popupsContainer"></div>
+              </div>
+
+              <!-- Classic Pause Box -->
+              <div class="board-veil" id="pauseVeil" hidden>
+                <div class="retro-double-box veil-card">
+                  <h2>PAUSED</h2>
+                  <p id="pauseRuleReminder">Multiples of 2</p>
+                  <div class="veil-actions">
+                    <button type="button" class="btn btn--start" id="resumeBtn">Resume</button>
+                    <button type="button" class="btn btn--control" id="quitToMenuBtn">Main Menu</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Classic Level Clear Box -->
+              <div class="board-veil" id="levelClearVeil" hidden>
+                <div class="retro-double-box veil-card">
+                  <h2 id="levelClearTitle">LEVEL 1 CLEAR!</h2>
+                  <p id="levelClearBonus">Bonus: 50</p>
+                </div>
+              </div>
+
+              <!-- Authentic Freeze-Frame Mistake / Eaten Prompt -->
+              <div class="oops-overlay" id="oopsOverlay" hidden role="alertdialog" aria-labelledby="oopsMessage">
+                <div class="retro-double-box oops-box">
+                  <div class="oops-sprite" id="oopsActorSprite" aria-hidden="true"></div>
+                  <div class="oops-copy">
+                    <p class="oops-message" id="oopsMessage">Belch! That number does not match.</p>
+                    <button type="button" class="btn btn--accent oops-btn" id="oopsContinueBtn">Press SPACEBAR or CLICK to continue</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Muncher Theater Cutscene Stage -->
+              <div class="theater-overlay" id="theaterOverlay" hidden></div>
+            </div>
+
+            <div class="edge-warnings edge-warnings--right" id="warnRight" aria-hidden="true"></div>
+          </div>
+          <div class="edge-warnings edge-warnings--bottom" id="warnBottom" aria-hidden="true"></div>
+        </div>
+
+        <!-- Classic MECC Bottom Bar: Hint/Status + Remaining Lives -->
+        <div class="retro-hud-bottom">
+          <div class="status-strip" id="statusStrip" role="status" aria-live="polite">
+            <span class="status-pill" id="statusPill">READY</span>
+            <p class="status-message" id="statusMessage">Arrow keys or click to move. SPACEBAR to munch!</p>
+          </div>
+          <div class="hud-lives" id="hudLives" aria-label="Remaining lives"></div>
+        </div>
+
+        <!-- Responsive On-Screen Controls (Touch / Narrow / Optional) -->
+        <div class="touch-pad" id="touchPad" aria-label="On-screen controls">
+          <div class="dpad" role="group" aria-label="Directional movement">
+            <button type="button" class="dpad-btn dpad-btn--up" data-dir="up" aria-label="Move Up">&#9650;</button>
+            <button type="button" class="dpad-btn dpad-btn--left" data-dir="left" aria-label="Move Left">&#9664;</button>
+            <button type="button" class="dpad-btn dpad-btn--right" data-dir="right" aria-label="Move Right">&#9654;</button>
+            <button type="button" class="dpad-btn dpad-btn--down" data-dir="down" aria-label="Move Down">&#9660;</button>
+          </div>
+          <button type="button" class="btn-munch-pad" id="touchMunchBtn">MUNCH</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Native Modal: Information / Field Guide -->
+  <dialog id="guideDialog" class="arcade-dialog arcade-dialog--wide" closedby="any" aria-labelledby="guideTitle">
+    <div class="dialog-header">
+      <h2 id="guideTitle">MECC MUNCHERS INFORMATION</h2>
+      <form method="dialog">
+        <button type="submit" class="btn btn--close" value="close" aria-label="Close Information" autofocus>Close</button>
+      </form>
+    </div>
+    <div class="dialog-body">
+      <p class="guide-intro">Move your Muncher onto answers that match the rule at the top of the screen and press SPACEBAR to eat them. Watch the edges for incoming TROGGLE warnings!</p>
+
+      <h3 class="guide-section-title">THE 4 MECC MUNCHERS GAMES (1985-1991)</h3>
+      <ul class="guide-controls">
+        <li><strong>Word Munchers (1985)</strong>: Phonics (short, long, and team vowel sounds), Parts of Speech, and Synonyms/Antonyms.</li>
+        <li><strong>Number Munchers (1986/1990)</strong>: Multiples, Factors, Primes, Equality, and Inequality.</li>
+        <li><strong>Fraction Munchers (1987)</strong>: Proper/Improper/Reduced Fractions, Equivalents, Comparing, and Fraction Expressions.</li>
+        <li><strong>Super Munchers (1991)</strong>: Trivia categories across Animals, Space/Geography, Science, and Culture. Eat 10 right in a row to become Super Muncher and gobble Troggles!</li>
+      </ul>
+
+      <h3 class="guide-section-title">THE 5 TROGGLES</h3>
+      <ul class="guide-list" id="troggleGuideList"></ul>
+
+      <h3 class="guide-section-title">CONTROLS &amp; SCORING</h3>
+      <ul class="guide-controls">
+        <li><strong>Arrow Keys / WASD</strong>: Move Muncher one square</li>
+        <li><strong>Spacebar / Enter</strong>: Munch the current square</li>
+        <li><strong>Click / Tap</strong>: Auto-walk to any square (click current square to Munch)</li>
+        <li><strong>ESC / F1 / F2 / F3 / F4 / P / M / F</strong>: Menu / Info / Options / Hall of Fame / Switch Disk / Pause / Sound / Fullscreen</li>
+        <li><strong>Classic Scoring</strong>: 5 &times; Level pts per match, 50 &times; Level clear bonus, free Muncher every 1,000 pts!</li>
+      </ul>
+
+      <h3 class="guide-section-title">OPTIONAL BONUS ITEMS (OFF BY DEFAULT)</h3>
+      <ul class="guide-list" id="powerUpGuideList"></ul>
+    </div>
+  </dialog>
+
+  <!-- Native Modal: Options -->
+  <dialog id="optionsDialog" class="arcade-dialog" closedby="any" aria-labelledby="optionsTitle">
+    <div class="dialog-header">
+      <h2 id="optionsTitle">OPTIONS</h2>
+      <form method="dialog">
+        <button type="submit" class="btn btn--close" value="close" aria-label="Close Options" autofocus>Done</button>
+      </form>
+    </div>
+    <div class="dialog-body options-body">
+      <label class="option-row">
+        <span>Monitor Palette</span>
+        <select id="optMonitor">
+          <option value="vga">1990 IBM DOS VGA (16-Color)</option>
+          <option value="apple2green">1986 Apple II Green Phosphor</option>
+          <option value="apple2color">1986 Apple II Hi-Res Color</option>
+        </select>
+      </label>
+
+      <label class="option-row">
+        <span>Difficulty Tier</span>
+        <select id="optDifficulty">
+          <option value="elementary">Elementary (Gentle)</option>
+          <option value="classic">Classic Arcade (1990 MECC)</option>
+          <option value="whiz">Math Whiz (Fast &amp; Tough)</option>
+        </select>
+      </label>
+
+      <label class="option-check">
+        <input type="checkbox" id="optCrt">
+        <span>CRT Scanline Effect</span>
+      </label>
+
+      <label class="option-check">
+        <input type="checkbox" id="optHints">
+        <span>Show Educational Mistake Explanations</span>
+      </label>
+
+      <label class="option-check">
+        <input type="checkbox" id="optDeluxe">
+        <span>Bonus Items (Non-Classic Power-Ups &amp; Streaks)</span>
+      </label>
+
+      <label class="option-row">
+        <span>PC Speaker Volume</span>
+        <input type="range" id="optVolume" min="0" max="100" step="5" value="55">
+      </label>
+
+      <label class="option-row">
+        <span>On-Screen D-Pad</span>
+        <select id="optTouchPad">
+          <option value="auto">Auto (Touch / Narrow Screens)</option>
+          <option value="show">Always Show</option>
+          <option value="hide">Always Hide</option>
+        </select>
+      </label>
+    </div>
+  </dialog>
+
+  <!-- Native Modal: Hall of Fame -->
+  <dialog id="hallOfFameDialog" class="arcade-dialog" closedby="any" aria-labelledby="hofTitle">
+    <div class="dialog-header">
+      <h2 id="hofTitle">HALL OF FAME</h2>
+      <form method="dialog">
+        <button type="submit" class="btn btn--close" value="close" aria-label="Close Hall of Fame" autofocus>Close</button>
+      </form>
+    </div>
+    <div class="dialog-body">
+      <div class="hof-table-wrap" role="region" aria-label="High scores table" tabindex="0">
+        <table class="hof-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Player</th>
+              <th>Mode</th>
+              <th>Lvl</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody id="hofTableBody"></tbody>
+        </table>
+      </div>
+      <div class="hof-actions">
+        <button type="button" class="btn btn--danger" id="resetHofBtn">Reset High Scores</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Native Modal: Game Over -->
+  <dialog id="gameOverDialog" class="arcade-dialog" closedby="closerequest" aria-labelledby="gameOverTitle">
+    <div class="dialog-header">
+      <h2 id="gameOverTitle">GAME OVER</h2>
+    </div>
+    <form method="dialog" class="dialog-body gameover-form" id="gameOverForm">
+      <p class="gameover-subtitle" id="gameOverReason">All Munchers are gone!</p>
+      <dl class="gameover-stats">
+        <div><dt>SCORE</dt><dd id="goScore">0</dd></div>
+        <div><dt>LEVEL</dt><dd id="goLevel">1</dd></div>
+        <div><dt>ACCURACY</dt><dd id="goAccuracy">100%</dd></div>
+      </dl>
+
+      <label class="gameover-name-field">
+        <span>ENTER YOUR NAME FOR HALL OF FAME:</span>
+        <input type="text" id="goPlayerName" maxlength="12" value="PLAYER 1" autocomplete="nickname" autofocus>
+      </label>
+
+      <div class="gameover-buttons">
+        <button type="submit" class="btn btn--start" value="again">Play Again</button>
+        <button type="submit" class="btn btn--control" value="menu">Main Menu</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

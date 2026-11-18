@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>CHAZFAB // HTML Sandbox Labs</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./mainframe.js"></script>
+</head>
+<body data-root-prefix="./">
+  <dialog class="Drawer" id="mobileDrawer" aria-label="Mainframe navigation drawer">
+    <div class="Drawer-scroller">
+      <nav class="Drawer-sheet" aria-label="Mobile menu">
+        <div class="drawer-header">
+          <span class="drawer-title">CHAZFAB</span>
+          <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu" autofocus>[X]</button>
+        </div>
+        <ul class="drawer-list">
+          <li><a class="drawer-link" href="./index.html"><span>[MAINFRAME]</span></a></li>
+          <li><a class="drawer-link" href="./games.html"><span>[GAMES]</span></a></li>
+          <li><a class="drawer-link" href="./projects.html"><span>[PROJECTS]</span></a></li>
+          <li><a class="drawer-link" href="./labs.html" aria-current="page"><span>[LABS]</span></a></li>
+          <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </dialog>
+
+  <div class="mainframe-shell" id="mainframeShell">
+    <div class="tron-grid-wrap" aria-hidden="true">
+      <div class="tron-horizon"></div>
+      <div class="tron-grid-plane"></div>
+    </div>
+    <div class="scanlines-layer" aria-hidden="true"></div>
+
+    <header class="mainframe-topbar">
+      <a class="brand-logo-link" href="./index.html" aria-label="CHAZFAB Home">
+        <img class="brand-logo-img" src="./assets/svg/chazfab-pixel-logo.svg" alt="CHAZFAB" width="256" height="52">
+      </a>
+
+      <nav class="top-nav" aria-label="Primary navigation">
+        <a class="nav-tab" href="./index.html">[MAINFRAME]</a>
+        <a class="nav-tab" href="./games.html">[GAMES]</a>
+        <a class="nav-tab" href="./projects.html">[PROJECTS]</a>
+        <a class="nav-tab" href="./labs.html" aria-current="page">[LABS *]</a>
+        <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
+      </nav>
+
+      <div class="topbar-right">
+        <a class="avatar-pill-link" href="./sysop.html" title="SYSOP // Chaz" aria-label="SYSOP Chaz profile">
+          <img class="avatar-pill-img" src="./assets/chazfab-avatar.png" alt="" width="38" height="38">
+        </a>
+        <button type="button" class="mobile-menu-trigger" id="drawerOpenBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileDrawer">[&equiv; MENU]</button>
+      </div>
+    </header>
+
+    <main class="mainframe-stage">
+      <div class="page-intro">
+        <h1 class="page-title">HTML Sandbox</h1>
+        <p class="page-note">Drop any standalone <code>.html</code> file into <code>/labs/</code> to share it.</p>
+      </div>
+
+      <section class="hub-grid hub-grid--3" aria-label="HTML lab experiments">
+        <!-- Lab 1: Shot Couch Coach -->
+        <article class="clean-card clean-card--violet">
+          <div class="card-head">
+            <h2 class="card-title">Shot Couch Coach</h2>
+            <span class="status-pill status-pill--wip">STUB</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <pre class="code-preview">&lt;!DOCTYPE html&gt;
+&lt;title&gt;Shot Couch Coach&lt;/title&gt;
+&lt;!-- Drop built app at:
+     labs/shot-couch-coach.html --&gt;</pre>
+          </div>
+          <div class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/shot-couch-coach.html">[OPEN]</a>
+            <a class="btn-raw" href="./labs/shot-couch-coach.html">[RAW .HTML]</a>
+          </div>
+        </article>
+
+        <!-- Lab 2: Number Munchers -->
+        <article class="clean-card clean-card--green">
+          <div class="card-head">
+            <h2 class="card-title">Number Munchers</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <svg viewBox="0 0 220 110" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="10" width="180" height="90" fill="#020804" stroke="#00ff41" stroke-width="2"/>
+              <path d="M20 32 H200 M20 55 H200 M20 78 H200 M56 10 V100 M92 10 V100 M128 10 V100 M164 10 V100" stroke="#00ff41" stroke-opacity="0.45" stroke-width="1"/>
+              <rect x="137" y="60" width="18" height="14" rx="3" fill="#00ff41"/>
+            </svg>
+          </div>
+          <div class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/number-munchers/index.html">[OPEN]</a>
+            <a class="btn-raw" href="./labs/number-munchers/index.html">[RAW .HTML]</a>
+          </div>
+        </article>
+
+        <!-- Lab 3: TRON Grid Test -->
+        <article class="clean-card">
+          <div class="card-head">
+            <h2 class="card-title">TRON Grid Test</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <svg viewBox="0 0 220 110" xmlns="http://www.w3.org/2000/svg">
+              <line x1="10" y1="36" x2="210" y2="36" stroke="#00e5ff" stroke-width="2"/>
+              <path d="M110 36 L10 104 M110 36 L55 104 M110 36 L110 104 M110 36 L165 104 M110 36 L210 104" stroke="#00ff41" stroke-width="1.4"/>
+              <path d="M40 54 H180 M28 70 H192 M16 88 H204" stroke="#00e5ff" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <div class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/tron-grid-test.html">[OPEN]</a>
+            <a class="btn-raw" href="./labs/tron-grid-test.html">[RAW .HTML]</a>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="mainframe-bottombar">
+      <div class="terminal-inline-wrap">
+        <form class="terminal-form" id="terminalForm">
+          <label class="terminal-prompt-label" for="terminalInput">
+            C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span>
+          </label>
+          <input class="terminal-input" id="terminalInput" type="text" placeholder="coach, munchers, tron, home, help..." autocomplete="off" spellcheck="false">
+        </form>
+        <span class="terminal-output" id="terminalOutput" aria-live="polite"></span>
+      </div>
+      <div class="bottom-toggles">
+        <label class="toggle-pill"><input type="checkbox" id="gridDrive"> [GRID]</label>
+        <label class="toggle-pill"><input type="checkbox" id="sfxToggle"> [SFX]</label>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

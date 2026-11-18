@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>CHAZFAB // App Viewer</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="viewer-body">
+  <header class="viewer-topbar">
+    <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+      <a class="btn-play" id="backBtn" href="./labs.html" style="min-height:32px;padding:0.2rem 0.65rem;flex:0 0 auto;">&larr; BACK</a>
+      <span class="viewer-file-label" id="fileReadout">labs/tron-grid-test.html</span>
+    </div>
+    <a class="btn-raw" id="rawBtn" href="./labs/tron-grid-test.html" style="min-height:32px;padding:0.2rem 0.65rem;flex:0 0 auto;">RAW .HTML &rarr;</a>
+  </header>
+
+  <iframe class="viewer-frame" id="appFrame" title="CHAZFAB Mainframe App Viewer" src="./labs/tron-grid-test.html"></iframe>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const requested = (params.get('app') || '').trim();
+      const safePattern = /^(labs|projects)\/[a-zA-Z0-9_./-]+\.html$/;
+      const isSafe = safePattern.test(requested) && !requested.includes('..');
+      const target = isSafe ? requested : 'labs/tron-grid-test.html';
+
+      const appFrame = document.getElementById('appFrame');
+      const fileReadout = document.getElementById('fileReadout');
+      const rawBtn = document.getElementById('rawBtn');
+      const backBtn = document.getElementById('backBtn');
+
+      appFrame.src = './' + target;
+      rawBtn.href = './' + target;
+      fileReadout.textContent = target;
+
+      if (target.startsWith('labs/number-munchers')) {
+        backBtn.href = './games.html';
+      } else if (document.referrer && document.referrer.startsWith(window.location.origin)) {
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          history.back();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

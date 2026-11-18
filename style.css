@@ -1,6 +1,6 @@
 /* ==========================================================================
-   CHAZFAB MAINFRAME // Global Responsive Stylesheet
-   Pure HTML + CSS (C:\CHAZFAB\MAINFRAME.EXE aesthetic, zero build tools)
+   CHAZFAB MAINFRAME // Clean 3-Zone Responsive Stylesheet
+   Pure HTML + CSS (Pixel-Arcade Neon + Cyber-Violet + TRON Cyan Grid)
    ========================================================================== */
 
 @font-face {
@@ -32,17 +32,17 @@
   color-scheme: light dark;
 
   --void: #020406;
-  --screen-panel: rgba(5, 11, 20, 0.92);
-  --screen-panel-alt: #07121f;
+  --card-bg: rgba(6, 12, 20, 0.86);
+  --card-art-bg: #03070d;
   --neon-green: #00ff41;
-  --neon-green-glow: rgba(0, 255, 65, 0.35);
+  --neon-green-glow: rgba(0, 255, 65, 0.36);
   --cyber-violet: #9d4edd;
   --titlebar-violet: #5a189a;
   --tron-cyan: #00e5ff;
   --tron-cyan-glow: rgba(0, 229, 255, 0.28);
   --laser-red: #ff2800;
-  --ink: #e2ffe9;
-  --ink-muted: #86c9a5;
+  --ink: #e8fff0;
+  --ink-muted: #8ec9a9;
 
   --font-display: "Press Start 2P", ui-monospace, monospace;
   --font-terminal: "VT323", "Share Tech Mono", ui-monospace, monospace;
@@ -81,88 +81,30 @@ body {
 }
 
 /* ==========================================================================
-   1. DESK BACKDROP & OLD-COMPUTER CRT MONITOR SHELL
+   1. CLEAN 3-ZONE MAINFRAME SHELL + BACKGROUND TRON GRID & SUBTLE SCANLINES
       Explicitly pairs color-scheme: dark with background-color & color.
+      Background layers stay at z-index 1..2 BEHIND content (z-index: 10)
+      so logos and cards are never sliced by horizontal scanlines.
    ========================================================================== */
-.desk-backdrop {
-  min-height: 100vh;
-  padding: 1rem;
-  background:
-    radial-gradient(circle at 50% 15%, rgba(157, 78, 221, 0.14), transparent 55%),
-    radial-gradient(circle at 50% 85%, rgba(0, 229, 255, 0.1), transparent 60%),
-    #020306;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.crt-monitor {
+.mainframe-shell {
   color-scheme: dark;
-  background-color: #12111a;
+  background-color: var(--void);
   color: var(--ink);
   accent-color: var(--tron-cyan);
 
-  width: 100%;
-  max-width: 1200px;
-  border-radius: 16px;
-  padding: 1.05rem 1.05rem 0.85rem;
-  border: 2px solid #2b2638;
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -4px 12px rgba(0, 0, 0, 0.78),
-    0 24px 64px rgba(0, 0, 0, 0.9);
-}
-
-.crt-screen {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
   position: relative;
-  overflow: hidden;
-  background-color: var(--void);
-  color: var(--ink);
-  border-radius: 12px;
-  border: 3px solid #08090f;
-  padding: 1.1rem;
-  box-shadow:
-    inset 0 0 46px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(157, 78, 221, 0.25);
+  overflow-x: clip;
 }
 
-/* Optional CRT Scanlines Layer (#scanlinesToggle) */
-.scanlines-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 30;
-  opacity: 0.48;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0 2px,
-    rgba(0, 0, 0, 0.34) 2px 4px
-  );
-  transition: opacity 0.2s ease;
-}
-
-.crt-monitor:not(:has(#scanlinesToggle:checked)) .scanlines-layer,
-.crt-monitor.no-scanlines .scanlines-layer {
-  opacity: 0;
-}
-
-@supports not selector(:has(*)) {
-  .crt-monitor.no-scanlines .scanlines-layer {
-    opacity: 0;
-  }
-}
-
-/* ==========================================================================
-   2. 3D PERSPECTIVE TRON CYAN HORIZON GRID & ACCESSIBLE MOTION
-      Static by default; animates only when #gridDrive is checked AND
-      user does not prefer reduced motion.
-   ========================================================================== */
 .tron-grid-wrap {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 52%;
+  height: 46%;
   pointer-events: none;
   overflow: hidden;
   z-index: 1;
@@ -177,7 +119,7 @@ body {
   background: var(--tron-cyan);
   box-shadow:
     0 0 14px var(--tron-cyan),
-    0 0 28px var(--tron-cyan-glow);
+    0 0 32px var(--tron-cyan-glow);
 }
 
 .tron-grid-plane {
@@ -187,48 +129,65 @@ body {
   top: -12%;
   bottom: -60%;
   background-image:
-    linear-gradient(to right, rgba(0, 229, 255, 0.42) 1.5px, transparent 1.5px),
-    linear-gradient(to bottom, rgba(0, 229, 255, 0.42) 1.5px, transparent 1.5px);
+    linear-gradient(to right, rgba(0, 229, 255, 0.36) 1.4px, transparent 1.4px),
+    linear-gradient(to bottom, rgba(0, 229, 255, 0.36) 1.4px, transparent 1.4px);
   background-size: 48px 48px;
-  transform: perspective(360px) rotateX(68deg) translate3d(0, 0, 0);
+  transform: perspective(380px) rotateX(68deg) translate3d(0, 0, 0);
   transform-origin: center top;
   mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.72) 28%, #000 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.72) 28%, #000 100%);
 }
 
+/* Subtle scanlines behind UI cards & brand logos */
+.scanlines-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.16;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 2px,
+    rgba(0, 0, 0, 0.45) 2px 4px
+  );
+  transition: opacity 0.2s ease;
+}
+
 @keyframes tronGridScroll {
-  from { transform: perspective(360px) rotateX(68deg) translate3d(0, 0, 0); }
-  to   { transform: perspective(360px) rotateX(68deg) translate3d(0, 48px, 0); }
+  from { transform: perspective(380px) rotateX(68deg) translate3d(0, 0, 0); }
+  to   { transform: perspective(380px) rotateX(68deg) translate3d(0, 48px, 0); }
 }
 
-@keyframes tubeBreathe {
-  0%, 100% { opacity: 0.94; filter: drop-shadow(0 0 4px rgba(0, 255, 65, 0.45)); }
-  50%      { opacity: 1;    filter: drop-shadow(0 0 12px rgba(0, 255, 65, 0.85)); }
+@keyframes logoBloom {
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 255, 65, 0.45)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(0, 255, 65, 0.85)); }
 }
 
-@keyframes winBoot {
+@keyframes cardReveal {
   from { opacity: 0; transform: translate3d(0, 6px, 0); }
   to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 @keyframes cursorPulse {
   0%, 100% { opacity: 1; }
-  50%      { opacity: 0.25; }
+  50%      { opacity: 0.22; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .crt-monitor:has(#gridDrive:checked) .tron-grid-plane,
-  .crt-monitor.has-grid-drive .tron-grid-plane {
+  .mainframe-shell:has(#gridDrive:checked) .tron-grid-plane,
+  .mainframe-shell.has-grid-drive .tron-grid-plane {
     animation: tronGridScroll 1.8s linear infinite;
     will-change: transform;
   }
 
-  .tube-logo-img {
-    animation: tubeBreathe 3.4s ease-in-out infinite;
+  .brand-logo-img,
+  .dossier-logo-img {
+    animation: logoBloom 3.4s ease-in-out infinite;
   }
 
-  .os-window-boot {
-    animation: winBoot 0.3s ease-out both;
+  .clean-card,
+  .sysop-dossier {
+    animation: cardReveal 0.28s ease-out both;
   }
 
   .terminal-cursor {
@@ -236,179 +195,124 @@ body {
   }
 }
 
-.crt-content {
+/* ==========================================================================
+   2. ZONE 1 — SLIM UNIFIED CYBER-VIOLET TOP HEADER BAR
+   ========================================================================== */
+.mainframe-topbar {
   position: relative;
   z-index: 10;
+  min-height: 56px;
+  padding: 0.45rem 1.25rem;
+  background: linear-gradient(90deg, #3b0764 0%, #240046 60%, #17022d 100%);
+  border-bottom: 1.5px solid rgba(0, 229, 255, 0.55);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.65);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
 }
 
-/* ==========================================================================
-   3. RETRO OS WINDOWS, CYBER-VIOLET CHROME & STATUS LEDS
-   ========================================================================== */
-.os-window {
-  background: var(--screen-panel);
-  border: 2px solid var(--tron-cyan);
-  box-shadow: 0 0 18px var(--tron-cyan-glow);
-}
-
-.os-window--violet {
-  border-color: var(--cyber-violet);
-  box-shadow: 0 0 18px rgba(157, 78, 221, 0.28);
-}
-
-.os-window--green {
-  border-color: var(--neon-green);
-  box-shadow: 0 0 18px var(--neon-green-glow);
-}
-
-.os-titlebar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.4rem 0.75rem;
-  background: linear-gradient(90deg, var(--titlebar-violet) 0%, #3c096c 70%, #240046 100%);
-  color: #f3e8ff;
-  border-bottom: 2px solid var(--cyber-violet);
-  font-size: 0.84rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-
-.os-titlebar-path {
+.brand-logo-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.led-cluster {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
+  text-decoration: none;
   flex-shrink: 0;
 }
 
-.led-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  display: inline-block;
+.brand-logo-img {
+  height: 28px;
+  width: auto;
+  display: block;
 }
 
-.led-dot--red {
-  background: var(--laser-red);
-  box-shadow: 0 0 8px var(--laser-red);
-}
-
-.led-dot--green {
-  background: var(--neon-green);
-  box-shadow: 0 0 8px var(--neon-green);
-}
-
-.led-dot--cyan {
-  background: var(--tron-cyan);
-  box-shadow: 0 0 8px var(--tron-cyan);
-}
-
-.win-controls {
-  display: inline-flex;
-  gap: 0.25rem;
-  font-size: 0.72rem;
-}
-
-.win-ctrl-box {
-  display: inline-grid;
-  place-items: center;
-  width: 20px;
-  height: 18px;
-  border: 1px solid var(--cyber-violet);
-  background: rgba(2, 4, 6, 0.55);
-  color: #e9d5ff;
-  line-height: 1;
-}
-
-.os-body {
-  padding: 1rem 1.1rem;
-}
-
-/* ==========================================================================
-   4. TOP PERSISTENT NAVIGATION MENU + HEADER + SYSOP BADGE
-   ========================================================================== */
-.top-nav-bar {
+.top-nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.55rem 0.75rem;
-  background: #0a0514;
-  border-bottom: 2px solid var(--tron-cyan);
-}
-
-.cmd-nav-desktop {
-  display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.45rem;
-  align-items: center;
-}
-
-.cmd-nav-inline {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  align-items: center;
 }
 
 .nav-tab {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
   min-height: 36px;
-  padding: 0.32rem 0.72rem;
+  padding: 0.3rem 0.72rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #f3e8ff;
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: var(--ink);
-  background: #060e1a;
-  border: 1.5px solid var(--cyber-violet);
+  letter-spacing: 0.04em;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .nav-tab:hover,
 .nav-tab:focus-visible {
-  background: var(--neon-green);
-  color: #021406;
-  border-color: var(--neon-green);
-  box-shadow: 0 0 12px var(--neon-green-glow);
+  color: var(--neon-green);
+  border-color: rgba(0, 255, 65, 0.55);
+  background: rgba(6, 28, 16, 0.75);
   outline: 2px solid var(--tron-cyan);
   outline-offset: 2px;
 }
 
 .nav-tab[aria-current="page"] {
-  background: var(--neon-green);
-  color: #021406;
+  background: #061c10;
+  color: var(--neon-green);
+  border: 1.5px solid var(--neon-green);
+  box-shadow: 0 0 12px var(--neon-green-glow);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.avatar-pill-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1.5px solid var(--tron-cyan);
+  background: #000000;
+  overflow: hidden;
+  box-shadow: 0 0 10px var(--tron-cyan-glow);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.avatar-pill-link:hover,
+.avatar-pill-link:focus-visible {
   border-color: var(--neon-green);
   box-shadow: 0 0 14px var(--neon-green-glow);
+}
+
+.avatar-pill-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  display: block;
 }
 
 .mobile-menu-trigger {
   display: none;
   align-items: center;
-  gap: 0.45rem;
-  min-height: 44px;
-  padding: 0.45rem 0.85rem;
-  background: var(--titlebar-violet);
-  color: #ffffff;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
   border: 1.5px solid var(--tron-cyan);
+  background: rgba(4, 14, 26, 0.85);
+  color: var(--tron-cyan);
   font-family: var(--font-mono);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -417,118 +321,52 @@ body {
 .mobile-menu-trigger:focus-visible {
   background: var(--tron-cyan);
   color: #021018;
-  outline: 2px solid var(--neon-green);
-  outline-offset: 2px;
-}
-
-.mobile-brand-mini {
-  display: none;
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  color: var(--neon-green);
-  letter-spacing: 0.08em;
-  text-shadow: 0 0 8px var(--neon-green-glow);
-}
-
-.hero-header-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1rem;
-  align-items: center;
-}
-
-.tube-logo-img {
-  width: min(100%, 400px);
-  height: auto;
-  display: block;
-}
-
-.hero-tagline {
-  margin: 0.35rem 0 0;
-  font-family: var(--font-terminal);
-  font-size: 1.25rem;
-  letter-spacing: 0.06em;
-  color: var(--tron-cyan);
-}
-
-/* Pixel-Cyborg SYSOP Card */
-.sysop-card {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.55rem 0.8rem;
-  background: #000000;
-  border: 2px solid var(--cyber-violet);
-  box-shadow: 0 0 14px rgba(157, 78, 221, 0.32);
-  text-decoration: none;
-  color: var(--ink);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.sysop-card:hover {
-  border-color: var(--neon-green);
-  box-shadow: 0 0 16px var(--neon-green-glow);
-}
-
-.sysop-avatar {
-  width: 68px;
-  height: 75px;
-  object-fit: contain;
-  image-rendering: pixelated;
-  background: #000000;
-  border: 1.5px solid var(--tron-cyan);
-  display: block;
-}
-
-.sysop-badge-title {
-  background: var(--titlebar-violet);
-  color: #f3e8ff;
-  font-size: 0.74rem;
-  font-weight: 700;
-  padding: 0.1rem 0.45rem;
-  margin-bottom: 0.25rem;
-  display: inline-block;
-}
-
-.sysop-meta {
-  font-size: 0.78rem;
-  line-height: 1.4;
-}
-
-.status-strip {
-  margin-top: 0.85rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--screen-panel-alt);
-  border: 1.5px solid var(--tron-cyan);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.84rem;
-}
-
-.status-tag {
-  background: var(--laser-red);
-  color: #ffffff;
-  font-weight: 700;
-  padding: 0.1rem 0.45rem;
-  margin-right: 0.45rem;
-  font-size: 0.74rem;
-}
-
-.status-tag--online {
-  background: var(--neon-green);
-  color: #021406;
 }
 
 /* ==========================================================================
-   5. MAINFRAME HUB GRID, CARDS, DUAL-BUTTON LABS & TABLES
+   3. ZONE 2 — SPACIOUS MAIN STAGE & CLEAN CARDS
    ========================================================================== */
+.mainframe-stage {
+  position: relative;
+  z-index: 10;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.page-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.page-title {
+  margin: 0;
+  font-family: var(--font-terminal);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+.page-note {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
 .hub-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.35rem;
 }
 
 .hub-grid--3 {
@@ -539,362 +377,482 @@ body {
   grid-column: 1 / -1;
 }
 
-.kicker {
-  margin: 0 0 0.2rem;
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--neon-green);
+.clean-card {
+  background: var(--card-bg);
+  border: 1.5px solid rgba(0, 229, 255, 0.42);
+  border-radius: 6px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.clean-card:hover {
+  border-color: rgba(0, 229, 255, 0.82);
+  box-shadow: 0 12px 34px rgba(0, 229, 255, 0.14);
+}
+
+.clean-card--green {
+  border-color: rgba(0, 255, 65, 0.52);
+}
+
+.clean-card--green:hover {
+  border-color: var(--neon-green);
+  box-shadow: 0 12px 34px rgba(0, 255, 65, 0.16);
+}
+
+.clean-card--violet {
+  border-color: rgba(157, 78, 221, 0.55);
+}
+
+.clean-card--violet:hover {
+  border-color: var(--cyber-violet);
+  box-shadow: 0 12px 34px rgba(157, 78, 221, 0.18);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.card-title {
+  margin: 0;
+  font-family: var(--font-terminal);
+  font-size: 1.55rem;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  color: #ffffff;
   text-transform: uppercase;
 }
 
-.kicker--wip {
-  color: var(--laser-red);
+.status-pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  border: 1px solid var(--tron-cyan);
+  color: var(--tron-cyan);
+  background: rgba(0, 229, 255, 0.08);
+  white-space: nowrap;
 }
 
-.card-heading {
-  margin: 0 0 0.45rem;
-  font-family: var(--font-terminal);
-  font-size: 1.5rem;
-  line-height: 1.15;
-  color: #ffffff;
-  letter-spacing: 0.03em;
+.status-pill--live {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  background: rgba(0, 255, 65, 0.1);
 }
 
-.card-copy {
-  margin: 0 0 0.85rem;
+.status-pill--wip {
+  border-color: var(--laser-red);
+  color: #ff9c8a;
+  background: rgba(255, 40, 0, 0.12);
+}
+
+.card-art {
+  background: var(--card-art-bg);
+  border: 1px solid rgba(0, 229, 255, 0.22);
+  border-radius: 4px;
+  aspect-ratio: 16 / 8.5;
+  display: grid;
+  place-items: center;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+
+.card-art svg {
+  width: 100%;
+  height: 100%;
+  max-height: 185px;
+  display: block;
+}
+
+.card-desc {
+  margin: 0;
   font-family: var(--font-sans);
   font-size: 0.94rem;
   color: var(--ink-muted);
 }
 
-.preview-box {
-  background: #02050b;
-  border: 1.5px solid var(--tron-cyan);
-  padding: 0.75rem;
-  margin-bottom: 0.85rem;
-  display: grid;
-  place-items: center;
-}
-
-.preview-box svg {
+.code-preview {
   width: 100%;
-  max-height: 190px;
-  height: auto;
-  display: block;
-}
-
-.code-snippet-box {
-  background: #020704;
-  border: 1.5px solid var(--neon-green);
+  height: 100%;
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  background: #020805;
   color: var(--neon-green);
-  padding: 0.75rem;
-  margin-bottom: 0.85rem;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   line-height: 1.45;
-  overflow-x: auto;
-  white-space: pre;
-}
-
-.chip-row {
+  overflow: hidden;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.42rem;
-  margin-bottom: 0.85rem;
-}
-
-.chip {
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.16rem 0.5rem;
-  border: 1px solid var(--tron-cyan);
-  background: #04101d;
-  color: var(--tron-cyan);
-}
-
-.chip--wip {
-  border-color: var(--laser-red);
-  color: #ffb4a6;
-  background: #1d0502;
-}
-
-.chip--live {
-  border-color: var(--neon-green);
-  color: var(--neon-green);
-  background: #031909;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .action-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
+  gap: 0.6rem;
   margin-top: auto;
 }
 
-.btn-mainframe,
-.btn-raw,
-.btn-violet {
+.enter-btn,
+.btn-play,
+.btn-raw {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  min-height: 44px;
-  padding: 0.45rem 0.9rem;
+  min-height: 42px;
+  padding: 0.45rem 0.85rem;
+  border-radius: 4px;
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: 0.04em;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.btn-mainframe {
-  background: #041b0b;
+.enter-btn {
+  width: 100%;
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  background: rgba(4, 20, 34, 0.8);
+  color: var(--ink);
+}
+
+.enter-btn:hover,
+.enter-btn:focus-visible {
+  background: #062112;
   color: var(--neon-green);
-  border: 1.5px solid var(--neon-green);
+  border-color: var(--neon-green);
+  box-shadow: 0 0 12px var(--neon-green-glow);
 }
 
-.btn-mainframe:hover,
-.btn-mainframe:focus-visible {
+.btn-play {
+  flex: 1 1 auto;
+  border: 1.5px solid var(--neon-green);
+  background: rgba(4, 27, 11, 0.88);
+  color: var(--neon-green);
+}
+
+.btn-play:hover,
+.btn-play:focus-visible {
   background: var(--neon-green);
   color: #021406;
-  box-shadow: 0 0 14px var(--neon-green-glow);
+  box-shadow: 0 0 12px var(--neon-green-glow);
 }
 
 .btn-raw {
-  background: #041322;
-  color: var(--tron-cyan);
+  flex: 1 1 auto;
   border: 1.5px solid var(--tron-cyan);
+  background: rgba(4, 19, 34, 0.88);
+  color: var(--tron-cyan);
 }
 
 .btn-raw:hover,
 .btn-raw:focus-visible {
   background: var(--tron-cyan);
   color: #021018;
-  box-shadow: 0 0 14px var(--tron-cyan-glow);
-}
-
-.btn-violet {
-  background: #23093d;
-  color: #f3e8ff;
-  border: 1.5px solid var(--cyber-violet);
-}
-
-.btn-violet:hover,
-.btn-violet:focus-visible {
-  background: var(--cyber-violet);
-  color: #080212;
-  box-shadow: 0 0 14px rgba(157, 78, 221, 0.45);
-}
-
-.template-slot {
-  border: 2px dashed var(--tron-cyan);
-  background: rgba(0, 229, 255, 0.04);
-  padding: 1rem;
-  text-align: center;
-  color: var(--tron-cyan);
-  font-size: 0.88rem;
+  box-shadow: 0 0 12px var(--tron-cyan-glow);
 }
 
 .spec-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.84rem;
-  margin-bottom: 0.85rem;
 }
 
 .spec-table th,
 .spec-table td {
   text-align: left;
   padding: 0.45rem 0.55rem;
-  border-bottom: 1px solid rgba(0, 229, 255, 0.24);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.22);
 }
 
 .spec-table th {
   color: var(--tron-cyan);
   font-size: 0.78rem;
   text-transform: uppercase;
-  background: rgba(0, 229, 255, 0.08);
 }
 
 /* ==========================================================================
-   6. INTERACTIVE C:\CHAZFAB> PROMPT BAR, TASKBAR & BEZEL CONTROLS
+   4. CLEAN 2-COLUMN SYSOP DOSSIER (Matches Render 1)
    ========================================================================== */
-.terminal-bar {
-  background: #020504;
-  border: 2px solid var(--neon-green);
-  box-shadow: 0 0 14px rgba(0, 255, 65, 0.2);
-  padding: 0.65rem 0.8rem;
+.sysop-dossier {
+  background: var(--card-bg);
+  border: 1.5px solid rgba(0, 229, 255, 0.42);
+  border-radius: 8px;
+  padding: 1.75rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65);
+  display: grid;
+  grid-template-columns: minmax(210px, 280px) 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.sysop-portrait-frame {
+  background: #03070d;
+  border: 1.5px solid rgba(0, 229, 255, 0.35);
+  border-radius: 6px;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sysop-portrait-img {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  image-rendering: pixelated;
+  background: #000000;
+  border-radius: 4px;
+}
+
+.sysop-portrait-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
+.online-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--neon-green);
+  font-weight: 700;
+}
+
+.online-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--neon-green);
+  box-shadow: 0 0 8px var(--neon-green);
+}
+
+.dossier-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+}
+
+.dossier-logo-img {
+  width: min(100%, 300px);
+  height: auto;
+  display: block;
+}
+
+.dossier-bio {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: #d6f5e3;
+  max-width: 52ch;
+}
+
+.bench-group-label {
+  margin: 0 0 0.45rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+
+.bench-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bench-pill {
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 229, 255, 0.45);
+  background: rgba(4, 18, 28, 0.85);
+  color: var(--ink);
+  font-size: 0.82rem;
+}
+
+.social-grid {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.social-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 68px;
+  padding: 0.55rem 0.5rem;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  background: rgba(3, 10, 18, 0.9);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.78rem;
+  text-align: center;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.social-tile svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.social-tile:hover,
+.social-tile:focus-visible {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  background: rgba(4, 24, 11, 0.9);
+  box-shadow: 0 0 12px var(--neon-green-glow);
+}
+
+/* ==========================================================================
+   5. ZONE 3 — SINGLE SLIM BOTTOM BAR (C:\CHAZFAB> + [GRID] [SFX])
+   ========================================================================== */
+.mainframe-bottombar {
+  position: relative;
+  z-index: 10;
+  min-height: 44px;
+  padding: 0.38rem 1.25rem;
+  background: rgba(4, 8, 14, 0.94);
+  border-top: 1px solid rgba(0, 229, 255, 0.38);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.terminal-inline-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1 1 300px;
+  min-width: 0;
+}
+
+.terminal-form {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.terminal-prompt-label {
+  color: var(--tron-cyan);
+  font-size: 0.92rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: var(--neon-green);
+}
+
+.terminal-input {
+  flex: 1 1 140px;
+  min-width: 0;
+  background: transparent;
+  color: var(--neon-green);
+  border: 0;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.32);
+  padding: 0.2rem 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+
+.terminal-input::placeholder {
+  color: rgba(142, 201, 169, 0.52);
+}
+
+.terminal-input:focus {
+  outline: none;
+  border-bottom-color: var(--neon-green);
 }
 
 .terminal-output {
-  font-size: 0.82rem;
-  color: var(--ink-muted);
-  margin-bottom: 0.45rem;
-  white-space: pre-wrap;
+  font-size: 0.78rem;
+  color: var(--neon-green);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 44ch;
 }
 
 .terminal-output:empty {
   display: none;
 }
 
-.terminal-form {
+.bottom-toggles {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+  font-size: 0.8rem;
 }
 
-.terminal-prompt-label {
-  color: var(--neon-green);
-  font-family: var(--font-terminal);
-  font-size: 1.35rem;
-  font-weight: 700;
+.toggle-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-}
-
-.terminal-cursor {
-  display: inline-block;
-  width: 9px;
-  height: 16px;
-  background: var(--neon-green);
-}
-
-.terminal-input {
-  flex: 1 1 180px;
-  min-height: 36px;
-  background: #040b06;
-  color: var(--neon-green);
-  border: 1px solid rgba(0, 255, 65, 0.45);
-  padding: 0.25rem 0.6rem;
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-}
-
-.terminal-input:focus {
-  outline: 2px solid var(--tron-cyan);
-  border-color: var(--tron-cyan);
-}
-
-.cmd-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
-}
-
-.cmd-chip {
+  gap: 0.3rem;
   min-height: 30px;
   padding: 0.15rem 0.55rem;
-  background: #05131f;
-  color: var(--tron-cyan);
-  border: 1px solid var(--tron-cyan);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.cmd-chip:hover {
-  background: var(--tron-cyan);
-  color: #021018;
-}
-
-.os-taskbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.6rem 0.8rem;
-  background: #080412;
-  border: 2px solid var(--cyber-violet);
-}
-
-.badge-shelf {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.badge-88x31 {
-  width: 88px;
-  height: 31px;
-  image-rendering: pixelated;
-  display: block;
-}
-
-.hit-counter {
-  padding: 0.24rem 0.6rem;
-  background: #000000;
-  color: var(--neon-green);
-  border: 1.5px solid var(--tron-cyan);
-  font-size: 0.84rem;
-  letter-spacing: 0.12em;
-}
-
-.monitor-bezel-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.65rem;
-  padding: 0.75rem 0.35rem 0.15rem;
-  font-size: 0.78rem;
-  color: #cbd5e1;
-}
-
-.bezel-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.bezel-brand {
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #94a3b8;
-}
-
-.bezel-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-  min-height: 36px;
-  padding: 0.28rem 0.65rem;
-  background: #0a0c12;
-  color: #cbd5e1;
-  border: 1.5px solid #38334b;
-  border-radius: 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  background: rgba(6, 14, 24, 0.85);
+  color: var(--ink-muted);
   cursor: pointer;
   user-select: none;
-  box-shadow: 0 3px 0 #020306;
-  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
-.bezel-btn:hover {
+.toggle-pill:hover {
   border-color: var(--tron-cyan);
-  color: #ffffff;
+  color: var(--ink);
 }
 
-.bezel-btn:has(input:checked) {
-  background: #072213;
-  color: var(--neon-green);
+.toggle-pill:has(input:checked) {
   border-color: var(--neon-green);
+  color: var(--neon-green);
+  background: rgba(4, 24, 11, 0.85);
 }
 
-.bezel-btn input {
+.toggle-pill input {
   margin: 0;
   accent-color: currentColor;
 }
 
 /* ==========================================================================
-   7. MOBILE SWIPE-TO-DISMISS <DIALOG> NAVIGATION DRAWER (navigation-drawer guide)
+   6. MOBILE SWIPE-TO-DISMISS <DIALOG> DRAWER (navigation-drawer guide)
    ========================================================================== */
 .Drawer {
   --drawer-width: min(20em, 80dvw, 100dvw - 24px);
@@ -914,7 +872,7 @@ body {
 
 .Drawer::backdrop {
   background: #000000;
-  opacity: calc(var(--drawer-backdrop) * 0.75);
+  opacity: calc(var(--drawer-backdrop) * 0.76);
 }
 
 .Drawer-scroller {
@@ -959,7 +917,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid var(--cyber-violet);
+  border-bottom: 1.5px solid var(--cyber-violet);
   padding-bottom: 0.65rem;
 }
 
@@ -1008,7 +966,6 @@ body {
   color: var(--neon-green);
 }
 
-/* MANDATORY (navigation-drawer guide): wrap scroll-driven backdrop animation in @supports */
 @supports (animation-timeline: scroll()) {
   .Drawer {
     timeline-scope: --drawer-fade;
@@ -1033,7 +990,7 @@ body {
 }
 
 /* ==========================================================================
-   8. FRAMED APP VIEWER (viewer.html)
+   7. FRAMED APP VIEWER (viewer.html)
    ========================================================================== */
 .viewer-body {
   margin: 0;
@@ -1048,9 +1005,9 @@ body {
 
 .viewer-topbar {
   min-height: 44px;
-  padding: 0.35rem 0.75rem;
-  background: linear-gradient(90deg, var(--titlebar-violet), #240046);
-  border-bottom: 2px solid var(--tron-cyan);
+  padding: 0.35rem 0.85rem;
+  background: linear-gradient(90deg, #3b0764, #240046);
+  border-bottom: 1.5px solid var(--tron-cyan);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1073,180 +1030,51 @@ body {
 }
 
 /* ==========================================================================
-   8B. SYSOP DOSSIER PORTRAIT & OFFICIAL SOCIAL/EMAIL UPLINKS
+   8. RESPONSIVE BREAKPOINTS (TABLET <=980px, PHONE <680px)
    ========================================================================== */
-.sysop-portrait-body {
-  text-align: center;
-}
-
-.sysop-portrait-box {
-  background: #000000;
-}
-
-.sysop-portrait-img {
-  width: 180px;
-  height: auto;
-  image-rendering: pixelated;
-  display: block;
-  margin: 0 auto;
-}
-
-.sysop-portrait-actions {
-  justify-content: center;
-}
-
-.sysop-bench-heading {
-  margin-top: 0.8rem;
-}
-
-.uplink-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 0.6rem;
-}
-
-.uplink-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  min-block-size: 44px;
-  padding: 0.5rem 0.75rem;
-  background: #041322;
-  color: var(--tron-cyan);
-  border: 1.5px solid var(--tron-cyan);
-  text-decoration: none;
-  font-family: var(--font-mono);
-  font-size: 0.84rem;
-  font-weight: 700;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.uplink-card:hover,
-.uplink-card:focus-visible {
-  background: var(--neon-green);
-  color: #021406;
-  border-color: var(--neon-green);
-  box-shadow: 0 0 12px var(--neon-green-glow);
-  outline: 2px solid var(--tron-cyan);
-  outline-offset: 2px;
-}
-
-.uplink-handle {
-  color: var(--ink-muted);
-  font-size: 0.78rem;
-}
-
-.uplink-card:hover .uplink-handle,
-.uplink-card:focus-visible .uplink-handle {
-  color: #021406;
-}
-
-.taskbar-uplinks {
-  display: flex;
-  align-items: center;
-}
-
-.uplink-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  align-items: center;
-}
-
-.uplink-pill {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 32px;
-  padding: 0.24rem 0.55rem;
-  background: #041322;
-  color: var(--tron-cyan);
-  border: 1px solid var(--tron-cyan);
-  text-decoration: none;
-  font-size: 0.76rem;
-  font-weight: 700;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.uplink-pill:hover,
-.uplink-pill:focus-visible {
-  background: var(--neon-green);
-  color: #021406;
-  border-color: var(--neon-green);
-  outline: 2px solid var(--tron-cyan);
-  outline-offset: 2px;
-}
-
-@media (pointer: coarse) {
-  .uplink-pill {
-    min-block-size: 44px;
-  }
-}
-
-/* ==========================================================================
-   9. RESPONSIVE BREAKPOINTS (TABLET <=1023px, PHONE <640px)
-   ========================================================================== */
-@media (max-width: 1023px) {
-  .desk-backdrop {
-    padding: 0.6rem;
-  }
-
-  .crt-monitor {
-    padding: 0.7rem;
-  }
-
+@media (max-width: 980px) {
   .hub-grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .social-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 639px) {
-  .desk-backdrop {
-    padding: 0;
-    background: var(--void);
+@media (max-width: 760px) {
+  .sysop-dossier {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 679px) {
+  .mainframe-topbar {
+    padding: 0.45rem 0.85rem;
   }
 
-  /* Hide outer CRT monitor bezel on Phone for crisp edge-to-edge readability */
-  .crt-monitor {
-    border: 0;
-    border-radius: 0;
-    padding: 0;
-    box-shadow: none;
-    background-color: var(--void);
-  }
-
-  .crt-screen {
-    border: 0;
-    border-radius: 0;
-    padding: 0.75rem;
-    min-height: 100svh;
-    box-shadow: none;
-  }
-
-  .cmd-nav-desktop {
+  .top-nav {
     display: none;
   }
 
-  .mobile-menu-trigger,
-  .mobile-brand-mini {
+  .mobile-menu-trigger {
     display: inline-flex;
   }
 
-  .hero-header-row,
+  .mainframe-stage {
+    padding: 1.25rem 0.85rem 1.75rem;
+    gap: 1rem;
+  }
+
   .hub-grid,
   .hub-grid--3 {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .monitor-bezel-controls {
-    padding: 0.75rem;
-    background: #090612;
-    border-top: 2px solid var(--cyber-violet);
+  .mainframe-bottombar {
+    padding: 0.45rem 0.85rem;
   }
 }

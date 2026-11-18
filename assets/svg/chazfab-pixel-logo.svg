@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 52" width="256" height="52" shape-rendering="crispEdges" role="img" aria-label="CHAZFAB">
+  <defs>
+    <filter id="pixelNeonGlow" x="-10%" y="-25%" width="120%" height="150%">
+      <feGaussianBlur stdDeviation="2.2" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#pixelNeonGlow)" fill="#04240E" stroke="#00FF41" stroke-width="2" stroke-linejoin="miter" fill-rule="evenodd">
+    <!-- C -->
+    <path d="M10,8 H30 V12 H34 V18 H26 V16 H14 V36 H26 V34 H34 V40 H30 V44 H10 V40 H6 V12 H10 Z"/>
+    <!-- H -->
+    <path d="M42,8 H50 V22 H62 V8 H70 V44 H62 V30 H50 V44 H42 Z"/>
+    <!-- A -->
+    <path d="M82,8 H102 V12 H106 V44 H98 V32 H86 V44 H78 V12 H82 Z M86,16 H98 V24 H86 Z"/>
+    <!-- Z -->
+    <path d="M114,8 H142 V18 H138 V22 H134 V26 H130 V30 H126 V34 H122 V36 H142 V44 H114 V34 H118 V30 H122 V26 H126 V22 H130 V18 H134 V16 H114 Z"/>
+    <!-- F -->
+    <path d="M150,8 H178 V16 H158 V23 H174 V31 H158 V44 H150 Z"/>
+    <!-- A -->
+    <path d="M190,8 H210 V12 H214 V44 H206 V32 H194 V44 H186 V12 H190 Z M194,16 H206 V24 H194 Z"/>
+    <!-- B -->
+    <path d="M222,8 H246 V12 H250 V22 H246 V26 H250 V40 H246 V44 H222 Z M230,14 H242 V22 H230 Z M230,28 H242 V38 H230 Z"/>
+  </g>
+</svg>

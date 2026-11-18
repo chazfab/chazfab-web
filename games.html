@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>CHAZFAB // Game Studio</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./mainframe.js"></script>
+</head>
+<body data-root-prefix="./">
+  <dialog class="Drawer" id="mobileDrawer" aria-label="Mainframe navigation drawer">
+    <div class="Drawer-scroller">
+      <nav class="Drawer-sheet" aria-label="Mobile menu">
+        <div class="drawer-header">
+          <span class="drawer-title">CHAZFAB</span>
+          <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu" autofocus>[X]</button>
+        </div>
+        <ul class="drawer-list">
+          <li><a class="drawer-link" href="./index.html"><span>[MAINFRAME]</span></a></li>
+          <li><a class="drawer-link" href="./games.html" aria-current="page"><span>[GAMES]</span></a></li>
+          <li><a class="drawer-link" href="./projects.html"><span>[PROJECTS]</span></a></li>
+          <li><a class="drawer-link" href="./labs.html"><span>[LABS]</span></a></li>
+          <li><a class="drawer-link" href="./sysop.html"><span>[SYSOP]</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </dialog>
+
+  <div class="mainframe-shell" id="mainframeShell">
+    <div class="tron-grid-wrap" aria-hidden="true">
+      <div class="tron-horizon"></div>
+      <div class="tron-grid-plane"></div>
+    </div>
+    <div class="scanlines-layer" aria-hidden="true"></div>
+
+    <header class="mainframe-topbar">
+      <a class="brand-logo-link" href="./index.html" aria-label="CHAZFAB Home">
+        <img class="brand-logo-img" src="./assets/svg/chazfab-pixel-logo.svg" alt="CHAZFAB" width="256" height="52">
+      </a>
+
+      <nav class="top-nav" aria-label="Primary navigation">
+        <a class="nav-tab" href="./index.html">[MAINFRAME]</a>
+        <a class="nav-tab" href="./games.html" aria-current="page">[GAMES *]</a>
+        <a class="nav-tab" href="./projects.html">[PROJECTS]</a>
+        <a class="nav-tab" href="./labs.html">[LABS]</a>
+        <a class="nav-tab" href="./sysop.html">[SYSOP]</a>
+      </nav>
+
+      <div class="topbar-right">
+        <a class="avatar-pill-link" href="./sysop.html" title="SYSOP // Chaz" aria-label="SYSOP Chaz profile">
+          <img class="avatar-pill-img" src="./assets/chazfab-avatar.png" alt="" width="38" height="38">
+        </a>
+        <button type="button" class="mobile-menu-trigger" id="drawerOpenBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileDrawer">[&equiv; MENU]</button>
+      </div>
+    </header>
+
+    <main class="mainframe-stage">
+      <div class="page-intro">
+        <h1 class="page-title">Game Studio</h1>
+        <p class="page-note">Playable browser builds &amp; upcoming arcade experiments.</p>
+      </div>
+
+      <section class="hub-grid" aria-label="Games catalog">
+        <!-- Number Munchers Deluxe -->
+        <article class="clean-card clean-card--green">
+          <div class="card-head">
+            <h2 class="card-title">Number Munchers Deluxe</h2>
+            <span class="status-pill status-pill--live">LIVE</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+              <rect x="44" y="10" width="192" height="120" fill="#020804" stroke="#00ff41" stroke-width="2"/>
+              <path d="M44 34 H236 M44 58 H236 M44 82 H236 M44 106 H236 M76 10 V130 M108 10 V130 M140 10 V130 M172 10 V130 M204 10 V130" stroke="#00ff41" stroke-opacity="0.4" stroke-width="1"/>
+              <text x="54" y="27" fill="#00ff41" font-family="monospace" font-size="11">3   6   9  12  15  18</text>
+              <text x="54" y="51" fill="#00e5ff" font-family="monospace" font-size="11">4  21   7  24   2  27</text>
+              <rect x="147" y="62" width="18" height="16" rx="3" fill="#00ff41"/>
+              <circle cx="152" cy="68" r="2" fill="#020406"/><circle cx="160" cy="68" r="2" fill="#020406"/>
+            </svg>
+          </div>
+          <p class="card-desc">Classic 6&times;5 math arcade remake with Troggles, Muncher Theater skits, and multiple rule modes.</p>
+          <div class="action-row">
+            <a class="btn-play" href="./viewer.html?app=labs/number-munchers/index.html">[PLAY]</a>
+            <a class="btn-raw" href="./labs/number-munchers/index.html">[RAW .HTML]</a>
+          </div>
+        </article>
+
+        <!-- Climb the Food Chain -->
+        <article class="clean-card clean-card--violet">
+          <div class="card-head">
+            <h2 class="card-title">Climb the Food Chain</h2>
+            <span class="status-pill status-pill--wip">SOON</span>
+          </div>
+          <div class="card-art" aria-hidden="true">
+            <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="140,14 236,126 44,126" fill="none" stroke="#9d4edd" stroke-width="2"/>
+              <line x1="112" y1="46" x2="168" y2="46" stroke="#00e5ff" stroke-width="1.5"/>
+              <line x1="88" y1="74" x2="192" y2="74" stroke="#00e5ff" stroke-width="1.5"/>
+              <line x1="65" y1="100" x2="215" y2="100" stroke="#00e5ff" stroke-width="1.5"/>
+              <text x="124" y="39" fill="#ff2800" font-family="monospace" font-size="9" font-weight="700">APEX</text>
+              <text x="108" y="66" fill="#00ff41" font-family="monospace" font-size="9">PREDATOR</text>
+              <text x="102" y="92" fill="#00e5ff" font-family="monospace" font-size="9">HERBIVORE</text>
+              <text x="104" y="117" fill="#8ec9a9" font-family="monospace" font-size="9">PRODUCER</text>
+            </svg>
+          </div>
+          <p class="card-desc">Placeholder page reserved for Climb the Food Chain devlogs, artwork, and playable export.</p>
+          <div class="action-row">
+            <a class="enter-btn" href="./projects/climb-the-food-chain.html">[OPEN STUB]</a>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="mainframe-bottombar">
+      <div class="terminal-inline-wrap">
+        <form class="terminal-form" id="terminalForm">
+          <label class="terminal-prompt-label" for="terminalInput">
+            C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span>
+          </label>
+          <input class="terminal-input" id="terminalInput" type="text" placeholder="munchers, climb, home, labs, help..." autocomplete="off" spellcheck="false">
+        </form>
+        <span class="terminal-output" id="terminalOutput" aria-live="polite"></span>
+      </div>
+      <div class="bottom-toggles">
+        <label class="toggle-pill"><input type="checkbox" id="gridDrive"> [GRID]</label>
+        <label class="toggle-pill"><input type="checkbox" id="sfxToggle"> [SFX]</label>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

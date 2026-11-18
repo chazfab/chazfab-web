@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>CHAZFAB // Climb the Food Chain</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../style.css">
+  <script defer src="../mainframe.js"></script>
+</head>
+<body data-root-prefix="../">
+  <dialog class="Drawer" id="mobileDrawer" aria-label="Mainframe navigation drawer">
+    <div class="Drawer-scroller">
+      <nav class="Drawer-sheet" aria-label="Mobile menu">
+        <div class="drawer-header">
+          <span class="drawer-title">CHAZFAB</span>
+          <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu" autofocus>[X]</button>
+        </div>
+        <ul class="drawer-list">
+          <li><a class="drawer-link" href="../index.html"><span>[MAINFRAME]</span></a></li>
+          <li><a class="drawer-link" href="../games.html" aria-current="page"><span>[GAMES]</span></a></li>
+          <li><a class="drawer-link" href="../projects.html"><span>[PROJECTS]</span></a></li>
+          <li><a class="drawer-link" href="../labs.html"><span>[LABS]</span></a></li>
+          <li><a class="drawer-link" href="../sysop.html"><span>[SYSOP]</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </dialog>
+
+  <div class="mainframe-shell" id="mainframeShell">
+    <div class="tron-grid-wrap" aria-hidden="true">
+      <div class="tron-horizon"></div>
+      <div class="tron-grid-plane"></div>
+    </div>
+    <div class="scanlines-layer" aria-hidden="true"></div>
+
+    <header class="mainframe-topbar">
+      <a class="brand-logo-link" href="../index.html" aria-label="CHAZFAB Home">
+        <img class="brand-logo-img" src="../assets/svg/chazfab-pixel-logo.svg" alt="CHAZFAB" width="256" height="52">
+      </a>
+
+      <nav class="top-nav" aria-label="Primary navigation">
+        <a class="nav-tab" href="../index.html">[MAINFRAME]</a>
+        <a class="nav-tab" href="../games.html" aria-current="page">[GAMES *]</a>
+        <a class="nav-tab" href="../projects.html">[PROJECTS]</a>
+        <a class="nav-tab" href="../labs.html">[LABS]</a>
+        <a class="nav-tab" href="../sysop.html">[SYSOP]</a>
+      </nav>
+
+      <div class="topbar-right">
+        <a class="avatar-pill-link" href="../sysop.html" title="SYSOP // Chaz" aria-label="SYSOP Chaz profile">
+          <img class="avatar-pill-img" src="../assets/chazfab-avatar.png" alt="" width="38" height="38">
+        </a>
+        <button type="button" class="mobile-menu-trigger" id="drawerOpenBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileDrawer">[&equiv; MENU]</button>
+      </div>
+    </header>
+
+    <main class="mainframe-stage">
+      <article class="clean-card clean-card--violet">
+        <div class="card-head">
+          <h1 class="card-title">Climb the Food Chain</h1>
+          <span class="status-pill status-pill--wip">COMING SOON</span>
+        </div>
+        <div class="card-art" aria-hidden="true">
+          <svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="180,12 296,136 64,136" fill="none" stroke="#9d4edd" stroke-width="2"/>
+            <line x1="145" y1="48" x2="215" y2="48" stroke="#00e5ff" stroke-width="1.5"/>
+            <line x1="117" y1="78" x2="243" y2="78" stroke="#00e5ff" stroke-width="1.5"/>
+            <line x1="90" y1="108" x2="270" y2="108" stroke="#00e5ff" stroke-width="1.5"/>
+            <text x="164" y="40" fill="#ff2800" font-family="monospace" font-size="10" font-weight="700">APEX</text>
+            <text x="150" y="70" fill="#00ff41" font-family="monospace" font-size="10">CARNIVORE</text>
+            <text x="148" y="99" fill="#00e5ff" font-family="monospace" font-size="10">HERBIVORE</text>
+            <text x="140" y="128" fill="#8ec9a9" font-family="monospace" font-size="10">PRODUCERS</text>
+          </svg>
+        </div>
+        <p class="card-desc">Placeholder page reserved for Climb the Food Chain devlog notes, screenshots, and playable browser build.</p>
+        <div class="action-row">
+          <a class="btn-play" href="../games.html">&larr; BACK TO GAMES</a>
+          <a class="btn-raw" href="../index.html">MAINFRAME HOME</a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="mainframe-bottombar">
+      <div class="terminal-inline-wrap">
+        <form class="terminal-form" id="terminalForm">
+          <label class="terminal-prompt-label" for="terminalInput">
+            C:\CHAZFAB&gt;<span class="terminal-cursor" aria-hidden="true"></span>
+          </label>
+          <input class="terminal-input" id="terminalInput" type="text" placeholder="games, home, labs, help..." autocomplete="off" spellcheck="false">
+        </form>
+        <span class="terminal-output" id="terminalOutput" aria-live="polite"></span>
+      </div>
+      <div class="bottom-toggles">
+        <label class="toggle-pill"><input type="checkbox" id="gridDrive"> [GRID]</label>
+        <label class="toggle-pill"><input type="checkbox" id="sfxToggle"> [SFX]</label>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
