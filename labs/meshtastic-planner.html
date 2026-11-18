@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark" />
-  <title>Meshtastic 915 MHz RF Site Planner — Northville, MI</title>
+  <title>Meshtastic 915 MHz RF Site Planner — Ann Arbor, MI</title>
   <link rel="icon" type="image/png" sizes="64x64" href="../assets/favicon.png" />
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -93,7 +93,7 @@
           <span class="hidden sm:inline-block text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">US915 · Slot 20 · 906.875 MHz</span>
         </div>
         <p class="text-[11px] text-slate-400 font-mono">
-          BASE STATION: <span class="text-slate-200">Downtown Northville, MI (830 ft ASL)</span> · Active Nodes: <span id="hdrNodeCount" class="text-emerald-400 font-bold">3</span> · Mesh Links: <span id="hdrLinkCount" class="text-cyan-400 font-bold">3</span>
+          START CENTER: <span class="text-slate-200">Downtown Ann Arbor, MI (840 ft ASL)</span> · Active Nodes: <span id="hdrNodeCount" class="text-emerald-400 font-bold">0</span> · Mesh Links: <span id="hdrLinkCount" class="text-cyan-400 font-bold">0</span>
         </p>
       </div>
     </div>
@@ -110,11 +110,11 @@
       <button id="btnCovOverlap" onclick="setCoverageMode('overlap')" class="px-2.5 py-1.5 rounded text-xs font-medium transition text-cyan-300 hover:bg-slate-800" title="Show multi-node handoff &amp; relay overlap zones">
         Relay Overlap Zones
       </button>
-      <button id="btnCovDiff1W" onclick="setCoverageMode('diff_1w')" class="px-2.5 py-1.5 rounded text-xs font-semibold transition text-fuchsia-300 bg-fuchsia-500/10 border border-fuchsia-500/30 hover:bg-fuchsia-500/20" title="Compare 1W (30 dBm) vs 0.1W (22 dBm) on Chimney (+8 dB Link Gain)">
-        Δ 1W vs 0.1W Chimney
+      <button id="btnCovDiff1W" onclick="setCoverageMode('diff_1w')" class="px-2.5 py-1.5 rounded text-xs font-semibold transition text-fuchsia-300 bg-fuchsia-500/10 border border-fuchsia-500/30 hover:bg-fuchsia-500/20" title="Compare 1W (30 dBm) vs 0.1W (22 dBm) on Base (+8 dB Link Gain)">
+        Δ 1W vs 0.1W Base
       </button>
-      <button id="btnToggleChimneyPower" onclick="quickToggleChimney1W()" class="px-2 py-1.5 rounded text-xs font-mono font-bold transition text-emerald-300 bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25" title="Instantly toggle Home Chimney between 1W (30dBm) and 0.1W (22dBm)">
-        Chimney: 1W (30dBm)
+      <button id="btnToggleChimneyPower" onclick="quickToggleChimney1W()" class="px-2 py-1.5 rounded text-xs font-mono font-bold transition text-slate-400 bg-slate-900 border border-slate-700" title="Instantly toggle Base node between 1W (30dBm) and 0.1W (22dBm)">
+        Base: Add Node
       </button>
       <button id="btnZoomClose" onclick="zoomToSelectedNodeClose()" class="px-2 py-1.5 rounded text-xs font-mono transition text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20" title="Zoom to 300ft Umbra Touchdown Ring">
         Up-Close (Umbra)
@@ -146,7 +146,7 @@
           1. Nodes &amp; Editor
         </button>
         <button id="tabBtnLinks" onclick="switchSidebarTab('links')" class="py-2.5 px-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
-          2. Mesh Links (<span id="tabLinkBadge">3</span>)
+          2. Mesh Links (<span id="tabLinkBadge">0</span>)
         </button>
         <button id="tabBtnIdle" onclick="switchSidebarTab('idle')" class="py-2.5 px-2 border-b-2 border-transparent text-indigo-300 hover:text-indigo-200 transition">
           3. Idle / CLI Config
@@ -156,15 +156,15 @@
       <!-- TAB 1: NODES LIST + SELECTED NODE RF EDITOR -->
       <div id="sidebarTab_nodes" class="flex-1 overflow-y-auto divide-y divide-slate-800">
 
-        <!-- 1W VS 0.1W CHIMNEY COMPARISON BANNER -->
+        <!-- 1W VS 0.1W BASE COMPARISON BANNER -->
         <div class="p-2.5 bg-gradient-to-r from-emerald-950/70 via-slate-900 to-fuchsia-950/50 border-b border-slate-800 flex items-center justify-between gap-2">
           <div>
             <div class="text-[11px] font-bold text-white flex items-center gap-1.5">
               <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px]">+8 dB GAIN</span>
-              <span>1W RAK on Chimney vs 0.1W</span>
+              <span>1W RAK Base vs 0.1W</span>
             </div>
             <p class="text-[10px] text-slate-300 mt-0.5" id="chimneyCompareSubtext">
-              35.3 dBm EIRP (~3.4W) punches West over Beck/Napier ridges + LNA boosts weak 0.1W handheld RX.
+              Add a node to compare 1W (30 dBm / ~3.4W EIRP + RX LNA) vs 0.1W across Ann Arbor ridges.
             </p>
           </div>
           <button onclick="setCoverageMode(state.coverageMode === 'diff_1w' ? 'combined' : 'diff_1w')" class="px-2 py-1 rounded text-[10px] font-mono font-semibold bg-fuchsia-600 hover:bg-fuchsia-500 text-white shrink-0 shadow">
@@ -187,14 +187,15 @@
           <div class="flex items-center gap-1.5 mb-2.5">
             <select id="presetNodeSelect" class="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
               <option value="">+ Quick-Add Regional Preset Node...</option>
+              <option value="downtown_aa">Downtown Ann Arbor Roof (Main &amp; Liberty · 1W Base)</option>
               <option value="personal_truck">Personal Handheld / Truck Node (0.1W · CLIENT_MUTE)</option>
-              <option value="maybury">Maybury State Park High Point (971 ft Hilltop Relay)</option>
-              <option value="downtown_nv">Downtown Northville Relay (Main &amp; Center Roof)</option>
-              <option value="southlyon">South Lyon Node (West Moraine Link)</option>
-              <option value="hinespark">Plymouth / Hines Park Valley Node</option>
-              <option value="novitower">Novi / 8 Mile Ridge Relay (958 ft Crest)</option>
-              <option value="livonia_e">Livonia East Flatland Node (I-96 Corridor)</option>
-              <option value="saline_s">Saline / Ann Arbor South Relay</option>
+              <option value="barton_hills">Barton Hills High Crest (985 ft Hilltop Relay)</option>
+              <option value="um_medical">UM Central / Medical Ridge (910 ft Roof)</option>
+              <option value="vets_west">West Side / Vet's Park Ridge (960 ft)</option>
+              <option value="north_campus">UM North Campus / Plymouth Rd Ridge</option>
+              <option value="ypsi_tower">Ypsilanti Cross St / Water Tower Ridge</option>
+              <option value="dexter_nw">Dexter / Huron River West Relay</option>
+              <option value="saline_s">Saline South Relay</option>
             </select>
             <button onclick="addPresetNodeFromDropdown()" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 shrink-0">
               Add
@@ -207,8 +208,10 @@
           </div>
         </div>
 
+        <div id="emptyNodeEditorNotice" class="p-3.5 text-xs text-slate-400 bg-slate-900/40">Select or add a node above to configure transceiver hardware, antenna vertical cone, and mast height.</div>
+
         <!-- SELECTED NODE HARDWARE & ANTENNA EDITOR -->
-        <div class="p-3.5 space-y-3" id="selectedNodeEditor">
+        <div class="hidden p-3.5 space-y-3" id="selectedNodeEditor">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400" id="edNodeColorDot"></span>
@@ -334,25 +337,6 @@
             </div>
           </div>
 
-          <!-- Global Tree / Suburban Clutter Slider -->
-          <div class="pt-2 border-t border-slate-800/80 space-y-2">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-400">Propagation Realism Preset</span>
-              <select id="selPropModel" onchange="onChangePropModel()" class="bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-[11px] font-mono text-emerald-300">
-                <option value="realistic" selected>Realistic Suburban (Handheld @ 5ft)</option>
-                <option value="rooftop">Roof-to-Roof Base Stations (@ 25ft)</option>
-                <option value="optimistic">Optimistic Bare-Earth (SPLAT! Raw)</option>
-              </select>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-slate-400">Northville Oak/Maple &amp; Roof Clutter</span>
-                <span class="font-mono text-cyan-400 font-semibold" id="valClutterFt">42 ft (12.8 m)</span>
-              </div>
-              <input id="sliderClutter" type="range" min="0" max="75" step="1" value="42" oninput="updateGlobalClutter()" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
-            </div>
-          </div>
-
           <!-- Selected Node RF & Role Advisor Card -->
           <div class="bg-slate-950 rounded-lg p-2.5 border border-slate-800 space-y-1.5">
             <div class="flex items-center justify-between text-[11px] font-mono">
@@ -363,6 +347,25 @@
             <div id="edRoleAdvisorBox" class="text-[11px] leading-snug text-slate-300 bg-slate-900/90 p-2 rounded border border-slate-800/90">
               <!-- Populated dynamically -->
             </div>
+          </div>
+        </div>
+
+        <!-- Global Tree / Suburban Clutter Slider & Propagation Realism Preset -->
+        <div id="globalPropSettings" class="p-3.5 space-y-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400">Propagation Realism Preset</span>
+            <select id="selPropModel" onchange="onChangePropModel()" class="bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-[11px] font-mono text-emerald-300">
+              <option value="realistic" selected>Realistic Suburban (Handheld @ 5ft)</option>
+              <option value="rooftop">Roof-to-Roof Base Stations (@ 25ft)</option>
+              <option value="optimistic">Optimistic Bare-Earth (SPLAT! Raw)</option>
+            </select>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-400">Ann Arbor Oak/Maple &amp; Roof Clutter</span>
+              <span class="font-mono text-cyan-400 font-semibold" id="valClutterFt">42 ft (12.8 m)</span>
+            </div>
+            <input id="sliderClutter" type="range" min="0" max="75" step="1" value="42" oninput="updateGlobalClutter()" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
           </div>
         </div>
       </div>
@@ -471,7 +474,7 @@
               <span class="w-3 h-3 rounded-sm bg-fuchsia-500/85 border border-fuchsia-300 inline-block"></span>
               <span class="text-fuchsia-200">1W (30 dBm) Extra Reach (+8 dB)</span>
             </div>
-            <div class="text-[10px] text-slate-400 pl-5">New Western ridge &amp; South Lyon zones unlocked ONLY by 1W PA</div>
+            <div class="text-[10px] text-slate-400 pl-5">Extra Huron valley &amp; moraine ridge reach unlocked ONLY by 1W PA</div>
             <div class="flex items-center gap-2 mt-1">
               <span class="w-3 h-3 rounded-sm bg-emerald-500/45 border border-emerald-400 inline-block"></span>
               <span class="text-slate-300">Covered by both 0.1W &amp; 1W</span>
@@ -495,7 +498,7 @@
           <div class="flex items-center gap-1.5">
             <span class="w-2.5 h-2.5 rounded-full border-2 border-amber-400 inline-block"></span>
             <span class="text-amber-300">Amber Ring:</span>
-            <span class="text-white font-bold" id="mapRingLabel">105 ft</span>
+            <span class="text-white font-bold" id="mapRingLabel">—</span>
             <span class="text-slate-400">Main Beam Touchdown</span>
           </div>
           <div class="h-3 w-px bg-slate-700"></div>
@@ -515,16 +518,16 @@
         <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
           <div class="flex items-center gap-2">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 font-mono">DUAL-CONE RF PATH &amp; FRESNEL PROFILER</span>
-            <span class="text-xs font-mono text-slate-200 font-semibold" id="profileTargetTitle">Home Base (CHIM) ⇄ South Lyon Relay (SLYN)</span>
+            <span class="text-xs font-mono text-slate-200 font-semibold" id="profileTargetTitle">No Active Nodes — Add a node to profile Ann Arbor RF paths</span>
           </div>
 
           <div class="flex flex-wrap items-center gap-3 text-xs font-mono">
-            <div>Dist: <span id="profDist" class="text-white font-bold">8.8 mi</span></div>
-            <div>FSPL: <span id="profFspl" class="text-slate-300 font-bold">114.6 dB</span></div>
-            <div>Beam Off-Axis: <span id="profLobeLoss" class="text-amber-300 font-bold">-0.3 dB</span></div>
-            <div>RSSI / SNR: <span id="profRssi" class="text-emerald-400 font-bold">-113.8 dBm</span> (<span id="profSnr" class="text-cyan-300 font-bold">+6.2 dB</span>)</div>
+            <div>Dist: <span id="profDist" class="text-white font-bold">—</span></div>
+            <div>FSPL: <span id="profFspl" class="text-slate-300 font-bold">—</span></div>
+            <div>Beam Off-Axis: <span id="profLobeLoss" class="text-amber-300 font-bold">—</span></div>
+            <div>RSSI / SNR: <span id="profRssi" class="text-emerald-400 font-bold">—</span> (<span id="profSnr" class="text-cyan-300 font-bold">—</span>)</div>
             <div class="px-2 py-0.5 rounded bg-slate-950 border border-slate-700">
-              <span id="profStatus" class="text-emerald-400 font-bold">STRONG MESH LINK</span>
+              <span id="profStatus" class="text-slate-400 font-bold">NO ACTIVE LINK</span>
             </div>
           </div>
         </div>
@@ -547,7 +550,7 @@
               <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">Meshtastic Firmware 2.5+</span>
               <h2 class="text-base font-bold text-white">Ideal / Idle Mesh Architecture, Solar Autonomy &amp; CLI Generator</h2>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">Tailored for Southeast Michigan / Northville terrain · Optimized for low channel utilization (&lt;12% airtime) &amp; Michigan winter idle survival</p>
+            <p class="text-xs text-slate-400 mt-0.5">Tailored for Ann Arbor &amp; Washtenaw County terrain · Optimized for low channel utilization (&lt;12% airtime) &amp; Michigan winter idle survival</p>
           </div>
           <button onclick="toggleIdleMeshModal(false)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono border border-slate-700">
             ✕ Close
@@ -560,9 +563,9 @@
           <!-- 1. CORE MESH TOPOLOGY & ROLE STRATEGY -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-slate-950/90 border border-slate-800 rounded-lg p-3.5">
-              <div class="text-xs font-bold uppercase text-emerald-400 mb-1">Why Chimney = CLIENT (Not ROUTER)</div>
+              <div class="text-xs font-bold uppercase text-emerald-400 mb-1">Why Roof Base = CLIENT (Not ROUTER)</div>
               <p class="text-xs text-slate-300 leading-relaxed">
-                At <strong>886 ft ASL</strong> (853 ft base + 33 ft chimney), your home node has great reach East toward Livonia, but the 960+ ft moraine ridges to the West block horizon sightlines. Setting it to <code class="text-emerald-300">CLIENT</code> lets it smartly repeat packets after listening briefly, whereas <code class="text-rose-300">ROUTER</code> preemptively grabs hops and can swallow packets meant for higher hilltop nodes (like Maybury State Park at 971 ft).
+                At <strong>~875 ft ASL</strong> (Downtown Ann Arbor ~840 ft ground + 35 ft roof/mast), a central base node covers the Huron valley basin well, while 960–985 ft moraine crests (Barton Hills &amp; West Side) command horizon sightlines. Setting it to <code class="text-emerald-300">CLIENT</code> lets it smartly repeat packets after listening briefly, whereas <code class="text-rose-300">ROUTER</code> preemptively grabs hops and can swallow packets meant for higher hilltop relays.
               </p>
             </div>
             <div class="bg-slate-950/90 border border-slate-800 rounded-lg p-3.5">
@@ -595,12 +598,12 @@
 
   <script>
     /***********************************************************************
-     * 1. SITE CONSTANTS, HARDWARE SPECS & NORTHVILLE TOPOGRAPHY ENGINE
+     * 1. SITE CONSTANTS, HARDWARE SPECS & ANN ARBOR TOPOGRAPHY ENGINE
      ***********************************************************************/
     const HOME_SITE = {
-      lat: 42.4310,
-      lon: -83.4832,
-      baseElevMeters: 253.0, // 830 ft ASL at Downtown Northville Town Square (Main & Center)
+      lat: 42.2808,
+      lon: -83.7430,
+      baseElevMeters: 256.0, // 840 ft ASL at Downtown Ann Arbor (Main & Liberty)
       freqMHz: 906.875,      // US915 LongFast Slot 20 center frequency
       rxSensitivity: -130.0, // LoRa SF11/BW250 sensitivity floor
       noiseFloorDbm: -120.0  // Typical 915MHz suburban thermal + RF noise floor
@@ -684,7 +687,7 @@
         beamwidthDeg: 35.0,
         halfAngle: 17.5,
         name: "5.8 dBi Fiberglass (SparkFun / Rokland)",
-        desc: "35° Sweet-Spot Cone: Touches down ~105 ft from chimney; upper +17.5° clears 950+ ft western ridges."
+        desc: "35° Sweet-Spot Cone: Touches down ~105 ft from mast; upper +17.5° clears 960+ ft moraine ridges."
       },
       6.0: {
         gain: 6.0,
@@ -698,23 +701,36 @@
         beamwidthDeg: 15.0,
         halfAngle: 7.5,
         name: "8.0 dBi High-Gain Collinear",
-        desc: "15° flat cone: Punches East across flat Livonia plain, but overshoots local dips."
+        desc: "15° flat cone: Punches across flat eastern plains, but overshoots local river valleys."
       },
       10.0: {
         gain: 10.0,
         beamwidthDeg: 12.0,
         halfAngle: 6.0,
         name: "10.0 dBi Backcountry Collinear (45\")",
-        desc: "12° razor pancake: 310+ ft umbrella dead-zone underneath; blocked by western hills."
+        desc: "12° razor pancake: 310+ ft umbrella dead-zone underneath; blocked by nearby hills."
       }
     };
 
     const REGIONAL_NODE_PRESETS = {
+      downtown_aa: {
+        name: "Downtown Ann Arbor Roof",
+        shortName: "AA2B",
+        lat: 42.2808,
+        lon: -83.7430,
+        heightFt: 35,
+        gain: 5.8,
+        hardware: "rak4631_1w",
+        role: "CLIENT",
+        power: "grid",
+        coaxLoss: 0.5,
+        color: "#10b981"
+      },
       personal_truck: {
         name: "Personal Handheld / Truck Node",
         shortName: "PRSN",
-        lat: 42.4148,
-        lon: -83.5045,
+        lat: 42.2755,
+        lon: -83.7485,
         heightFt: 5,
         gain: 2.0,
         hardware: "seeed_nRF",
@@ -723,12 +739,12 @@
         coaxLoss: 0.4,
         color: "#f59e0b"
       },
-      maybury: {
-        name: "Maybury Hilltop Relay (971 ft)",
-        shortName: "MAYB",
-        lat: 42.4318,
-        lon: -83.5325,
-        heightFt: 25,
+      barton_hills: {
+        name: "Barton Hills High Crest (985 ft)",
+        shortName: "BRTN",
+        lat: 42.3135,
+        lon: -83.7630,
+        heightFt: 30,
         gain: 5.8,
         hardware: "rak4631",
         role: "CLIENT",
@@ -736,12 +752,12 @@
         coaxLoss: 0.4,
         color: "#22d3ee"
       },
-      downtown_nv: {
-        name: "Downtown Northville Roof",
-        shortName: "DWNV",
-        lat: 42.4310,
-        lon: -83.4832,
-        heightFt: 28,
+      um_medical: {
+        name: "UM Central / Medical Ridge",
+        shortName: "UMED",
+        lat: 42.2835,
+        lon: -83.7305,
+        heightFt: 40,
         gain: 5.8,
         hardware: "rak4631",
         role: "CLIENT",
@@ -749,134 +765,85 @@
         coaxLoss: 0.4,
         color: "#a855f7"
       },
-      southlyon: {
-        name: "South Lyon West Node",
-        shortName: "SLYN",
-        lat: 42.4605,
-        lon: -83.6515,
-        heightFt: 35,
+      vets_west: {
+        name: "West Side / Vet's Park Ridge",
+        shortName: "VETS",
+        lat: 42.2845,
+        lon: -83.7815,
+        heightFt: 28,
         gain: 5.8,
         hardware: "rak4631",
         role: "CLIENT",
         power: "solar",
         coaxLoss: 0.4,
-        color: "#f59e0b"
+        color: "#38bdf8"
       },
-      hinespark: {
-        name: "Plymouth / Hines Park Node",
-        shortName: "HINE",
-        lat: 42.3985,
-        lon: -83.4340,
-        heightFt: 20,
-        gain: 3.0,
-        hardware: "seeed_nRF",
-        role: "CLIENT_MUTE",
-        power: "battery",
+      north_campus: {
+        name: "UM North Campus / Plymouth Ridge",
+        shortName: "NCMP",
+        lat: 42.2965,
+        lon: -83.7145,
+        heightFt: 32,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "CLIENT",
+        power: "solar",
         coaxLoss: 0.4,
         color: "#ec4899"
       },
-      novitower: {
-        name: "Novi 8-Mile Ridge Relay",
-        shortName: "NOVI",
-        lat: 42.4480,
-        lon: -83.5240,
-        heightFt: 35,
-        gain: 5.8,
-        hardware: "rak4631",
-        role: "ROUTER",
-        power: "solar",
-        coaxLoss: 0.4,
-        color: "#38bdf8"
-      },
-      livonia_e: {
-        name: "Livonia East Gateway",
-        shortName: "LIVO",
-        lat: 42.4090,
-        lon: -83.3550,
-        heightFt: 30,
-        gain: 8.0,
-        hardware: "heltec_v3",
-        role: "CLIENT",
-        power: "grid",
-        coaxLoss: 0.4,
-        color: "#38bdf8"
-      },
-      saline_s: {
-        name: "Saline / Ann Arbor South Relay",
-        shortName: "SALN",
-        lat: 42.2650,
-        lon: -83.7450,
+      ypsi_tower: {
+        name: "Ypsilanti Water Tower Ridge",
+        shortName: "YPSI",
+        lat: 42.2465,
+        lon: -83.6195,
         heightFt: 40,
-        gain: 5.8,
+        gain: 8.0,
         hardware: "rak4631",
         role: "CLIENT",
         power: "solar",
         coaxLoss: 0.4,
         color: "#84cc16"
+      },
+      dexter_nw: {
+        name: "Dexter / Huron River West Relay",
+        shortName: "DEXT",
+        lat: 42.3380,
+        lon: -83.8860,
+        heightFt: 35,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "CLIENT",
+        power: "solar",
+        coaxLoss: 0.4,
+        color: "#f97316"
+      },
+      saline_s: {
+        name: "Saline South Relay",
+        shortName: "SALN",
+        lat: 42.1668,
+        lon: -83.7800,
+        heightFt: 35,
+        gain: 5.8,
+        hardware: "rak4631",
+        role: "CLIENT",
+        power: "solar",
+        coaxLoss: 0.4,
+        color: "#14b8a6"
       }
     };
 
     const NODE_PALETTE = ["#10b981", "#f59e0b", "#22d3ee", "#a855f7", "#ec4899", "#38bdf8", "#84cc16"];
 
-    // Initial Multi-Node State:
-    // 1. Node 1: Downtown Northville Base (1W / 30dBm RAK + 5.8 dBi N-Type @ 30 ft AGL, 1.2 dB coax+window loss, CLIENT)
-    // 2. Node 2: Personal Handheld / Truck Node (0.1W / 22dBm Seeed/RAK + 2 dBi Whip @ 5 ft AGL, CLIENT_MUTE)
-    // 3. Node 3: Maybury State Park High Point Relay (971 ft ASL + 25 ft AGL, 5.8 dBi, CLIENT)
+    // Initial Multi-Node State: centered in Downtown Ann Arbor with zero active nodes
     let state = {
       coverageMode: 'combined', // 'combined' | 'selected' | 'overlap' | 'diff_1w'
       propModel: 'realistic',   // 'realistic' (5ft handheld w/ ground bounce & clutter) | 'rooftop' (25ft roof-to-roof) | 'optimistic'
-      clutterHeightFt: 42,      // Mature Northville oak/maple canopy & 2-story roofs (~42 ft)
+      clutterHeightFt: 42,      // Mature Ann Arbor oak/maple canopy & 2-story roofs (~42 ft)
       addNodeMapMode: false,
-      selectedNodeId: 'node_1',
-      activeLinkPair: ['node_1', 'node_2'],
+      selectedNodeId: null,
+      activeLinkPair: [],
       customTargetPoint: null,
-      nodes: [
-        {
-          id: 'node_1',
-          name: 'Northville Base (Town Square Roof)',
-          shortName: 'BASE',
-          lat: 42.4310,
-          lon: -83.4832,
-          heightFt: 30, // 30 ft roof/mast AGL
-          gain: 5.8,    // 5.8 dBi N-Type Fiberglass
-          hardware: 'rak4631_1w', // 1W / 30 dBm RAK PA/LNA
-          role: 'CLIENT',
-          power: 'grid',
-          coaxLoss: 1.2, // 25ft 400-series coax (0.9dB) + 12" flat window ribbon (0.25dB)
-          enabled: true,
-          color: '#10b981'
-        },
-        {
-          id: 'node_2',
-          name: 'Personal Handheld / Truck Node',
-          shortName: 'PRSN',
-          lat: 42.4165,
-          lon: -83.5080, // Positioned West near Beck / 6 Mile so user can test link back to chimney & Maybury
-          heightFt: 5,  // 5 ft AGL handheld/truck height
-          gain: 2.0,    // 2.0 dBi Whip
-          hardware: 'seeed_nRF', // Standard 0.1W (22 dBm)
-          role: 'CLIENT_MUTE',
-          power: 'battery',
-          coaxLoss: 0.4,
-          enabled: true,
-          color: '#f59e0b'
-        },
-        {
-          id: 'node_3',
-          name: 'Maybury Hilltop Relay (971 ft)',
-          shortName: 'MAYB',
-          lat: 42.4318,
-          lon: -83.5325,
-          heightFt: 25,
-          gain: 5.8,
-          hardware: 'rak4631',
-          role: 'CLIENT',
-          power: 'solar',
-          coaxLoss: 0.4,
-          enabled: true,
-          color: '#22d3ee'
-        }
-      ]
+      nodes: []
     };
 
     /***********************************************************************
@@ -885,59 +852,53 @@
     const demCache = new Map();
     let srtmGrid = null; // Stores live bilinear SRTM 30m matrix fetched from Open-Meteo
 
-    // Calibrated USGS regional moraine & river valley fallback prior to SRTM grid sync:
-    // - Northville moraine shelf: 261m (856 ft ASL)
-    // - Beck Rd / Ridge Rd crest: 277m–296m (909–971 ft ASL)
-    // - Salem / Chubb moraine: 302m (991 ft ASL)
-    // - Downtown Northville / Rouge River Valley floor: 238m (780 ft ASL)
-    // - East escarpment drop into Livonia lakebed: 206m (675 ft ASL)
-    const TERRAIN_ORIGIN = { lat: 42.4100, lon: -83.4850 };
+    // Calibrated USGS regional moraine & Huron River valley fallback prior to SRTM grid sync:
+    // - Downtown Ann Arbor (Main & Liberty): ~256m (840 ft ASL)
+    // - Barton Hills / M-14 moraine crest (NNW): ~298m (978 ft ASL)
+    // - West Side / Vet's Park / Liberty ridge (W): ~292m (958 ft ASL)
+    // - Huron River valley trench (N/NE): ~232m (761 ft ASL)
+    // - Eastern lakeplain drop toward Ypsilanti: ~238m (781 ft ASL)
+    const TERRAIN_ORIGIN = { lat: 42.2808, lon: -83.7430 };
 
     function getSyntheticTerrainMeters(lat, lon) {
       const dLatKm = (lat - TERRAIN_ORIGIN.lat) * 111.132;
       const dLonKm = (lon - TERRAIN_ORIGIN.lon) * 111.320 * Math.cos(TERRAIN_ORIGIN.lat * Math.PI / 180);
 
-      let elev = 260.9; // Baseline moraine shelf elevation (m)
+      let elev = 256.0; // Downtown Ann Arbor baseline (840 ft ASL)
 
-      if (dLonKm > 1.1) {
-        // Defiance Moraine drops sharply East of Haggerty/I-275 down onto the flat glacial lakebed (Livonia ~675ft)
-        const eastDist = dLonKm - 1.1;
-        elev -= 55.0 * (1 - Math.exp(-eastDist / 2.4)) + eastDist * 1.25;
+      if (dLonKm > 1.8) {
+        // Gentle drop East/ESE across US-23 toward Ypsilanti & glacial lakeplain (~238m)
+        const eastDist = dLonKm - 1.8;
+        elev -= 18.0 * (1 - Math.exp(-eastDist / 3.2)) + eastDist * 0.6;
       } else {
-        // Steep climb West across the Fort Wayne & Defiance Moraines (Beck Rd -> Ridge Rd -> Napier Rd)
+        // Westward climb across Vet's Park / Liberty moraine & NNW Barton Hills crest
         const westDist = Math.max(0, -dLonKm);
         const northDist = Math.max(0, dLatKm);
-        elev += westDist * 4.4 + northDist * 2.8;
+        elev += westDist * 3.8 + northDist * 1.6;
 
-        const ridgeAxis = westDist * 0.88 + dLatKm * 0.42;
-        const SheldonBluff = 9.5 * Math.exp(-Math.pow((ridgeAxis - 1.05) / 0.55, 2));
-        const beckRidge = 18.5 * Math.exp(-Math.pow((ridgeAxis - 2.35) / 0.85, 2));
-        const mayburyCrest = 26.0 * Math.exp(-Math.pow((ridgeAxis - 4.5) / 1.45, 2));
-        const salemHigh = 22.0 * Math.exp(-Math.pow((ridgeAxis - 8.2) / 2.4, 2));
-        elev += SheldonBluff + beckRidge + mayburyCrest + salemHigh;
+        const westMoraine = 24.0 * Math.exp(-Math.pow((westDist - 3.0) / 1.4, 2));
+        const bartonCrest = 36.0 * Math.exp(-(Math.pow((dLonKm + 1.65) / 1.5, 2) + Math.pow((dLatKm - 3.6) / 1.4, 2)));
+        const northCampusRidge = 16.0 * Math.exp(-(Math.pow((dLonKm - 2.3) / 1.6, 2) + Math.pow((dLatKm - 1.7) / 1.3, 2)));
+        elev += westMoraine + bartonCrest + northCampusRidge;
       }
 
-      if (dLatKm < -0.8) {
-        elev -= Math.abs(dLatKm + 0.8) * 3.5;
-      }
-
-      // Middle Rouge River / Hines Park Valley Trench cutting NW-to-SE through Downtown Northville & Plymouth
-      const valleyOffset = (dLatKm * 0.76 + dLonKm * 0.64) - 1.42;
-      if (dLonKm < 5.5 && dLonKm > -4.5) {
-        const valleyDepth = -29.5 * Math.exp(-Math.pow(valleyOffset / 0.58, 2));
+      // Huron River valley trench cutting WNW -> ESE north of Downtown Ann Arbor
+      const huronAxis = (dLatKm - 0.16 * dLonKm) - 1.85;
+      if (dLonKm > -7.0 && dLonKm < 8.5) {
+        const valleyDepth = -26.0 * Math.exp(-Math.pow(huronAxis / 0.62, 2));
         elev += valleyDepth;
       }
 
-      const undulation = 3.8 * Math.sin(dLonKm * 2.6) * Math.cos(dLatKm * 2.4);
+      const undulation = 3.2 * Math.sin(dLonKm * 2.4) * Math.cos(dLatKm * 2.2);
       elev += undulation;
 
       const distKm = Math.hypot(dLatKm, dLonKm);
-      if (distKm < 0.15) {
-        const w = distKm / 0.15;
-        elev = 260.9 * (1 - w) + elev * w;
+      if (distKm < 0.2) {
+        const w = distKm / 0.2;
+        elev = 256.0 * (1 - w) + elev * w;
       }
 
-      return Math.max(175.0, Math.min(335.0, elev));
+      return Math.max(195.0, Math.min(335.0, elev));
     }
 
     function getElevationMeters(lat, lon) {
@@ -966,8 +927,8 @@
       return getSyntheticTerrainMeters(lat, lon);
     }
 
-    // Fetches a real 2D SRTM 30m elevation grid (15x15 = 225 satellite points in batched chunks)
-    // across Northville, Novi, South Lyon, Plymouth, and Livonia
+    // Fetches a real 2D SRTM 30m elevation grid (14x14 = 196 satellite points in 2 batched chunks)
+    // across Ann Arbor, Barton Hills, Dexter, Ypsilanti, and Saline
     async function fetchRegionalSRTMGrid() {
       const dot = document.getElementById('demStatusDot');
       const txt = document.getElementById('demStatusText');
@@ -975,18 +936,20 @@
         if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
         if (txt) txt.textContent = "Fetching SRTM 30m Topo Grid...";
 
-        // 1. Sync exact node coordinates first
-        const nLats = state.nodes.map(n => n.lat);
-        const nLons = state.nodes.map(n => n.lon);
-        const nodeRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${nLats.join(',')}&longitude=${nLons.join(',')}`);
-        if (nodeRes.ok) {
-          const nData = await nodeRes.json();
-          if (nData && Array.isArray(nData.elevation)) {
-            state.nodes.forEach((n, i) => {
-              if (typeof nData.elevation[i] === 'number') {
-                demCache.set(`${n.lat.toFixed(3)},${n.lon.toFixed(3)}`, nData.elevation[i]);
-              }
-            });
+        // 1. Sync exact node coordinates first (only when nodes exist)
+        if (state.nodes.length > 0) {
+          const nLats = state.nodes.map(n => n.lat);
+          const nLons = state.nodes.map(n => n.lon);
+          const nodeRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${nLats.join(',')}&longitude=${nLons.join(',')}`);
+          if (nodeRes.ok) {
+            const nData = await nodeRes.json();
+            if (nData && Array.isArray(nData.elevation)) {
+              state.nodes.forEach((n, i) => {
+                if (typeof nData.elevation[i] === 'number') {
+                  demCache.set(`${n.lat.toFixed(3)},${n.lon.toFixed(3)}`, nData.elevation[i]);
+                }
+              });
+            }
           }
         }
 
@@ -1023,7 +986,7 @@
         }
       } catch (e) {
         if (dot) dot.className = "w-2 h-2 rounded-full bg-cyan-400";
-        if (txt) txt.textContent = "USGS Northville DEM Active";
+        if (txt) txt.textContent = "USGS Ann Arbor DEM Active";
         updateAllVisuals();
       }
     }
@@ -1165,7 +1128,7 @@
       let foliageLossDb = 0;
       if (clutterM > 2 && state.propModel !== 'optimistic') {
         const canopyFraction = canopyHits / sampleSteps;
-        // Penetrating Northville oak/maple canopy and houses at 915 MHz
+        // Penetrating Ann Arbor oak/maple canopy and houses at 915 MHz
         foliageLossDb = Math.min(28.0, canopyFraction * (clutterM * 1.15) * Math.log10(1 + distKm * 3.8));
         // Local receiver street-level clutter penalty when target is a 5ft handheld below roof/tree height
         if (rxHeightM < clutterM * 0.75) {
@@ -1174,7 +1137,7 @@
         }
       }
 
-      // Extra attenuation when solid glacial moraine dirt (Beck/Maybury/Salem ridges) physically blocks LOS
+      // Extra attenuation when solid glacial moraine dirt / ridges physically block LOS
       if (rockHits >= 2 && state.propModel !== 'optimistic') {
         diffractionLossDb += Math.min(16.0, rockHits * 2.8);
       }
@@ -1286,7 +1249,8 @@
           const activeNodes = state.nodes.filter(n => n.enabled);
           if (activeNodes.length === 0) return;
 
-          const homeNode = state.nodes[0];
+          const homeNode = activeNodes[0];
+          if (!homeNode) return;
           const nodesToEval = (state.coverageMode === 'selected')
             ? activeNodes.filter(n => n.id === state.selectedNodeId)
             : activeNodes;
@@ -1377,7 +1341,7 @@
         if (state.addNodeMapMode) {
           addNewNodeAtCoords(e.latlng.lat, e.latlng.lng);
           toggleAddNodeMapMode(false);
-        } else {
+        } else if (state.nodes.some(n => n.enabled)) {
           state.customTargetPoint = {
             lat: e.latlng.lat,
             lon: e.latlng.lng,
@@ -1512,8 +1476,10 @@
     /***********************************************************************
      * 5. MULTI-NODE MANAGEMENT & SIDEBAR EDITING
      ***********************************************************************/
+    let nextNodeSeq = 1;
+
     function getSelectedNode() {
-      return state.nodes.find(n => n.id === state.selectedNodeId) || state.nodes[0];
+      return state.nodes.find(n => n.id === state.selectedNodeId) || state.nodes[0] || null;
     }
 
     function selectNodeById(id) {
@@ -1542,8 +1508,8 @@
     }
 
     function addNewNodeAtCoords(lat, lon, presetObj = null) {
-      const idx = state.nodes.length + 1;
-      const newId = 'node_' + Date.now().toString().slice(-4);
+      const idx = nextNodeSeq++;
+      const newId = 'node_' + idx + '_' + Date.now().toString().slice(-4);
       const color = presetObj?.color || NODE_PALETTE[(idx - 1) % NODE_PALETTE.length];
 
       const newNode = {
@@ -1563,10 +1529,12 @@
       };
 
       state.nodes.push(newNode);
-      const prevId = state.selectedNodeId;
       state.selectedNodeId = newId;
       state.customTargetPoint = null;
-      if (prevId) state.activeLinkPair = [prevId, newId];
+      const otherActive = state.nodes.find(n => n.id !== newId && n.enabled);
+      if (otherActive) {
+        state.activeLinkPair = [otherActive.id, newId];
+      }
 
       updateAllVisuals();
       fetchLiveOpenMeteoDEM();
@@ -1589,19 +1557,30 @@
       const nd = state.nodes.find(n => n.id === id);
       if (nd) {
         nd.enabled = !nd.enabled;
+        const active = state.nodes.filter(n => n.enabled);
+        if (active.length < 2) {
+          state.activeLinkPair = [];
+        } else if (!active.some(n => n.id === state.activeLinkPair[0]) || !active.some(n => n.id === state.activeLinkPair[1])) {
+          state.activeLinkPair = [active[0].id, active[1].id];
+        }
         updateAllVisuals();
       }
     }
 
     function deleteNodeById(id, ev) {
       ev.stopPropagation();
-      if (state.nodes.length <= 1) return; // Always keep at least 1 node
       state.nodes = state.nodes.filter(n => n.id !== id);
       if (state.selectedNodeId === id) {
-        state.selectedNodeId = state.nodes[0].id;
+        state.selectedNodeId = state.nodes[0]?.id || null;
       }
-      if (state.activeLinkPair.includes(id) && state.nodes.length >= 2) {
-        state.activeLinkPair = [state.nodes[0].id, state.nodes[1].id];
+      if (state.nodes.length === 0) {
+        state.customTargetPoint = null;
+      }
+      const active = state.nodes.filter(n => n.enabled);
+      if (active.length < 2) {
+        state.activeLinkPair = [];
+      } else if (state.activeLinkPair.includes(id) || !active.some(n => n.id === state.activeLinkPair[0]) || !active.some(n => n.id === state.activeLinkPair[1])) {
+        state.activeLinkPair = [active[0].id, active[1].id];
       }
       updateAllVisuals();
     }
@@ -1610,38 +1589,40 @@
       const container = document.getElementById('nodeRosterList');
       container.innerHTML = '';
 
-      state.nodes.forEach(nd => {
-        const isSelected = nd.id === state.selectedNodeId;
-        const elevFt = Math.round(getElevationMeters(nd.lat, nd.lon) * 3.28084);
-        const hw = HARDWARE_SPECS[nd.hardware] || HARDWARE_SPECS.rak4631;
-        const pwrBadge = hw.txPowerDbm >= 30 ? '1W (30dBm)' : '0.1W (22dBm)';
-        const card = document.createElement('div');
-        card.onclick = () => selectNodeById(nd.id);
-        card.className = `p-2 rounded-lg border transition cursor-pointer flex items-center justify-between gap-2 ${
-          isSelected
-            ? 'bg-slate-800/95 border-emerald-500 shadow'
-            : 'bg-slate-900/70 border-slate-800 hover:bg-slate-800/60'
-        }`;
+      if (state.nodes.length === 0) {
+        container.innerHTML = `<div class="p-3 rounded-lg bg-slate-900/70 border border-dashed border-slate-700 text-xs text-slate-400 leading-relaxed">No active nodes yet. Click <strong class="text-emerald-300">+ Click Map to Add</strong> anywhere around Ann Arbor, or pick a preset above.</div>`;
+      } else {
+        state.nodes.forEach(nd => {
+          const isSelected = nd.id === state.selectedNodeId;
+          const elevFt = Math.round(getElevationMeters(nd.lat, nd.lon) * 3.28084);
+          const hw = HARDWARE_SPECS[nd.hardware] || HARDWARE_SPECS.rak4631;
+          const pwrBadge = hw.txPowerDbm >= 30 ? '1W (30dBm)' : '0.1W (22dBm)';
+          const card = document.createElement('div');
+          card.onclick = () => selectNodeById(nd.id);
+          card.className = `p-2 rounded-lg border transition cursor-pointer flex items-center justify-between gap-2 ${
+            isSelected
+              ? 'bg-slate-800/95 border-emerald-500 shadow'
+              : 'bg-slate-900/70 border-slate-800 hover:bg-slate-800/60'
+          }`;
 
-        card.innerHTML = `
-          <div class="flex items-center gap-2 min-w-0">
-            <input type="checkbox" ${nd.enabled ? 'checked' : ''} onclick="toggleNodeEnabled('${nd.id}', event)" class="rounded accent-emerald-500 cursor-pointer" title="Toggle node active" />
-            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${nd.color}"></span>
-            <div class="min-w-0">
-              <div class="text-xs font-semibold text-white truncate">${nd.name}</div>
-              <div class="text-[10px] font-mono text-slate-400">
-                <span class="text-emerald-300">${nd.shortName}</span> · <span class="text-cyan-300">${pwrBadge}</span> · ${nd.role} · ${elevFt}+${nd.heightFt}ft · ${nd.gain}dBi
+          card.innerHTML = `
+            <div class="flex items-center gap-2 min-w-0">
+              <input type="checkbox" ${nd.enabled ? 'checked' : ''} onclick="toggleNodeEnabled('${nd.id}', event)" class="rounded accent-emerald-500 cursor-pointer" title="Toggle node active" />
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${nd.color}"></span>
+              <div class="min-w-0">
+                <div class="text-xs font-semibold text-white truncate">${nd.name}</div>
+                <div class="text-[10px] font-mono text-slate-400">
+                  <span class="text-emerald-300">${nd.shortName}</span> · <span class="text-cyan-300">${pwrBadge}</span> · ${nd.role} · ${elevFt}+${nd.heightFt}ft · ${nd.gain}dBi
+                </div>
               </div>
             </div>
-          </div>
-          <div class="flex items-center gap-1 shrink-0">
-            ${state.nodes.length > 1 ? `
+            <div class="flex items-center gap-1 shrink-0">
               <button onclick="deleteNodeById('${nd.id}', event)" class="px-1.5 py-0.5 rounded text-[10px] text-slate-400 hover:text-rose-400 hover:bg-slate-950" title="Remove Node">✕</button>
-            ` : ''}
-          </div>
-        `;
-        container.appendChild(card);
-      });
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
 
       const activeCount = state.nodes.filter(n => n.enabled).length;
       const linkCount = Math.max(0, (activeCount * (activeCount - 1)) / 2);
@@ -1650,17 +1631,23 @@
       document.getElementById('tabLinkBadge').textContent = linkCount;
 
       // Update Quick 1W vs 0.1W Header Button state
-      const homeNode = state.nodes[0];
+      const homeNode = state.nodes.find(n => n.enabled) || state.nodes[0];
       const toggleBtn = document.getElementById('btnToggleChimneyPower');
       const subText = document.getElementById('chimneyCompareSubtext');
-      if (homeNode && toggleBtn) {
+      if (!homeNode) {
+        if (toggleBtn) {
+          toggleBtn.textContent = "Base: Add Node";
+          toggleBtn.className = "px-2 py-1.5 rounded text-xs font-mono font-bold transition text-slate-400 bg-slate-900 border border-slate-700";
+        }
+        if (subText) subText.textContent = "Add a node to compare 1W (30 dBm / ~3.4W EIRP + RX LNA) vs 0.1W across Ann Arbor ridges.";
+      } else if (toggleBtn) {
         const is1W = homeNode.hardware === 'rak4631_1w' || homeNode.hardware === 'station_g2';
         if (is1W) {
-          toggleBtn.textContent = "Chimney: 1W (30dBm)";
+          toggleBtn.textContent = "Base: 1W (30dBm)";
           toggleBtn.className = "px-2 py-1.5 rounded text-xs font-mono font-bold transition text-emerald-300 bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25";
-          if (subText) subText.textContent = "ACTIVE: 1W (30dBm) + 5.8 dBi = 35.3 dBm EIRP (~3.4W) + RX LNA boost.";
+          if (subText) subText.textContent = "ACTIVE: 1W (30dBm) + antenna gain + RX LNA boost across Ann Arbor terrain.";
         } else {
-          toggleBtn.textContent = "Chimney: 0.1W (22dBm)";
+          toggleBtn.textContent = "Base: 0.1W (22dBm)";
           toggleBtn.className = "px-2 py-1.5 rounded text-xs font-mono font-bold transition text-amber-300 bg-amber-500/15 border border-amber-500/40 hover:bg-amber-500/25";
           if (subText) subText.textContent = "ACTIVE: Standard 0.1W (22dBm) = 27.3 dBm EIRP (~0.5W). Click top button to test 1W.";
         }
@@ -1668,7 +1655,7 @@
     }
 
     function quickToggleChimney1W() {
-      const homeNode = state.nodes[0];
+      const homeNode = state.nodes.find(n => n.enabled) || state.nodes[0];
       if (!homeNode) return;
       homeNode.hardware = (homeNode.hardware === 'rak4631_1w') ? 'rak4631' : 'rak4631_1w';
       state.selectedNodeId = homeNode.id;
@@ -1677,7 +1664,15 @@
 
     function populateSelectedNodeEditor() {
       const nd = getSelectedNode();
-      if (!nd) return;
+      const editorEl = document.getElementById('selectedNodeEditor');
+      const emptyEl = document.getElementById('emptyNodeEditorNotice');
+      if (editorEl) editorEl.classList.toggle('hidden', !nd);
+      if (emptyEl) emptyEl.classList.toggle('hidden', Boolean(nd));
+      if (!nd) {
+        const ringEl = document.getElementById('mapRingLabel');
+        if (ringEl) ringEl.textContent = '—';
+        return;
+      }
 
       const groundFt = Math.round(getElevationMeters(nd.lat, nd.lon) * 3.28084);
       document.getElementById('edNodeColorDot').style.backgroundColor = nd.color;
@@ -1721,11 +1716,11 @@
       const totalAltFt = groundFt + nd.heightFt;
       const advisorEl = document.getElementById('edRoleAdvisorBox');
       if (hw.txPowerDbm >= 30 && nd.heightFt < 12) {
-        advisorEl.innerHTML = `<span class="text-rose-400 font-semibold">⚠️ Alligator Warning (1W at Ground Level):</span> Running 1W (30 dBm) at ${nd.heightFt} ft AGL lets your node shout far, but it won't hear weak 0.1W replies through clutter. Put the <strong>1W RAK on your 30 ft chimney</strong> and use 0.1W (<code class="text-amber-300">CLIENT_MUTE</code>) as your personal node.`;
+        advisorEl.innerHTML = `<span class="text-rose-400 font-semibold">⚠️ Alligator Warning (1W at Ground Level):</span> Running 1W (30 dBm) at ${nd.heightFt} ft AGL lets your node shout far, but it won't hear weak 0.1W replies through clutter. Put the <strong>1W RAK on a 30+ ft roof/mast</strong> and use 0.1W (<code class="text-amber-300">CLIENT_MUTE</code>) as your personal node.`;
       } else if (hw.txPowerDbm >= 30 && nd.heightFt >= 20) {
-        advisorEl.innerHTML = `<span class="text-emerald-400 font-semibold">★ Optimal 1W Chimney Base (${totalAltFt} ft ASL):</span> 30 dBm + 5.8 dBi antenna (${eirp.toFixed(1)} dBm EIRP) + built-in LNA gives balanced 2-way links with 0.1W handhelds and +8 dB punch over the Western ridges. Keep Role = <code class="text-emerald-300">CLIENT</code>.`;
+        advisorEl.innerHTML = `<span class="text-emerald-400 font-semibold">★ Optimal 1W Roof/Mast Base (${totalAltFt} ft ASL):</span> 30 dBm + 5.8 dBi antenna (${eirp.toFixed(1)} dBm EIRP) + built-in LNA gives balanced 2-way links with 0.1W handhelds and +8 dB punch over moraine ridges. Keep Role = <code class="text-emerald-300">CLIENT</code>.`;
       } else if (nd.role === 'CLIENT_MUTE' || nd.heightFt <= 10) {
-        advisorEl.innerHTML = `<span class="text-amber-300 font-semibold">Personal / Truck Node (${totalAltFt} ft ASL):</span> Standard 0.1W (22 dBm) set to <code class="text-amber-300">CLIENT_MUTE</code> saves battery and prevents indoor/driveway hop-stealing while your 1W Chimney Base handles all repeating.`;
+        advisorEl.innerHTML = `<span class="text-amber-300 font-semibold">Personal / Truck Node (${totalAltFt} ft ASL):</span> Standard 0.1W (22 dBm) set to <code class="text-amber-300">CLIENT_MUTE</code> saves battery and prevents indoor/driveway hop-stealing while your elevated base node handles repeating.`;
       } else if (totalAltFt >= 965) {
         advisorEl.innerHTML = `<span class="text-cyan-400 font-semibold">High Moraine Crest (${totalAltFt} ft ASL):</span> Commanding regional elevation. Suitable for <code class="text-emerald-300">CLIENT</code> or dedicated <code class="text-cyan-300">ROUTER</code> with a <strong>5.8–6 dBi (35° cone)</strong> antenna.`;
       } else {
@@ -1863,18 +1858,39 @@
 
     function updateCrossSectionProfiler() {
       const activeNodes = state.nodes.filter(n => n.enabled);
-      let nodeA = state.nodes.find(n => n.id === state.activeLinkPair[0]) || getSelectedNode();
+      const selectedActive = activeNodes.find(n => n.id === state.selectedNodeId) || activeNodes[0] || null;
+      let nodeA = activeNodes.find(n => n.id === state.activeLinkPair[0]) || selectedActive;
       let targetB = null;
 
-      if (state.customTargetPoint) {
-        nodeA = getSelectedNode();
+      if (state.customTargetPoint && selectedActive) {
+        nodeA = selectedActive;
         targetB = state.customTargetPoint;
-      } else {
-        targetB = state.nodes.find(n => n.id === state.activeLinkPair[1] && n.id !== nodeA.id) ||
-                  activeNodes.find(n => n.id !== nodeA.id);
+      } else if (nodeA) {
+        targetB = activeNodes.find(n => n.id === state.activeLinkPair[1] && n.id !== nodeA.id) ||
+                  activeNodes.find(n => n.id !== nodeA.id) || null;
       }
 
-      if (!nodeA || !targetB) return;
+      if (!nodeA || !targetB) {
+        const titleEl = document.getElementById('profileTargetTitle');
+        if (titleEl) {
+          titleEl.textContent = activeNodes.length === 0
+            ? "No Active Nodes — Click '+ Click Map to Add' to place nodes in Ann Arbor"
+            : `${nodeA.shortName} Ready — Click map or add a 2nd node to profile RF path`;
+        }
+        ['profDist', 'profFspl', 'profLobeLoss', 'profRssi', 'profSnr'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = '—';
+        });
+        const statusEl = document.getElementById('profStatus');
+        if (statusEl) {
+          statusEl.textContent = "NO ACTIVE LINK";
+          statusEl.className = "text-slate-400 font-bold";
+        }
+        drawEmptyCrossSection(activeNodes.length === 0
+          ? "No active nodes in Ann Arbor mesh — add a node to start RF terrain profiling"
+          : `${nodeA.shortName} placed — click anywhere on map or add a 2nd node to inspect RF path`);
+        return;
+      }
 
       const link = evaluateLinkBetween(nodeA, targetB, 48);
       const isNodeB = Boolean(targetB.id);
@@ -1915,17 +1931,51 @@
       drawDualConeCrossSection(nodeA, targetB, link);
     }
 
+    function drawEmptyCrossSection(message) {
+      const canvas = document.getElementById('profileCanvas');
+      if (!canvas) return;
+      const rect = (canvas.parentElement && canvas.parentElement.getBoundingClientRect()) || { width: 600, height: 160 };
+      const W = Math.max(100, rect.width || 600);
+      const H = Math.max(80, rect.height || 160);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let k = 1; k <= 3; k++) {
+        const y = (k / 4) * H;
+        ctx.beginPath();
+        ctx.moveTo(24, y);
+        ctx.lineTo(W - 24, y);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(message, W / 2, H / 2);
+      ctx.textAlign = 'start';
+      ctx.textBaseline = 'alphabetic';
+    }
+
     function drawDualConeCrossSection(nodeA, targetB, link) {
       const canvas = document.getElementById('profileCanvas');
       if (!canvas) return;
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width * window.devicePixelRatio;
-      canvas.height = rect.height * window.devicePixelRatio;
+      const rect = (canvas.parentElement && canvas.parentElement.getBoundingClientRect()) || { width: 600, height: 160 };
+      const W = Math.max(100, rect.width || 600);
+      const H = Math.max(80, rect.height || 160);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
 
       const ctx = canvas.getContext('2d');
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      const W = rect.width;
-      const H = rect.height;
+      ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, W, H);
 
       const padL = 52, padR = 52, padT = 18, padB = 24;
@@ -2134,11 +2184,11 @@
       let recommendedRole = "CLIENT";
       let roleReason = "Smart-flooding CLIENT balances local coverage and multi-hop forwarding without hogging airtime.";
       if (hw.txPowerDbm >= 30 && nd.heightFt >= 20) {
-        recommendedRole = "CLIENT (1W Chimney Base)";
-        roleReason = "1W (30 dBm) + 5.8 dBi on your 30 ft chimney achieves ~35.3 dBm EIRP & LNA RX boost. Keep as CLIENT so it relays packets for your 0.1W handheld across Northville, Maybury, and South Lyon.";
+        recommendedRole = "CLIENT (1W Roof/Mast Base)";
+        roleReason = "1W (30 dBm) + 5.8 dBi on your 30+ ft roof/mast achieves ~35.3 dBm EIRP & LNA RX boost. Keep as CLIENT so it relays packets for 0.1W handhelds across Ann Arbor, Barton Hills, and Ypsilanti.";
       } else if (nd.role === 'CLIENT_MUTE' || nd.heightFt <= 10) {
         recommendedRole = "CLIENT_MUTE (Personal / Mobile)";
-        roleReason = "Set your 0.1W personal/truck node to CLIENT_MUTE so it never steals hops inside the house or driveway—letting your 1W Chimney Base handle 100% of repeating.";
+        roleReason = "Set your 0.1W personal/truck node to CLIENT_MUTE so it never steals hops inside the house or driveway—letting elevated 1W base nodes handle repeating.";
       } else if (totalAltFt >= 965 && nd.heightFt >= 25) {
         recommendedRole = "CLIENT (or ROUTER)";
         roleReason = "Sits on a dominant 965+ ft glacial crest. Ideal regional relay; keep as CLIENT or ROUTER.";
@@ -2181,6 +2231,12 @@
 
       sidebarBox.innerHTML = '';
       modalBox.innerHTML = '';
+
+      if (state.nodes.length === 0) {
+        sidebarBox.innerHTML = `<div class="p-3 rounded-lg bg-slate-950 border border-dashed border-slate-800 text-xs text-slate-400">No active nodes yet. Add one or more nodes around Ann Arbor in Tab 1 to generate per-node power budgets and Meshtastic CLI setup commands.</div>`;
+        modalBox.innerHTML = `<div class="col-span-full p-4 rounded-xl bg-slate-950 border border-dashed border-slate-800 text-xs text-slate-400">No active nodes configured yet. Close this dialog and add nodes on the Ann Arbor map or via presets to generate Meshtastic CLI blocks.</div>`;
+        return;
+      }
 
       state.nodes.forEach((nd, idx) => {
         const info = computeNodePowerAndCli(nd);
@@ -2325,7 +2381,7 @@
         title.textContent = "Multi-Node Handoff Overlap";
       } else if (mode === 'diff_1w') {
         if (diffLeg) diffLeg.classList.remove('hidden');
-        title.textContent = "Δ 1W (30dBm) vs 0.1W Chimney";
+        title.textContent = "Δ 1W (30dBm) vs 0.1W Base";
       } else {
         stdLeg.classList.remove('hidden');
         title.textContent = mode === 'selected' ? "Selected Node Coverage" : "Combined Mesh Coverage";
@@ -2338,6 +2394,8 @@
       const nd = getSelectedNode();
       if (nd && map) {
         map.setView([nd.lat, nd.lon], 16);
+      } else if (map) {
+        map.setView([HOME_SITE.lat, HOME_SITE.lon], 15);
       }
     }
 
