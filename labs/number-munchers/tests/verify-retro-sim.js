@@ -47,9 +47,11 @@ assertPixelSprite(mascots.muncherHtml, 'TitleMuncher');
 assertPixelSprite(mascots.reggieHtml, 'TitleReggie');
 
 // 2. Verify HTML structure, IDs, and native dialogs
-for (const reqId of ['mainMenuBox', 'modeMenuBox', 'diskMenuBox', 'diskStrip', 'diskBtn', 'oopsOverlay', 'arcadeCabinet', 'guideDialog', 'optionsDialog', 'hallOfFameDialog', 'gameOverDialog']) {
+for (const reqId of ['mainMenuBox', 'modeMenuBox', 'diskMenuBox', 'diskStrip', 'diskBtn', 'sysMenuBtn', 'sysPopoverMenu', 'oopsOverlay', 'arcadeCabinet', 'guideDialog', 'optionsDialog', 'hallOfFameDialog', 'gameOverDialog']) {
   assert(html.includes(`id="${reqId}"`), `index.html missing id="${reqId}"`);
 }
+assert(html.includes('popovertarget="sysPopoverMenu"'), 'index.html sysMenuBtn missing popovertarget');
+assert(html.includes('popover="auto"'), 'index.html sysPopoverMenu missing popover="auto"');
 assert(html.includes('js/content-packs.js'), 'index.html must load js/content-packs.js');
 assert(!/role=["']dialog["']/i.test(html), 'index.html must not contain role="dialog"');
 assert(!/aria-modal=/i.test(html), 'index.html must not contain aria-modal');
@@ -70,6 +72,9 @@ assert(css.includes('content-visibility: auto'), 'styles.css missing content-vis
 assert(!css.includes('880px'), 'styles.css must not cap arcade-cabinet width at 880px');
 assert(css.includes('repeat(5, minmax(46px, 1fr))'), 'styles.css .board-grid must stretch row heights via 1fr');
 assert(!css.includes('76px'), 'styles.css must not cap board-grid row height at 76px');
+assert(/\.dos-fkey-bar\s*\{[^}]*flex-wrap:\s*nowrap/s.test(css), 'styles.css .dos-fkey-bar must set flex-wrap: nowrap');
+assert(css.includes(':is(:popover-open, .\\:popover-open)'), 'styles.css missing popover polyfill styling hook');
+assert(css.includes('repeat(2, 44px)'), 'styles.css .dpad must use compact 2-row inverted-T layout');
 assert(gameJs.includes('contentvisibilityautostatechange'), 'game.js missing contentvisibilityautostatechange listener');
 
 // 4. Verify pure classic default options in game.js

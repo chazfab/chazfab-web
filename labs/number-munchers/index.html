@@ -18,32 +18,56 @@
 <body>
   <div class="app-shell">
     <main class="arcade-cabinet" id="arcadeCabinet" data-monitor="vga">
-      <!-- Compact DOS Function-Key Strip -->
-      <header class="dos-fkey-bar toolbar" aria-label="System commands">
-        <button type="button" class="fkey-btn" id="homeBtn" title="Return to Main Menu">
-          <span class="fkey-key">ESC</span><span class="fkey-label">:Menu</span>
-        </button>
-        <button type="button" class="fkey-btn" id="guideBtn">
-          <span class="fkey-key">F1</span><span class="fkey-label">:Info</span>
-        </button>
-        <button type="button" class="fkey-btn" id="optionsBtn">
-          <span class="fkey-key">F2</span><span class="fkey-label">:Options</span>
-        </button>
-        <button type="button" class="fkey-btn" id="hofBtn">
-          <span class="fkey-key">F3</span><span class="fkey-label">:Hall of Fame</span>
-        </button>
-        <button type="button" class="fkey-btn" id="diskBtn" title="Switch MECC Game Disk">
-          <span class="fkey-key">F4</span><span class="fkey-label">:Disk</span>
-        </button>
-        <button type="button" class="fkey-btn" id="pauseBtn" hidden>
-          <span class="fkey-key">P</span><span class="fkey-label" id="pauseLabel">:Pause</span>
-        </button>
-        <button type="button" class="fkey-btn" id="muteBtn" aria-label="Mute sound">
-          <span class="fkey-key">M</span><span class="fkey-label" id="muteLabel">:Sound ON</span>
-        </button>
-        <button type="button" class="fkey-btn" id="fullscreenBtn" aria-label="Toggle fullscreen">
-          <span class="fkey-key">F</span><span class="fkey-label" id="fullscreenLabel">:Full</span>
-        </button>
+      <!-- Single-Row DOS Function-Key Strip + Mobile SYS Popover -->
+      <header class="dos-fkey-bar" aria-label="System commands">
+        <div class="fkey-group fkey-primary">
+          <button type="button" class="fkey-btn" id="homeBtn" title="Return to Main Menu">
+            <span class="fkey-key">ESC</span><span class="fkey-label">:Menu</span>
+          </button>
+          <button type="button" class="fkey-btn" id="pauseBtn" hidden>
+            <span class="fkey-key">P</span><span class="fkey-label" id="pauseLabel">:Pause</span>
+          </button>
+          <button type="button" class="fkey-btn fkey-desktop-only" id="diskBtn" title="Switch MECC Game Disk">
+            <span class="fkey-key">F4</span><span class="fkey-label">:Disk</span>
+          </button>
+        </div>
+
+        <div class="fkey-group fkey-desktop-only">
+          <button type="button" class="fkey-btn" id="guideBtn">
+            <span class="fkey-key">F1</span><span class="fkey-label">:Info</span>
+          </button>
+          <button type="button" class="fkey-btn" id="optionsBtn">
+            <span class="fkey-key">F2</span><span class="fkey-label">:Options</span>
+          </button>
+          <button type="button" class="fkey-btn" id="hofBtn">
+            <span class="fkey-key">F3</span><span class="fkey-label">:Hall of Fame</span>
+          </button>
+          <button type="button" class="fkey-btn" id="fullscreenBtn" aria-label="Toggle fullscreen">
+            <span class="fkey-key">F</span><span class="fkey-label" id="fullscreenLabel">:Full</span>
+          </button>
+        </div>
+
+        <div class="fkey-group fkey-right">
+          <button type="button" class="fkey-btn" id="muteBtn" aria-label="Mute sound">
+            <span class="fkey-key">M</span><span class="fkey-label" id="muteLabel">:Sound ON</span>
+          </button>
+          <button
+            type="button"
+            class="fkey-btn fkey-sys-btn"
+            id="sysMenuBtn"
+            popovertarget="sysPopoverMenu"
+            popovertargetaction="toggle"
+            aria-label="Open system menu"
+          >SYS &#9662;</button>
+          <div id="sysPopoverMenu" class="sys-popover retro-double-box" popover="auto" role="group" aria-label="System menu">
+            <button type="button" class="sys-pop-item" data-sys-action="disk">Switch MECC Disk (F4)</button>
+            <button type="button" class="sys-pop-item" data-sys-action="info">Information (F1)</button>
+            <button type="button" class="sys-pop-item" data-sys-action="options">Options (F2)</button>
+            <button type="button" class="sys-pop-item" data-sys-action="hof">Hall of Fame (F3)</button>
+            <button type="button" class="sys-pop-item" data-sys-action="fullscreen">Fullscreen (F)</button>
+            <button type="button" class="sys-pop-item" data-sys-action="dpad">Toggle Touch D-Pad</button>
+          </div>
+        </div>
       </header>
 
       <!-- Authentic MECC Boot & Menu Screen -->
@@ -61,19 +85,19 @@
           <legend class="sr-only">Select MECC Game Disk</legend>
           <label class="disk-chip">
             <input type="radio" name="activeDisk" value="number" checked>
-            <span>[1] NUMBER</span>
+            <span class="disk-full">[1] NUMBER</span><span class="disk-abbr" aria-hidden="true">1:NUM</span>
           </label>
           <label class="disk-chip">
             <input type="radio" name="activeDisk" value="word">
-            <span>[2] WORD</span>
+            <span class="disk-full">[2] WORD</span><span class="disk-abbr" aria-hidden="true">2:WORD</span>
           </label>
           <label class="disk-chip">
             <input type="radio" name="activeDisk" value="fraction">
-            <span>[3] FRACTION</span>
+            <span class="disk-full">[3] FRACTION</span><span class="disk-abbr" aria-hidden="true">3:FRAC</span>
           </label>
           <label class="disk-chip">
             <input type="radio" name="activeDisk" value="super">
-            <span>[4] SUPER</span>
+            <span class="disk-full">[4] SUPER</span><span class="disk-abbr" aria-hidden="true">4:SUPR</span>
           </label>
         </fieldset>
 

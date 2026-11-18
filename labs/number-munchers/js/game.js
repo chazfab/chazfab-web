@@ -137,6 +137,8 @@
     els.muteLabel = document.getElementById('muteLabel');
     els.fullscreenBtn = document.getElementById('fullscreenBtn');
     els.fullscreenLabel = document.getElementById('fullscreenLabel');
+    els.sysMenuBtn = document.getElementById('sysMenuBtn');
+    els.sysPopoverMenu = document.getElementById('sysPopoverMenu');
 
     els.titleScreen = document.getElementById('titleScreen');
     els.titleHeading = document.getElementById('titleHeading');
@@ -1775,6 +1777,34 @@
       openModal(els.hallOfFameDialog, renderHallOfFame);
     });
 
+    if (els.sysPopoverMenu) {
+      els.sysPopoverMenu.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-sys-action]');
+        if (!btn) return;
+        var act = btn.dataset.sysAction;
+        if (typeof els.sysPopoverMenu.hidePopover === 'function') {
+          try { els.sysPopoverMenu.hidePopover(); } catch (_) {}
+        }
+        NM.Audio.playMenuSelect();
+        if (act === 'disk') {
+          if (state.phase !== 'title') returnToMainMenu();
+          setMenuScreen('disk');
+        } else if (act === 'info') {
+          openModal(els.guideDialog);
+        } else if (act === 'options') {
+          openModal(els.optionsDialog, syncOptionsUI);
+        } else if (act === 'hof') {
+          openModal(els.hallOfFameDialog, renderHallOfFame);
+        } else if (act === 'fullscreen') {
+          toggleFullscreen();
+        } else if (act === 'dpad') {
+          options.touchPadMode = options.touchPadMode === 'show' ? 'hide' : 'show';
+          saveOptions();
+          syncOptionsUI();
+        }
+      });
+    }
+
     els.resetHofBtn.addEventListener('click', function () {
       saveHighScores(DEFAULT_HOF);
       renderHallOfFame();
@@ -1998,6 +2028,9 @@
   }
 
   function init() {
+    if (typeof HTMLElement !== 'undefined' && !Object.hasOwn(HTMLElement.prototype, 'popover')) {
+      import('https://unpkg.com/@oddbird/popover-polyfill@latest/dist/popover.min.js').catch(function () {});
+    }
     cacheElements();
     NM.Audio.init();
     loadOptions();
